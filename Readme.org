@@ -1,6 +1,6 @@
 * Readme
 
-** Basic Editoe
+** Basic Editor
 
 This is an experiment writing a simple editor in Lisp.
 
