@@ -1,4 +1,13 @@
 * Readme
+
+** Basic Editoe
+
+This is an experiment writing a simple editor in Lisp.
+
+It is built on top of: https://github.com/bigos/clops-gui
+
+Below are my old notes, that may no longer make sense
+
 ** counter
 We have file:~/Programming/Lisp/lispy-experiments/clops-gui/counter/ project
 with src file:~/Programming/Lisp/lispy-experiments/clops-gui/counter/src/ that
