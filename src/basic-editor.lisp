@@ -13,8 +13,10 @@
 (defparameter *basic-editor-model* nil)
 
 (defclass/std basic-editor-model (boxes:model)
-  ((text :std (sycamore:rope
-               (alexandria:read-file-into-string "~/.bashrc")))
+  ((text :std nil
+         ;; (sycamore:rope
+         ;;  (alexandria:read-file-into-string "~/.bashrc"))
+         )
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
@@ -203,6 +205,13 @@
                         (sycamore:subrope (text model) :start (+ 0 cur-pos)
                                                        :end (sycamore:rope-length (text model)))))
     (move-cursor-right model)))
+
+(defun open-file (filepath)
+  (warn "going to load ~S" filepath)
+
+  (setf
+   (text *basic-editor-model*) (sycamore:rope
+                                (alexandria:read-file-into-string (subseq filepath 7)))))
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
@@ -562,6 +571,7 @@
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
    gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
+   gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
    *basic-editor-model* (make-instance 'basic-editor-model)
    boxes::*model* *basic-editor-model*
    )
