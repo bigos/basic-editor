@@ -6,27 +6,33 @@ This is an experiment writing a simple editor in Lisp.
 
 It is built on top of: https://github.com/bigos/clops-gui
 
+file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::1
+
+file:~/Programming/Lisp/clops-gui/src/
+
+
+** old notes
 Below are my old notes, that may no longer make sense
 
-** counter
+*** counter
 We have file:~/Programming/Lisp/lispy-experiments/clops-gui/counter/ project
 with src file:~/Programming/Lisp/lispy-experiments/clops-gui/counter/src/ that
 can be used as example and to derive new project
-** src folder
+*** src folder
 basic-editor src
 file:~/Programming/Lisp/lispy-experiments/clops-gui/basic-editor/src/
-** editor
+*** editor
 
-*** sections
+**** sections
 We will try to have a reactive toolbar, edit area and status area.
 using this example file:~/Programming/Lisp/clops-gui/examples/boxes2.lisp::1
 
-*** representation of text
+**** representation of text
 needed for cursor movement
 [[file:src/basic-editor.lisp::((text :std]]
 [[file:src/basic-editor.lisp::for c across]]
 
-**** rope
+***** rope
 https://en.wikipedia.org/wiki/Rope_(data_structure)
 
 creating new rope
@@ -34,11 +40,11 @@ creating new rope
 (sycamore:rope-map #'identity my-new-text)
 #+end_src
 
-** other experiments
+*** other experiments
 file:Programming/Lisp/lispy-experiments/to-do-list.lisp
 file:Programming/Lisp/lispy-experiments/klopsik.lisp
 
-** libraries to check
+*** libraries to check
 [[file:~/Programming/Lisp/lispy-experiments/curated-libraries.org::*Curated libraries][Curated libraries]]
 
 https://github.com/garlic0x1/rope
@@ -47,25 +53,25 @@ https://github.com/orthecreedence/cl-hash-util
 https://gitlab.common-lisp.net/fset/fset/-/wikis/home
 https://github.com/sirherrbatka/cl-data-structures
 
-** interesting sources
+*** interesting sources
 [[file:~/Programming/Pyrulis/Lisp/gaborean.org::*Gaborean][Gaborean]]
 [[file:~/Programming/Pyrulis/Lisp/aaaaa-lisp-reference.org::*AAAAA Lisp Reference][AAAAA Lisp Reference]]
 [[file:~/Programming/Pyrulis/Lisp/interesting-notes.org::*books][books]]
 
-** ACME
+*** ACME
 https://www.youtube.com/watch?v=TBnPxe4e6Ek
 https://www.youtube.com/watch?v=dP1xVpMPn8M
 https://github.com/jinyangustc/acme-editor
 
-** notes
+*** notes
 
-*** clops gui
+**** clops gui
 [[file:~/Programming/Lisp/clops-gui/README.org::*Clops-Gui][Clops-Gui]]
 file:~/Programming/Lisp/clops-gui/src/packages.lisp::1
 beginning of file dialog
 [[file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::defun present-file-dialog-save (]]
 
-*** FileDialog
+**** FileDialog
 https://docs.gtk.org/gtk4/class.FileDialog.html
 
 window and callback
