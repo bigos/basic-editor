@@ -10,7 +10,7 @@ file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::1
 
 file:~/Programming/Lisp/clops-gui/src/
 
-It is not meant to be a BASIC (programming language) editor, but simple and not
+It is not meant to be a [[https://en.wikipedia.org/wiki/BASIC][BASIC]] (programming language) editor, but simple and not
 complicated, so able to provide the base or starting point from which something
 can develop.
 
