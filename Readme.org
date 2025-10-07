@@ -14,6 +14,20 @@ It is not meant to be a [[https://en.wikipedia.org/wiki/BASIC][BASIC]] (programm
 complicated, so able to provide the base or starting point from which something
 can develop.
 
+** File Dialog fix
+You need to update one of the dependencies that is not in Ultralisp yet.
+
+You need to add the changes from here
+https://github.com/bohonghuang/cl-gobject-introspection-wrapper
+
+to folder
+file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-wrapper-20230914193217/
+
+Copying the latest version of those files: desc.lisp, macro.lisp
+
+for more info, see
+https://github.com/bohonghuang/cl-gtk4/issues/79#issuecomment-3368709352
+
 ** old notes
 Below are my old notes, that may no longer make sense
 
