@@ -18,10 +18,10 @@ can develop.
 You no longer need to edit the source of:
 https://github.com/bohonghuang/cl-gobject-introspection-wrapper
 
-The author made the changes available in Utralisp.
+The author has made the changes available in Utralisp.
 https://ultralisp.org/
 
-** old notes
+** Old Notes
 Below are my old notes, that may no longer make sense
 
 *** counter

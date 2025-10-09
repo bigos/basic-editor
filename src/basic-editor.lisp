@@ -525,6 +525,9 @@
              ((equalp action "save-as")
               (format T "menu selected save-as~%")
               (gui-window-gtk:present-file-save-dialog))
+             ((equalp action "about")
+              (format T "menu selected about~%")
+              (gui-window-gtk:present-about-dialog (about-dialog)))
              (T
               (format T "unhandled menu action ~S~%" action)))))
     (otherwise
@@ -561,6 +564,21 @@
         (gui-menu:prepare-item-simple lisp-window app menu "About" "about")))))
 
     (values menu)))
+
+(defun about-dialog ()
+  (list :authors (list "Jacek Podkanski")
+        :website      "https://github.com/bigos/basic-editor"
+        :program-name "Basic Editor"
+        :comments     "A sample editor experiment written in Lisp"
+        :license      "Public Domain"
+        :system-information (format nil "~A" (list
+                                              (lisp-implementation-type)
+                                              (lisp-implementation-version)
+                                              (uiop/os:detect-os)
+                                              (uiop/os:architecture)
+                                              (uiop/os:implementation-identifier)
+                                              (asdf:find-system :basic-editor)))
+        :logo-icon-name  "application-x-addon"))
 
 (defun main (&key (testing nil))
   (setf
