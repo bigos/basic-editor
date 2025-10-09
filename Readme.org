@@ -15,18 +15,11 @@ complicated, so able to provide the base or starting point from which something
 can develop.
 
 ** File Dialog fix
-You need to update one of the dependencies that is not in Ultralisp yet.
-
-You need to add the changes from here
+You no longer need to edit the source of:
 https://github.com/bohonghuang/cl-gobject-introspection-wrapper
 
-to folder
-file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-wrapper-20230914193217/
-
-Copying the latest version of those files: desc.lisp and macro.lisp
-
-For more info, see:
-https://github.com/bohonghuang/cl-gtk4/issues/79#issuecomment-3368709352
+The author made the changes available in Utralisp.
+https://ultralisp.org/
 
 ** old notes
 Below are my old notes, that may no longer make sense
