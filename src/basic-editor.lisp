@@ -569,16 +569,20 @@
   (list :authors (list "Jacek Podkanski")
         :website      "https://github.com/bigos/basic-editor"
         :program-name "Basic Editor"
-        :comments     "A sample editor experiment written in Lisp"
+        :comments     (format nil "~A~%~A"
+                       "Basic Editor"
+                       "A sample editor experiment written in Lisp")
         :license      "Public Domain"
-        :system-information (format nil "~A" (list
-                                              (lisp-implementation-type)
-                                              (lisp-implementation-version)
-                                              (uiop/os:detect-os)
-                                              (uiop/os:architecture)
-                                              (uiop/os:implementation-identifier)
-                                              (asdf:find-system :basic-editor)))
-        :logo-icon-name  "application-x-addon"))
+        :system-information (format nil "~A~%~A~%~A~%~A~%~A~%"
+                                    (lisp-implementation-type)
+                                    (lisp-implementation-version)
+                                    (uiop/os:detect-os)
+                                    (uiop/os:architecture)
+                                    (uiop/os:implementation-identifier))
+        ;; icon names to try
+        ;; https://specifications.freedesktop.org/icon-naming-spec/latest/#names
+        :logo-icon-name  "applications-development"
+        ))
 
 (defun main (&key (testing nil))
   (setf
