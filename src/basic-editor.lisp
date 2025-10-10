@@ -218,6 +218,12 @@
    (text *basic-editor-model*) (sycamore:rope
                                 (alexandria:read-file-into-string (subseq filepath 7)))))
 
+(defun save-file (filepath)
+  (warn "going to save ~S" filepath)
+
+  )
+
+
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
   (let* ((the-chars
@@ -586,8 +592,7 @@
                                     (uiop/os:implementation-identifier))
         ;; icon names to try
         ;; https://specifications.freedesktop.org/icon-naming-spec/latest/#names
-        :logo-icon-name  "applications-development"
-        ))
+        :logo-icon-name  "applications-development"))
 
 (defun main (&key (testing nil))
   (setf
@@ -599,6 +604,7 @@
    gui-window-gtk:*initial-title*           "Basic-Editor"
    gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
+   gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
    *basic-editor-model* (make-instance 'basic-editor-model)
    boxes::*model* *basic-editor-model*
    )
