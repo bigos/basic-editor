@@ -576,7 +576,7 @@
         :program-name "Basic Editor"
         :comments     (format nil "~A~%~A"
                        "Basic Editor"
-                       "A sample editor experiment written in Lisp")
+                       "A sample editor experiment written in SBCL Common Lisp")
         :license      "Public Domain"
         :system-information (format nil "~A~%~A~%~A~%~A~%~A~%"
                                     (lisp-implementation-type)
