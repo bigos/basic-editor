@@ -193,18 +193,23 @@
   (let ((cur-pos (find-cursor-position model))
         (overwrite 1)
         (insert 0))
-    (warn "will insert ~S at row ~S col ~S pos ~S"
-          entered
-          (~> model cursor row)
-          (~> model cursor col)
-          cur-pos)
-    (setf (text model) (sycamore:rope
-                        (sycamore:subrope (text model) :start 0
-                                                       :end cur-pos)
-                        entered
-                        (sycamore:subrope (text model) :start (+ 0 cur-pos)
-                                                       :end (sycamore:rope-length (text model)))))
-    (move-cursor-right model)))
+    (if cur-pos
+        (progn                          ;then
+          (warn "will insert ~S at row ~S col ~S pos ~S"
+                entered
+                (~> model cursor row)
+                (~> model cursor col)
+                cur-pos)
+          (setf (text model) (sycamore:rope
+                              (sycamore:subrope (text model) :start 0
+                                                             :end cur-pos)
+                              entered
+                              (sycamore:subrope (text model) :start (+ 0 cur-pos)
+                                                             :end (sycamore:rope-length (text model)))))
+          (move-cursor-right model))
+        (progn                          ; else
+          ;; TODO start adding tests
+          (warn "cursor pos is NIL")))))
 
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
