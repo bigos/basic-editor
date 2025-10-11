@@ -226,7 +226,7 @@
     (if (equal filepath (current-file model))
         (warn "going to save ~S" (current-file model))
         (warn "going to save AS ~S" (current-file model)))
-    ;; TODO
+    ;; TODO if we edit the file in the selector the program still does not see it
     (alexandria:write-string-into-file
      (sycamore:rope-string (text model))
      (current-file model)
@@ -486,7 +486,7 @@
                   (insert-character-at-cursor model entered)))))))
 
 (defmethod process-event ((lisp-window basic-editor-window) event &rest args)
-  (unless (eq event :timeout)
+  (unless (member event '(:timeout :motion))
     (unless (eq *environment* :testing) (warn "event ~S ~S" event args)))
   (case event
     (:timeout
