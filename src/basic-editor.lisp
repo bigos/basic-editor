@@ -549,6 +549,7 @@
               (format T "menu selected save-as~%")
               (gui-window-gtk:present-file-save-dialog
                :title "Save me As"
+               :filters (list "*")
                :initial-folder (uiop/cl:namestring
                                 (uiop/pathname:pathname-directory-pathname
                                  (current-file *basic-editor-model*)))
