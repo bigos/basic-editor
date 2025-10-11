@@ -221,6 +221,9 @@
                    (alexandria:read-file-into-string clean-filepath))
      (current-file model) clean-filepath)))
 
+(defun cancel-open-file ()
+  (warn "cancelled opening file"))
+
 (defun save-file (filepath)
   (let ((model *basic-editor-model*)
         (clean-filepath (subseq filepath 7)))
@@ -235,6 +238,9 @@
      clean-filepath
      :if-exists :supersede
      :if-does-not-exist :create)))
+
+(defun cancel-save-file ()
+  (warn "cancelled saving file"))
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
@@ -622,7 +628,10 @@
    gui-window-gtk:*initial-title*           "Basic-Editor"
    gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
+   gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
    gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
+   gui-window-gtk:*client-fn-cancel-save-file* 'basic-editor::cancel-save-file
+
    *basic-editor-model* (make-instance 'basic-editor-model)
    boxes::*model* *basic-editor-model*
    )
