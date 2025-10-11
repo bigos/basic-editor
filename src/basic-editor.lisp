@@ -229,6 +229,12 @@
      (sycamore:rope-string (text model))
      (current-file model))))
 
+(defun save-file (filepath)
+  (warn "going to save ~S" filepath)
+
+  )
+
+
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
   (let* ((the-chars
@@ -587,7 +593,7 @@
         :program-name "Basic Editor"
         :comments     (format nil "~A~%~A"
                        "Basic Editor"
-                       "A sample editor experiment written in Lisp")
+                       "A sample editor experiment written in SBCL Common Lisp")
         :license      "Public Domain"
         :system-information (format nil "~A~%~A~%~A~%~A~%~A~%"
                                     (lisp-implementation-type)
@@ -597,8 +603,7 @@
                                     (uiop/os:implementation-identifier))
         ;; icon names to try
         ;; https://specifications.freedesktop.org/icon-naming-spec/latest/#names
-        :logo-icon-name  "applications-development"
-        ))
+        :logo-icon-name  "applications-development"))
 
 (defun main (&key (testing nil))
   (setf
