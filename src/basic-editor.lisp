@@ -27,6 +27,7 @@
    (text-wrap :std :wrap)               ; trim, wrap, word-wrap
    (world)
    (seen-chars)
+   (current-file)
    ;; debug
    ))
 
@@ -213,10 +214,20 @@
 
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
+  (let ((model *basic-editor-model*))
+    (setf
+     (text model) (sycamore:rope
+                   (alexandria:read-file-into-string (subseq filepath 7)))
+     (current-file model) filepath)))
 
-  (setf
-   (text *basic-editor-model*) (sycamore:rope
-                                (alexandria:read-file-into-string (subseq filepath 7)))))
+
+(defun save-file ()
+  (let ((model *basic-editor-model*))
+    (warn "going to save ~S" (current-file model))
+    ;; TODO
+    (alexandria:write-string-into-file
+     (sycamore:rope-string (text model))
+     (current-file model))))
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
@@ -599,6 +610,7 @@
    gui-window-gtk:*initial-title*           "Basic-Editor"
    gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
+   gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
    *basic-editor-model* (make-instance 'basic-editor-model)
    boxes::*model* *basic-editor-model*
    )
