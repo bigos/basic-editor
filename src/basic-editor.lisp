@@ -220,20 +220,15 @@
                    (alexandria:read-file-into-string (subseq filepath 7)))
      (current-file model) filepath)))
 
-
-(defun save-file ()
+(defun save-file (filepath)
   (let ((model *basic-editor-model*))
-    (warn "going to save ~S" (current-file model))
+    (if (equal filepath (current-file model))
+        (warn "going to save ~S" (current-file model))
+        (warn "going to save AS ~S" (current-file model)))
     ;; TODO
     (alexandria:write-string-into-file
      (sycamore:rope-string (text model))
      (current-file model))))
-
-(defun save-file (filepath)
-  (warn "going to save ~S" filepath)
-
-  )
-
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
@@ -546,7 +541,10 @@
               (gui-window-gtk:present-file-open-dialog))
              ((equalp action "save-as")
               (format T "menu selected save-as~%")
-              (gui-window-gtk:present-file-save-dialog))
+              (gui-window-gtk:present-file-save-dialog
+               :title "Save me As"
+               :initial-folder (uiop/pathname:pathname-directory-pathname  (current-file *basic-editor-model*))
+               :initial-file (current-file *basic-editor-model*)))
              ((equalp action "about")
               (format T "menu selected about~%")
               (gui-window-gtk:present-about-dialog (about-dialog)))
