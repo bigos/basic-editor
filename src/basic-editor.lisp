@@ -214,11 +214,12 @@
 
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
-  (let ((model *basic-editor-model*))
+  (let ((model *basic-editor-model*)
+        (clean-filepath (subseq filepath 7)))
     (setf
      (text model) (sycamore:rope
-                   (alexandria:read-file-into-string (subseq filepath 7)))
-     (current-file model) filepath)))
+                   (alexandria:read-file-into-string clean-filepath))
+     (current-file model) clean-filepath)))
 
 (defun save-file (filepath)
   (let ((model *basic-editor-model*))
@@ -228,7 +229,9 @@
     ;; TODO
     (alexandria:write-string-into-file
      (sycamore:rope-string (text model))
-     (current-file model))))
+     (current-file model)
+     :if-exists :supersede
+     :if-does-not-exist :create)))
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
@@ -543,7 +546,9 @@
               (format T "menu selected save-as~%")
               (gui-window-gtk:present-file-save-dialog
                :title "Save me As"
-               :initial-folder (uiop/pathname:pathname-directory-pathname  (current-file *basic-editor-model*))
+               :initial-folder (uiop/cl:namestring
+                                (uiop/pathname:pathname-directory-pathname
+                                 (current-file *basic-editor-model*)))
                :initial-file (current-file *basic-editor-model*)))
              ((equalp action "about")
               (format T "menu selected about~%")
