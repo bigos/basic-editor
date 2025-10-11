@@ -222,14 +222,16 @@
      (current-file model) clean-filepath)))
 
 (defun save-file (filepath)
-  (let ((model *basic-editor-model*))
-    (if (equal filepath (current-file model))
+  (let ((model *basic-editor-model*)
+        (clean-filepath (subseq filepath 7)))
+    (warn "using filepath ~S" filepath)
+    (if (equal clean-filepath (current-file model))
         (warn "going to save ~S" (current-file model))
         (warn "going to save AS ~S" (current-file model)))
     ;; TODO if we edit the file in the selector the program still does not see it
     (alexandria:write-string-into-file
      (sycamore:rope-string (text model))
-     (current-file model)
+     clean-filepath
      :if-exists :supersede
      :if-does-not-exist :create)))
 
