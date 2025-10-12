@@ -213,32 +213,35 @@
           (warn "cursor pos is NIL")))))
 
 (defun open-file (filepath)
-  (warn "going to load ~S" filepath)
-  (if (eq (car  filepath) :cancelled)
-      (warn "file opening cancelled")
+   (case (car  filepath)
+     (:cancelled
+      nil)
+     (:selected
       (let ((model *basic-editor-model*)
             (clean-filepath (subseq (cdr  filepath) 7)))
+        (warn "going to loaf ~S" clean-filepath)
         (setf
          (text model) (sycamore:rope
                        (alexandria:read-file-into-string clean-filepath))
-         (current-file model) clean-filepath))))
+         (current-file model) clean-filepath)))))
 
 (defun save-file (filepath)
-  (if (eq (car filepath) :cancelled)
-      (warn "saving cancelled")
-      (let ((model *basic-editor-model*)
-            (clean-filepath (subseq (cdr filepath) 7)))
-        (warn "using filepath ~S" clean-filepath)
-        (if (equal clean-filepath (current-file model))
-            (warn "going to save ~S" clean-filepath)
-            (warn "going to save AS ~S" clean-filepath))
-        (setf (current-file model) clean-filepath)
-        ;; TODO if we edit the file in the selector the program still does not see it
-        (alexandria:write-string-into-file
-         (sycamore:rope-string (text model))
-         clean-filepath
-         :if-exists :supersede
-         :if-does-not-exist :create))))
+  (case (car filepath)
+    (:cancelled
+     nil)
+    (:selected
+     (let ((model *basic-editor-model*)
+           (clean-filepath (subseq (cdr filepath) 7)))
+       (if (equal clean-filepath (current-file model))
+           (warn "going to save ~S" clean-filepath)
+           (warn "going to save AS ~S" clean-filepath))
+       (setf (current-file model) clean-filepath)
+       ;; TODO if we edit the file in the selector the program still does not see it
+       (alexandria:write-string-into-file
+        (sycamore:rope-string (text model))
+        clean-filepath
+        :if-exists :supersede
+        :if-does-not-exist :create)))))
 
 
 
