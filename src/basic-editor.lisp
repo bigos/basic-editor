@@ -212,24 +212,22 @@
           ;; TODO start adding tests
           (warn "cursor pos is NIL")))))
 
-(defun cancelled-value () "cancelled or error/*/")
-
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
-  (if (equal filepath (cancelled-value))
+  (if (equal (car  filepath) :cancelled)
       (warn "file opening cancelled")
       (let ((model *basic-editor-model*)
-            (clean-filepath (subseq filepath 7)))
+            (clean-filepath (subseq (cdr  filepath) 7)))
         (setf
          (text model) (sycamore:rope
                        (alexandria:read-file-into-string clean-filepath))
          (current-file model) clean-filepath))))
 
 (defun save-file (filepath)
-  (if (equal filepath (cancelled-value))
+  (if (equal (car filepath) :cancelled)
       (warn "saving cancelled")
       (let ((model *basic-editor-model*)
-            (clean-filepath (subseq filepath 7)))
+            (clean-filepath (subseq (cdr filepath) 7)))
         (warn "using filepath ~S" clean-filepath)
         (if (equal clean-filepath (current-file model))
             (warn "going to save ~S" clean-filepath)
