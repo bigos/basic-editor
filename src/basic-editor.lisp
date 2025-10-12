@@ -213,9 +213,10 @@
           (warn "cursor pos is NIL")))))
 
 (defun new-file ()
-  (setf
-   (text model) (sycamore:rope "new file")
-   (current-file *basic-editor-model*) nil))
+  (let ((model *basic-editor-model*))
+    (setf
+     (text model) (sycamore:rope "")
+     (current-file model) nil)))
 
 (defun open-file (filepath)
    (case (car  filepath)
@@ -563,12 +564,17 @@
           (gui-window-gtk:present-file-open-dialog))
          ((equalp action "save-as")
           (format T "menu selected save-as~%")
-          (gui-window-gtk:present-file-save-dialog
-           :title "Save me As"
-           :initial-folder (uiop/cl:namestring
-                            (uiop/pathname:pathname-directory-pathname
-                             (current-file *basic-editor-model*)))
-           :initial-file (current-file *basic-editor-model*)))
+          (if (current-file *basic-editor-model*)
+              ;; then
+              (gui-window-gtk:present-file-save-dialog
+               :title "Save me As"
+               :initial-folder (uiop/cl:namestring
+                                (uiop/pathname:pathname-directory-pathname
+                                 (current-file *basic-editor-model*)))
+               :initial-file (current-file *basic-editor-model*))
+              ;; else
+              (gui-window-gtk:present-file-save-dialog
+               :title "Save me As")))
          ((equalp action "quit")
           (format T "menu selected quit~%")
           (gui-window-gtk:close-all-windows-and-quit))
