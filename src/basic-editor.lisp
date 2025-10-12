@@ -212,6 +212,11 @@
           ;; TODO start adding tests
           (warn "cursor pos is NIL")))))
 
+(defun new-file ()
+  (setf
+   (text model) (sycamore:rope "new file")
+   (current-file *basic-editor-model*) nil))
+
 (defun open-file (filepath)
    (case (car  filepath)
      (:cancelled
@@ -548,25 +553,31 @@
        (handle-key-pressed entered key-name key-code mods)))
     (:menu-simple
      (destructuring-bind ((action)) args
-       (cond ((equalp action "quit")
-              (format T "menu selected quit~%")
-              (gui-window-gtk:close-all-windows-and-quit))
-             ((equalp action "open")
-              (format T "menu selected open~%")
-              (gui-window-gtk:present-file-open-dialog))
-             ((equalp action "save-as")
-              (format T "menu selected save-as~%")
-              (gui-window-gtk:present-file-save-dialog
-               :title "Save me As"
-               :initial-folder (uiop/cl:namestring
-                                (uiop/pathname:pathname-directory-pathname
-                                 (current-file *basic-editor-model*)))
-               :initial-file (current-file *basic-editor-model*)))
-             ((equalp action "about")
-              (format T "menu selected about~%")
-              (gui-window-gtk:present-about-dialog (about-dialog)))
-             (T
-              (format T "unhandled menu action ~S~%" action)))))
+       (cond
+         ;; File
+         ((equalp action "new")
+          (format T "menu selected new~%")
+          (new-file))
+         ((equalp action "open")
+          (format T "menu selected open~%")
+          (gui-window-gtk:present-file-open-dialog))
+         ((equalp action "save-as")
+          (format T "menu selected save-as~%")
+          (gui-window-gtk:present-file-save-dialog
+           :title "Save me As"
+           :initial-folder (uiop/cl:namestring
+                            (uiop/pathname:pathname-directory-pathname
+                             (current-file *basic-editor-model*)))
+           :initial-file (current-file *basic-editor-model*)))
+         ((equalp action "quit")
+          (format T "menu selected quit~%")
+          (gui-window-gtk:close-all-windows-and-quit))
+         ;; Help
+         ((equalp action "about")
+          (format T "menu selected about~%")
+          (gui-window-gtk:present-about-dialog (about-dialog)))
+         (T
+          (format T "unhandled menu action ~S~%" action)))))
     (otherwise
      (warn "not handled event ~S ~S" event args)))
 
@@ -585,6 +596,7 @@
       (gui-menu:prepare-section
        nil
        (gui-menu:build-items
+        (gui-menu:prepare-item-simple lisp-window app menu "New" "new")
         (gui-menu:prepare-item-simple lisp-window app menu "Open" "open")
         (gui-menu:prepare-item-simple lisp-window app menu "Save As" "save-as")
         ))
