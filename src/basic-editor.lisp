@@ -214,7 +214,7 @@
 
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
-  (if (equal (car  filepath) :cancelled)
+  (if (eq (car  filepath) :cancelled)
       (warn "file opening cancelled")
       (let ((model *basic-editor-model*)
             (clean-filepath (subseq (cdr  filepath) 7)))
@@ -224,7 +224,7 @@
          (current-file model) clean-filepath))))
 
 (defun save-file (filepath)
-  (if (equal (car filepath) :cancelled)
+  (if (eq (car filepath) :cancelled)
       (warn "saving cancelled")
       (let ((model *basic-editor-model*)
             (clean-filepath (subseq (cdr filepath) 7)))
