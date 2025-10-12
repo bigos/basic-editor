@@ -214,12 +214,14 @@
 
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
-  (let ((model *basic-editor-model*)
-        (clean-filepath (subseq filepath 7)))
-    (setf
-     (text model) (sycamore:rope
-                   (alexandria:read-file-into-string clean-filepath))
-     (current-file model) clean-filepath)))
+  (if (equal filepath  "cancelled or error/*/" )
+      (warn "file opening cancelled")
+      (let ((model *basic-editor-model*)
+            (clean-filepath (subseq filepath 7)))
+        (setf
+         (text model) (sycamore:rope
+                       (alexandria:read-file-into-string clean-filepath))
+         (current-file model) clean-filepath))))
 
 (defun cancel-open-file ()
   (warn "cancelled opening file"))
