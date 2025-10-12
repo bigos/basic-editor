@@ -212,9 +212,11 @@
           ;; TODO start adding tests
           (warn "cursor pos is NIL")))))
 
+(defun cancelled-value () "cancelled or error/*/")
+
 (defun open-file (filepath)
   (warn "going to load ~S" filepath)
-  (if (equal filepath  "cancelled or error/*/" )
+  (if (equal filepath (cancelled-value))
       (warn "file opening cancelled")
       (let ((model *basic-editor-model*)
             (clean-filepath (subseq filepath 7)))
@@ -223,26 +225,24 @@
                        (alexandria:read-file-into-string clean-filepath))
          (current-file model) clean-filepath))))
 
-(defun cancel-open-file ()
-  (warn "cancelled opening file"))
-
 (defun save-file (filepath)
-  (let ((model *basic-editor-model*)
-        (clean-filepath (subseq filepath 7)))
-    (warn "using filepath ~S" clean-filepath)
-    (if (equal clean-filepath (current-file model))
-        (warn "going to save ~S" clean-filepath)
-        (warn "going to save AS ~S" clean-filepath))
-    (setf (current-file model) clean-filepath)
-    ;; TODO if we edit the file in the selector the program still does not see it
-    (alexandria:write-string-into-file
-     (sycamore:rope-string (text model))
-     clean-filepath
-     :if-exists :supersede
-     :if-does-not-exist :create)))
+  (if (equal filepath (cancelled-value))
+      (warn "saving cancelled")
+      (let ((model *basic-editor-model*)
+            (clean-filepath (subseq filepath 7)))
+        (warn "using filepath ~S" clean-filepath)
+        (if (equal clean-filepath (current-file model))
+            (warn "going to save ~S" clean-filepath)
+            (warn "going to save AS ~S" clean-filepath))
+        (setf (current-file model) clean-filepath)
+        ;; TODO if we edit the file in the selector the program still does not see it
+        (alexandria:write-string-into-file
+         (sycamore:rope-string (text model))
+         clean-filepath
+         :if-exists :supersede
+         :if-does-not-exist :create))))
 
-(defun cancel-save-file ()
-  (warn "cancelled saving file"))
+
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
