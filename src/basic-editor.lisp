@@ -568,7 +568,7 @@
               ;; then
               (gui-window-gtk:present-file-save-dialog
                :title "Save me As"
-               :initial-folder (uiop/cl:namestring
+               :initial-folder (uiop/pathname:pathname-directory-pathname
                                 (uiop/pathname:pathname-directory-pathname
                                  (current-file *basic-editor-model*)))
                :initial-file (current-file *basic-editor-model*))

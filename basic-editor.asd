@@ -4,10 +4,11 @@
   :license "PUBLIC DOMAIN"
   :depends-on (#:clops-gui
                #:sycamore
-               ;; #:cl-gtk4
-               ;; #:cl-gdk4 #:cl-glib #:cl-cairo2
-               ;; #:serapeum
-               ;; #:defclass-std
+               #:uiop
+               #:cl-gtk4
+               #:cl-gdk4 #:cl-glib #:cl-cairo2
+               #:serapeum
+               #:defclass-std
                )
   :pathname "src/"
   :components ((:file "packages")
