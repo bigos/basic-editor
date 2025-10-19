@@ -14,15 +14,22 @@ It is not meant to be a [[https://en.wikipedia.org/wiki/BASIC][BASIC]] (programm
 complicated, so able to provide the base or starting point from which something
 can develop.
 
-** File Dialog fix
-You no longer need to edit the source of:
-https://github.com/bohonghuang/cl-gobject-introspection-wrapper
+** Testing
 
-The author has made the changes available in Utralisp.
-https://ultralisp.org/
+*** basic editor
+defsystem
+[[file:basic-editor.asd::(defsystem "basic-editor/tests"]]
+
+tests folder
+file:~/Programming/Lisp/basic-editor/tests/
+
+*** clops gui
+defsystem
+[[file:~/Programming/Lisp/clops-gui/clops-gui.asd]]
+
 
 ** Old Notes
-Below are my old notes, that may no longer make sense
+Below are my old notes
 
 *** counter
 We have file:~/Programming/Lisp/lispy-experiments/clops-gui/counter/ project
