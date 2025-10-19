@@ -351,6 +351,41 @@
         (cairo:text-extents (format nil "~A" text)))
     (list :xb xb :yb yb :width width :height height)))
 
+(defun adding-children (world)
+  (add-children world
+                (list
+                 (make-instance 'node-text
+                                :coordinates-relative (make-coordinates-relative 10 50)
+                                :width (- (width world) 40)
+                                :height  30
+                                :color "white"
+                                :wrap 'truncate
+                                :text (format nil "Heading will go here. ~S - ~S"
+                                              (gui-app:mouse-button gui-app:*lisp-app*)
+                                              (cursor *basic-editor-model*)
+                                              ))
+                 (let ((text-container (make-node 20
+                                                  340
+                                                  (- (width world) 20 20)
+                                                  (- (height world) 60) "yellow")))
+                   (add-children text-container
+                                 (calculate-chars text-container *basic-editor-model*)))
+                 (make-instance 'node-text
+                                :coordinates-relative (make-coordinates-relative 10 50)
+                                :width (- (width world) 40)
+                                :height 30
+                                :color "white"
+                                :wrap 'truncate
+                                :text (format nil
+                                              "rowcols ~S, fl ~S, fc ~S"
+                                              (cons
+                                               (view-port-lines
+                                                *basic-editor-model*)
+                                               (view-port-columns
+                                                *basic-editor-model*))
+                                              (view-port-first-line   *basic-editor-model*)
+                                              (view-port-first-column *basic-editor-model*))))))
+
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
   (let ((cv 0.95)) (cairo:set-source-rgb  cv cv cv))
@@ -381,40 +416,7 @@
     (boxes:absolute-coordinates world)
 
     ;; =========================================================================
-    (add-children world
-                  (list
-                   (make-instance 'node-text
-                                  :coordinates-relative (make-coordinates-relative 10 50)
-                                  :width (- (width world) 40)
-                                  :height  30
-                                  :color "white"
-                                  :wrap 'truncate
-                                  :text (format nil "Heading will go here. ~S - ~S"
-                                                (gui-app:mouse-button gui-app:*lisp-app*)
-                                                (cursor *basic-editor-model*)
-                                                ))
-                   (let ((text-container (make-node 20
-                                                    340
-                                                    (- (width world) 20 20)
-                                                    (- (height world) 60) "yellow")))
-                     (add-children text-container
-                                   (calculate-chars text-container *basic-editor-model*)))
-                   (make-instance 'node-text
-                                  :coordinates-relative (make-coordinates-relative 10 50)
-                                  :width (- (width world) 40)
-                                  :height 30
-                                  :color "white"
-                                  :wrap 'truncate
-                                  :text (format nil
-                                                "rowcols ~S, fl ~S, fc ~S"
-                                                (cons
-                                                 (view-port-lines
-                                                  *basic-editor-model*)
-                                                 (view-port-columns
-                                                  *basic-editor-model*))
-                                                (view-port-first-line   *basic-editor-model*)
-                                                (view-port-first-column *basic-editor-model*)))))
-
+    (adding-children world)
 
     ;; (warn "adding absolute coordinates -----------------------------------")
     (boxes:absolute-coordinates world)

@@ -107,8 +107,7 @@
     (is (= 710 (width experimental-window)))
     (is (= 420 (height experimental-window)))
 
-    (let ((children (boxes::children
-                     (be::test-add-children-text))))
+    (let
       ;; (break "we have text node ~S" text-node)
       (is (= 420 (length children)))
       (is (equal #\b (be::bchar (nth 5 children))))
