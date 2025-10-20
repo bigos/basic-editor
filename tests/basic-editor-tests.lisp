@@ -115,21 +115,14 @@
     (basic-editor::adding-children world)
 
 
-    (let* ((world-children (boxes:children world))
-           (children ;;(boxes::children (nth 1 world-children))
-             (serapeum:~> world-children (nth 1 _) boxes::children))
+    (let* ((children (~> world boxes::children (nth 1 _) boxes::children))
            (loaded-text (sycamore:rope-string (be::text model))))
 
       (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
       (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
 
-
-      (let ((a 1))
-        ;; (break "we have text node ~S" text-node)
-        (is (= 420 (length children)))
-        (is (equal #\b (be::bchar (nth 5 children))))
-        (is (equal #\a (be::bchar (nth 6 children))))
-        (is (equal #\s (be::bchar (nth 7 children))))
-        (is (equal #\h (be::bchar (nth 8 children))))
-        )
-      )))
+      (is (= 420 (length children)))
+      (is (equal #\b (be::bchar (nth 5 children))))
+      (is (equal #\a (be::bchar (nth 6 children))))
+      (is (equal #\s (be::bchar (nth 7 children))))
+      (is (equal #\h (be::bchar (nth 8 children)))))))

@@ -6,6 +6,7 @@
   (:export #:run!
            #:basic-editor-suite)
   (:import-from #:basic-editor
+                #:~>
                 #:main
                 #:*basic-editor-model*
                 #:width
