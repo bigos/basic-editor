@@ -226,7 +226,7 @@
      (:selected
       (let ((model *basic-editor-model*)
             (clean-filepath (subseq (cdr  filepath) 7)))
-        (warn "going to loaf ~S" clean-filepath)
+        (warn "going to load ~S" clean-filepath)
         (setf
          (text model) (sycamore:rope
                        (alexandria:read-file-into-string clean-filepath))
@@ -273,6 +273,8 @@
                              (floor (/ (width text-container)
                                        (1+ bwidth)))
                              2)))))
+             ;; (break "examine model in calculate chars ~S" model)
+
              (loop for last-char = nil then c
                    for c across
                          (sycamore:rope-string
