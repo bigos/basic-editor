@@ -99,30 +99,30 @@
     ))
 
 (test char-children
-  "children for the characters"
-  (let ((experimental-window (main :testing T))
-        (world (boxes::make-node-down
-                0 0 600 400 "#cccccc88"))
-        (model *basic-editor-model*))
+      "children for the characters"
+      (let
+          ((experimental-window (main :testing T))
+           (world (boxes::make-node-down
+                   0 0 600 400 "#cccccc88"))
+           (model *basic-editor-model*))
 
+        (process-event experimental-window :resize '(710 420))
+        (is (= 710 (width experimental-window)))
+        (is (= 420 (height experimental-window)))
 
-    (process-event experimental-window :resize '(710 420))
-    (is (= 710 (width experimental-window)))
-    (is (= 420 (height experimental-window)))
+        (be::new-file)
+        (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
 
-    (be::new-file)
-    (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
-    (basic-editor::adding-children world)
+        (basic-editor::adding-children world)
+        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
+                 (char-kids model))
+               (loaded-text (sycamore:rope-string (be::text model))))
 
+          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+          (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
 
-    (let* ((children (~> world boxes::children (nth 1 _) boxes::children))
-           (loaded-text (sycamore:rope-string (be::text model))))
-
-      (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-      (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
-
-      (is (= 420 (length children)))
-      (is (equal #\b (be::bchar (nth 5 children))))
-      (is (equal #\a (be::bchar (nth 6 children))))
-      (is (equal #\s (be::bchar (nth 7 children))))
-      (is (equal #\h (be::bchar (nth 8 children)))))))
+          (is (= 420 (length children)))
+          (is (equal #\b (be::bchar (nth 5 children))))
+          (is (equal #\a (be::bchar (nth 6 children))))
+          (is (equal #\s (be::bchar (nth 7 children))))
+          (is (equal #\h (be::bchar (nth 8 children)))))))

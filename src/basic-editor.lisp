@@ -414,7 +414,7 @@
 
   (let ((world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
-    (setf (world *basic-editor-model*) world)
+    (setf (world *basic-editor-model*) world) ; zzzzzzzzzzzzzzzzzzz
     (boxes:absolute-coordinates world)
 
     ;; =========================================================================
