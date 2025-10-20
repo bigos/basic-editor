@@ -113,7 +113,7 @@
         (be::new-file)
         (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
 
-        (setf (world be:*basic-editor-model* world))
+        (setf (world model) world)
         (basic-editor::adding-children world)
         (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
                  (char-kids model))
