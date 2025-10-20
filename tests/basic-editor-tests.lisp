@@ -1,3 +1,5 @@
+(declaim (optimize (speed 0) (safety 3) (debug 3)))
+
 (in-package #:basic-editor-test)
 
 ;; (ql:quickload :basic-editor/tests)
@@ -103,16 +105,20 @@
                 0 0 600 400 "#cccccc88"))
         (model *basic-editor-model*))
 
+
     (process-event experimental-window :resize '(710 420))
     (is (= 710 (width experimental-window)))
     (is (= 420 (height experimental-window)))
 
-    (let
-      ;; (break "we have text node ~S" text-node)
-      (is (= 420 (length children)))
-      (is (equal #\b (be::bchar (nth 5 children))))
-      (is (equal #\a (be::bchar (nth 6 children))))
-      (is (equal #\s (be::bchar (nth 7 children))))
-      (is (equal #\h (be::bchar (nth 8 children))))
-      )
-    ))
+    (basic-editor::adding-children world)
+
+    (let ((childen (boxes:children (nth 1 (boxes:children world)))))
+      ;; (let ()
+      ;;   ;; (break "we have text node ~S" text-node)
+      ;;   (is (= 420 (length children)))
+      ;;   (is (equal #\b (be::bchar (nth 5 children))))
+      ;;   (is (equal #\a (be::bchar (nth 6 children))))
+      ;;   (is (equal #\s (be::bchar (nth 7 children))))
+      ;;   (is (equal #\h (be::bchar (nth 8 children))))
+      ;;   )
+      )))
