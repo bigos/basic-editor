@@ -111,9 +111,18 @@
     (is (= 420 (height experimental-window)))
 
     (basic-editor::adding-children world)
+    (be::new-file)
+    (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
 
-    (let ((childen (boxes:children (nth 1 (boxes:children world)))))
-      ;; (let ()
+
+    (let* ((world-childen (boxes:children world))
+           (children (nth 1 world-childen))
+           (loaded-text (sycamore:rope-string (be::text be::*basic-editor-model*))))
+
+      (is (equal (type-of be::*basic-editor-model*) 'BE::BASIC-EDITOR-MODEL))
+      (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
+
+      ;; (let ((a 1))
       ;;   ;; (break "we have text node ~S" text-node)
       ;;   (is (= 420 (length children)))
       ;;   (is (equal #\b (be::bchar (nth 5 children))))

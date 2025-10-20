@@ -218,6 +218,7 @@
      (text model) (sycamore:rope "")
      (current-file model) nil)))
 
+;; (funcall *client-fn-open-file* (cancelled-value))
 (defun open-file (filepath)
    (case (car  filepath)
      (:cancelled
@@ -231,6 +232,7 @@
                        (alexandria:read-file-into-string clean-filepath))
          (current-file model) clean-filepath)))))
 
+;; (funcall *client-fn-save-file* (cancelled-value))
 (defun save-file (filepath)
   (case (car filepath)
     (:cancelled
@@ -248,8 +250,6 @@
         clean-filepath
         :if-exists :supersede
         :if-does-not-exist :create)))))
-
-
 
 ;;; drawing ====================================================================
 (defun calculate-chars (text-container model)
