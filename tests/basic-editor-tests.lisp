@@ -66,14 +66,16 @@
     (is (= 0 (view-port-first-column model)))
     (is (eq 'boxes::node-down  (type-of (be::world model))))
 
-    ;; (is (eq #\b (basic-editor::bchar (nth 5 (char-kids model)))))
-    ;; (is (= 5 (be::col (nth 5 (char-kids model)))))
-    ;; (is (= 0 (be::row (nth 5 (char-kids model)))))
+    (is (eq #\b (basic-editor::bchar (nth 5 (char-kids model)))))
+    (is (= 5 (be::col (nth 5 (char-kids model)))))
+    (is (= 0 (be::row (nth 5 (char-kids model)))))
 
-    ;; (process-event experimental-window  :key-pressed '("n" "n" 57 NIL))
-    ;; (is (= 1 (view-port-first-line model)))
-    ;; (is (= 0 (view-port-first-column model)))
-    ;; (is (= 1 (be::row (nth 5 (char-kids model)))))
+    (gui-drawing:simulate-draw-func experimental-window)
+
+    (process-event experimental-window  :key-pressed '("n" "n" 57 NIL))
+    (is (= 1 (view-port-first-line model)))
+    (is (= 0 (view-port-first-column model)))
+    (is (= 1 (be::row (nth 5 (char-kids model)))))
 
     ;; (process-event experimental-window  :key-pressed '("n" "n" 57 NIL))
     ;; (is (= 2 (view-port-first-line model)))
