@@ -595,7 +595,7 @@
   ;; moving widgets -------------------------
   ;; (warn "may implement moving widgets in response to actions)
   ;; redrawing ------------------------------
-  (gui-window:redraw-canvas lisp-window (format  nil "~A" event)))
+  (gui-window:redraw-canvas lisp-window (format  nil "EVENT_~A" event)))
 
 ;;; main =======================================================================
 (defun menu-bar (app lisp-window)
