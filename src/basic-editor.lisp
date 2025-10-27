@@ -259,7 +259,7 @@
                 (margin-horizontal 0)
                 (margin-vertical 0)
 
-                (text-data (text-size "ly()" font-size ))
+                (text-data (text-size "MpOly()_" font-size ))
                 (twidth (floor (/ (getf text-data :width) 4)))
                 (theight          (getf text-data :height))
 
@@ -338,7 +338,11 @@
     the-chars))
 
 (defun text-size (text text-size)
-  (cairo:select-font-face "Ubuntu Mono" :normal :normal)
+  (cairo:select-font-face
+   ;; "Ubuntu Mono"
+   ;; "Advaita Mono
+   "Liberation Mono"
+                          :normal :normal)
   (cairo:set-font-size text-size)
 
   (multiple-value-bind (xb yb width height)
