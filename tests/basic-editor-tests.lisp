@@ -39,6 +39,17 @@
 
 (in-suite basic-editor-suite)
 
+(test test-single-line-fname
+  "test single-line.txt file name"
+  (is (equal (namestring (text-single-line-fname))
+             "/home/jacek/Programming/Lisp/basic-editor/tests/examples/single_line.txt")))
+
+(test test-single-line-content
+  "test single-line.txt file content"
+  (is (equal (text-single-line-content)
+             (format nil
+                     "Ala ma kota.~%"))))
+
 (test test-equality
   "test some equalities"
   (is (= 2 2))
