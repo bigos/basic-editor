@@ -6,6 +6,10 @@
 ;; (in-package #:basic-editor-test)
 ;; (run! 'basic-editor-suite)
 
+
+;;; find directory for future tests
+;; (uiop/pathname:pathname-directory-pathname (asdf:system-definition-pathname :basic-editor/tests))
+
 (defun test-all ()
   "Compile and run all test in one command."
   (ql:quickload :basic-editor/tests)
