@@ -9,6 +9,7 @@
 
 ;;; find directory for future tests
 ;; (uiop/pathname:pathname-directory-pathname (asdf:system-definition-pathname :basic-editor/tests))
+;;;  ~/Programming/Lisp/basic-editor/tests/examples/single_line.txt
 
 (defun test-all ()
   "Compile and run all test in one command."
@@ -24,6 +25,14 @@
                 boxes::children
                 (nth 1 _)
                 boxes::children))
+
+(defun text-single-line-fname ()
+  (merge-pathnames
+   "tests/examples/single_line.txt"
+   (asdf:system-source-directory :basic-editor/tests)))
+
+(defun text-single-line-content ()
+  (alexandria:read-file-into-string (text-single-line-fname)))
 
 (def-suite basic-editor-suite
   :description "Suite to hold other suites and tests")
