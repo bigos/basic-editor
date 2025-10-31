@@ -1,6 +1,6 @@
 ;;; all rests loader
 
-;;; run with:
+;;; in this folder, run with:
 ;; sbcl --load ./all-tests-loader.lisp
 
 (ql:quickload :basic-editor/tests)
