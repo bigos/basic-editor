@@ -129,7 +129,8 @@
   (move-cursor-up (cursor model)))
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((last-row (all-lines-count model)))
-    (move-cursor-down (cursor model) last-row)))
+    (when last-row
+      (move-cursor-down (cursor model) last-row))))
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
