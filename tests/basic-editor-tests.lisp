@@ -23,16 +23,16 @@
 
 (defun file-single-line-fname ()
   (merge-pathnames
-   "tests/examples/single_line.txt"
+   "tests/example_texts/single_line.txt"
    (asdf:system-source-directory :basic-editor/tests)))
 
 (defun file-single-line-content ()
-  (alexandria:read-file-into-string (text-single-line-fname)))
+  (alexandria:read-file-into-string (file-single-line-fname)))
 
 (def-suite basic-editor-suite
   :description "Suite to hold other suites and tests")
 
-(in-suite basic-editor-suite)
+(in-suite basic-editor-suite)           ; ==================================
 
 (test test-equality
   "test some equalities"
@@ -45,7 +45,7 @@
 (test test-single-line-fname
   "test single-line.txt file name"
   (is (equal (namestring (file-single-line-fname))
-             "/home/jacek/Programming/Lisp/basic-editor/tests/examples/single_line.txt")))
+             "/home/jacek/Programming/Lisp/basic-editor/tests/example_texts/single_line.txt")))
 
 (test test-single-line-content
   "test single-line.txt file content"
