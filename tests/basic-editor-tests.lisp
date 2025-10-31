@@ -9,7 +9,7 @@
 (defun test-all ()
   "Compile and run all test in one command."
   (ql:quickload :basic-editor/tests)
-  (fiveam:run!  'basic-editor-test:basic-editor-suite))
+  (fiveam:run-all-tests))
 
 (defun snapshot (experimental-window &optional log)
   (gui-drawing:simulate-draw-func experimental-window log))
@@ -29,10 +29,25 @@
 (defun file-single-line-content ()
   (alexandria:read-file-into-string (file-single-line-fname)))
 
+(def-suite equality
+  :description "Suite to test if 2 and 2 is 4")
+
 (def-suite basic-editor-suite
   :description "Suite to hold other suites and tests")
 
-(in-suite basic-editor-suite)           ; ==================================
+(def-suite basic-editor-resizing
+  :description "Suite for resizing"
+  :in basic-editor-suite)
+
+(def-suite basic-editor-text
+  :description "Suite for text"
+  :in basic-editor-suite)
+
+(def-suite basic-editor-text-scrolling
+  :description "Suite for text scrolling"
+  :in basic-editor-text)
+
+(in-suite equality)        ; ==================================
 
 (test test-equality
   "test some equalities"
@@ -42,16 +57,7 @@
         (got 3))
     (is (= expected got ))))
 
-(test test-single-line-fname
-  "test single-line.txt file name"
-  (is (equal (namestring (file-single-line-fname))
-             "/home/jacek/Programming/Lisp/basic-editor/tests/example_texts/single_line.txt")))
-
-(test test-single-line-content
-  "test single-line.txt file content"
-  (is (equal (file-single-line-content)
-             (format nil
-                     "Ala ma kota.~%"))))
+(in-suite basic-editor-resizing)        ; ==================================
 
 (test first-resizing
   "test resizing"
@@ -68,6 +74,10 @@
     (process-event experimental-window :resize '(700 500))
     (is (= 700 (width experimental-window)))
     (is (= 500 (height experimental-window)))))
+
+(in-suite basic-editor-suite)           ; ==================================
+
+(in-suite basic-editor-text-scrolling)           ; ==================================
 
 (test first-scrolling
   "test resizing"
@@ -129,6 +139,19 @@
 
     ;;(break "check the model ~S" *basic-editor-model*)
     ))
+
+(in-suite basic-editor-suite)           ; ==================================
+
+(test test-single-line-fname
+  "test single-line.txt file name"
+  (is (equal (namestring (file-single-line-fname))
+             "/home/jacek/Programming/Lisp/basic-editor/tests/example_texts/single_line.txt")))
+
+(test test-single-line-content
+  "test single-line.txt file content"
+  (is (equal (file-single-line-content)
+             (format nil
+                     "Ala ma kota.~%"))))
 
 (test char-children
       "children for the characters"
