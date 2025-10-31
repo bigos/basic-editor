@@ -477,8 +477,10 @@
                  (equal mods '(:CTRL)))
             (setf (view-port-first-column model) (1+ (view-port-first-column model))))
            ((equal key-name "Left")
+            ;; handle menu bar focus problem
             (move-cursor-left model))
            ((equal key-name "Right")
+            ;; handle menu bar focus problem
             (move-cursor-right model))
            ((equal key-name "Up")
             (move-cursor-up model)
@@ -587,6 +589,11 @@
                :title "Save me As")))
          ((equalp action "quit")
           (format T "menu selected quit~%")
+          (warn "will try to get some information about menu focus============")
+          (warn "gui-app:*lisp-app* ~S" gui-app:*lisp-app*)
+          (warn "window of current focus"
+                (~> gui-app:*lisp-app* gui-app:current-focus))
+          (break "trying to fix ~S" gui-app:*lisp-app*)
           (gui-window-gtk:close-all-windows-and-quit))
          ;; Help
          ((equalp action "about")
