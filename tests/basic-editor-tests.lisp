@@ -5,6 +5,7 @@
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
 ;; (run! 'basic-editor-suite)
+;; (run! 'basic-editor-resizing)
 
 (defun test-all ()
   "Compile and run all test in one command."
