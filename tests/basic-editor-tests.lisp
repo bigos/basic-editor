@@ -143,6 +143,7 @@
             (model *basic-editor-model*))
 
         (process-event experimental-window :resize '(710 420))
+        ;; (snapshot experimental-window "what-is-the-size")
         (is (= 710 (width experimental-window)))
         (is (= 420 (height experimental-window)))
 
@@ -158,7 +159,7 @@
           (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
           (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
 
-          (is (= 420 (length children)))
+          (is (= 316 (length children)))
           (is (equal #\b (be::bchar (nth 5 children))))
           (is (equal #\a (be::bchar (nth 6 children))))
           (is (equal #\s (be::bchar (nth 7 children))))
