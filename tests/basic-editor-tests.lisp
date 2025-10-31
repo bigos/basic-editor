@@ -6,11 +6,6 @@
 ;; (in-package #:basic-editor-test)
 ;; (run! 'basic-editor-suite)
 
-
-;;; find directory for future tests
-;; (uiop/pathname:pathname-directory-pathname (asdf:system-definition-pathname :basic-editor/tests))
-;;;  ~/Programming/Lisp/basic-editor/tests/examples/single_line.txt
-
 (defun test-all ()
   "Compile and run all test in one command."
   (ql:quickload :basic-editor/tests)
@@ -26,12 +21,12 @@
                 (nth 1 _)
                 boxes::children))
 
-(defun text-single-line-fname ()
+(defun file-single-line-fname ()
   (merge-pathnames
    "tests/examples/single_line.txt"
    (asdf:system-source-directory :basic-editor/tests)))
 
-(defun text-single-line-content ()
+(defun file-single-line-content ()
   (alexandria:read-file-into-string (text-single-line-fname)))
 
 (def-suite basic-editor-suite
@@ -39,24 +34,24 @@
 
 (in-suite basic-editor-suite)
 
+(test test-equality
+  "test some equalities"
+  (is (= 2 2))
+  (is (= 4 (* 2 2)))
+  (let ((expected 3)
+        (got 3))
+    (is (= expected got ))))
+
 (test test-single-line-fname
   "test single-line.txt file name"
-  (is (equal (namestring (text-single-line-fname))
+  (is (equal (namestring (file-single-line-fname))
              "/home/jacek/Programming/Lisp/basic-editor/tests/examples/single_line.txt")))
 
 (test test-single-line-content
   "test single-line.txt file content"
-  (is (equal (text-single-line-content)
+  (is (equal (file-single-line-content)
              (format nil
                      "Ala ma kota.~%"))))
-
-(test test-equality
-  "test some equalities"
-  (is (= 2 2))
-  (let ((expected 3)
-        (got 3))
-    (is (= expected got )))
-  (is (= 4 (* 2 2))))
 
 (test first-resizing
   "test resizing"
