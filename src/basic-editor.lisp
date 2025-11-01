@@ -466,8 +466,8 @@
             ;; simulate Enter due to the menu focus problem
             (progn
               (insert-character-at-cursor model (for-enter) nil)
-              ;; TODO fix me, cursor does not go to new line
-              ))
+              (move-cursor-down model :ignored)
+              (move-cursor-home model)))
            ((and (equal key-name "f")
                  (equal mods '(:Alt)))
             (format T "keyboard selected open~%")
