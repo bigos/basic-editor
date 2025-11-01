@@ -200,21 +200,6 @@
         (insert 0))
     (if cur-pos
         (progn                          ;then
-          (warn "doing ~S"
-                (cond
-                  ((equal key-name "Return" )
-                   :return)
-                  (T
-                   :other)))
-          (warn "will insert ~S at row ~S col ~S pos ~S"
-                (cond
-                  ((equal key-name "Return")
-                   (for-enter))
-                  (T
-                   entered))
-                (~> model cursor row)
-                (~> model cursor col)
-                cur-pos)
           (setf (text model) (sycamore:rope
                               (sycamore:subrope (text model) :start 0
                                                              :end cur-pos)
