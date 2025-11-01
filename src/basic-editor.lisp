@@ -191,21 +191,37 @@
                         (sycamore:subrope (text model) :start (1+ cur-pos)
                                                        :end (sycamore:rope-length (text model)))))))
 
-(defmethod insert-character-at-cursor ((model basic-editor-model) entered)
+(defun for-enter ()
+  (format nil "~%"))
+
+(defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   (let ((cur-pos (find-cursor-position model))
         (overwrite 1)
         (insert 0))
     (if cur-pos
         (progn                          ;then
+          (warn "doing ~S"
+                (cond
+                  ((equal key-name "Return" )
+                   :return)
+                  (T
+                   :other)))
           (warn "will insert ~S at row ~S col ~S pos ~S"
-                entered
+                (cond
+                  ((equal key-name "Return")
+                   (for-enter))
+                  (T
+                   entered))
                 (~> model cursor row)
                 (~> model cursor col)
                 cur-pos)
           (setf (text model) (sycamore:rope
                               (sycamore:subrope (text model) :start 0
                                                              :end cur-pos)
-                              entered
+                              (cond
+                                ((equal key-name "Return")
+                                 (for-enter))
+                                (T entered))
                               (sycamore:subrope (text model) :start (+ 0 cur-pos)
                                                              :end (sycamore:rope-length (text model)))))
           (move-cursor-right model))
@@ -457,7 +473,7 @@
                  (equal mods '(:CTRL)))
             ;; simulate Enter due to the menu focus problem
             (progn
-              (insert-character-at-cursor model (format nil "~%"))
+              (insert-character-at-cursor model (for-enter) nil)
               ;; TODO fix me, cursor does not go to new line
               ))
            ((and (equal key-name "f")
@@ -527,7 +543,7 @@
             (if (equal entered "")
                 (format t "unhandled key ~S~%" (list entered key-name key-code mods))
                 (progn
-                  (insert-character-at-cursor model entered)))))))
+                  (insert-character-at-cursor model entered key-name)))))))
 
 (defmethod process-event ((lisp-window basic-editor-window) event &rest args)
   (unless (member event '(:timeout :motion))
