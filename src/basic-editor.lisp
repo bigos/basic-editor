@@ -209,7 +209,14 @@
                                 (T entered))
                               (sycamore:subrope (text model) :start (+ 0 cur-pos)
                                                              :end (sycamore:rope-length (text model)))))
-          (move-cursor-right model))
+          (cond
+            ((equal key-name "Return")
+             (warn "move cursor return")
+             (move-cursor-down model :ignored)
+             (move-cursor-home model))
+            (T
+             (warn "move cursor normal")
+             (move-cursor-right model))))
         (progn                          ; else
           ;; TODO start adding tests
           (warn "cursor pos is NIL")))))
