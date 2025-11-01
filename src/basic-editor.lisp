@@ -453,6 +453,13 @@
                  (null mods))
             (break "examine the models ~S" (list lisp-window *basic-editor-model*) ))
            ;; (:SHIFT :CTRL :ALT :WIN)
+           ((and (equal key-name "j")
+                 (equal mods '(:CTRL)))
+            ;; simulate Enter due to the menu focus problem
+            (progn
+              (insert-character-at-cursor model (format nil "~%"))
+              (move-cursor-right model))
+            )
            ((and (equal key-name "p")
                  (equal mods '(:CTRL)))
             (setf (view-port-first-line model) (1- (view-port-first-line model)) ))
@@ -562,7 +569,7 @@
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
        ;; example of accessing gtk window object
-       (gtk4:widget-grab-focus (gui-window::gir-window lisp-window))
+       ;; (gtk4:widget-grab-focus (gui-window:gir-window lisp-window))
 
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
        (handle-key-pressed entered key-name key-code mods)))
@@ -615,6 +622,11 @@
 ;;; main =======================================================================
 (defun menu-bar (app lisp-window)
   (let ((menu (gio:make-menu)))
+    ;; stop the annoying menu selection when left and right arrows are pressed
+    ;; i could not make it work
+    ;; (gir:invoke (menu 'gtk_widget_set_focusable) nil)
+
+
     (gui-menu:build-menu
      menu
      (gui-menu:prepare-submenu
