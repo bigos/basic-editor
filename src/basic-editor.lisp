@@ -458,7 +458,8 @@
             ;; simulate Enter due to the menu focus problem
             (progn
               (insert-character-at-cursor model (format nil "~%"))
-              (move-cursor-right model))
+              ;; TODO fix me, cursor does not go to new line
+              )
             )
            ((and (equal key-name "p")
                  (equal mods '(:CTRL)))
