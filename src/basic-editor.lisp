@@ -561,6 +561,9 @@
              (height lisp-window) h)))
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
+       ;; example of accessing gtk window object
+       (gtk4:widget-grab-focus (gui-window::gir-window lisp-window))
+
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
        (handle-key-pressed entered key-name key-code mods)))
     (:menu-simple
