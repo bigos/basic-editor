@@ -459,8 +459,15 @@
             (progn
               (insert-character-at-cursor model (format nil "~%"))
               ;; TODO fix me, cursor does not go to new line
-              )
-            )
+              ))
+           ((and (equal key-name "f")
+                 (equal mods '(:Alt)))
+            (format T "keyboard selected open~%")
+            (gui-window-gtk:present-file-open-dialog))
+           ((and (equal key-name "a")
+                 (equal mods '(:Alt)))
+            (format T "keyboard selected about~%")
+            (gui-window-gtk:present-about-dialog (about-dialog)))
            ((and (equal key-name "p")
                  (equal mods '(:CTRL)))
             (setf (view-port-first-line model) (1- (view-port-first-line model)) ))
