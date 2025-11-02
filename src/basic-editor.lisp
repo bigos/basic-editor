@@ -214,10 +214,25 @@
              (move-cursor-home model))
             (T
              (warn "move cursor normal")
-             (move-cursor-right model))))
+             (move-cursor-right model)))
+          )
         (progn                          ; else
           ;; TODO start adding tests
-          (warn "cursor pos is NIL")))))
+          (warn "cursor pos is NIL")
+          (setf (text model) (sycamore:rope
+                              (cond
+                                ((equal key-name "Return")
+                                 (for-enter))
+                                (T entered))))
+          (cond
+            ((equal key-name "Return")
+             (warn "move cursor return")
+             (move-cursor-down model :ignored)
+             (move-cursor-home model))
+            (T
+             (warn "move cursor normal")
+             (move-cursor-right model)))
+          ))))
 
 (defun new-file ()
   (let ((model *basic-editor-model*))
