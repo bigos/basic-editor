@@ -195,9 +195,7 @@
   (format nil "~%"))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
-  (let ((cur-pos (find-cursor-position model))
-        (overwrite 1)
-        (insert 0))
+  (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
         (progn                          ;then
           (setf (text model) (sycamore:rope
@@ -468,6 +466,10 @@
               (insert-character-at-cursor model (for-enter) nil)
               (move-cursor-down model :ignored)
               (move-cursor-home model)))
+           ((and (equal key-name "n")
+                 (equal mods '(:Alt)))
+            (format T "keyboard selected new~%")
+            (new-file))
            ((and (equal key-name "f")
                  (equal mods '(:Alt)))
             (format T "keyboard selected open~%")
