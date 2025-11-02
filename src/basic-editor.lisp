@@ -73,6 +73,8 @@
             (row obj)
             (col obj))))
 
+;;; ==============================================================================================
+;;; review that
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 
@@ -109,6 +111,7 @@
   (setf
    (row cursor) (row cursor)
    (col cursor) last-col))
+;;; ===========================================================================================
 
 (defmethod move-cursor-left ((model basic-editor-model))
   (if (> (~> model cursor col) 0)
@@ -196,6 +199,10 @@
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
+  (warn "before insert")
+  (warn "~S"
+        (sycamore:subrope (text model)))
+
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
         (progn                          ;then
