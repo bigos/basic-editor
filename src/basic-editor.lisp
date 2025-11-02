@@ -73,16 +73,13 @@
             (row obj)
             (col obj))))
 
-;;; ==============================================================================================
+;;; ============================================================================
 ;;; review that
-(defmethod move-cursor-to ((model basic-editor-model) row col)
-  (move-cursor-to (cursor model) row col))
 
 (defmethod move-cursor-to ((cursor cursor) row col)
   (setf
    (row cursor) row
    (col cursor) col))
-
 (defmethod move-cursor-left ((cursor cursor))
   (setf
    (row cursor) (row cursor)
@@ -111,8 +108,10 @@
   (setf
    (row cursor) (row cursor)
    (col cursor) last-col))
-;;; ===========================================================================================
+;;; ============================================================================
 
+(defmethod move-cursor-to ((model basic-editor-model) row col)
+  (move-cursor-to (cursor model) row col))
 (defmethod move-cursor-left ((model basic-editor-model))
   (if (> (~> model cursor col) 0)
       (move-cursor-left (cursor model))
@@ -138,6 +137,7 @@
   (move-cursor-home (cursor model)))
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
   (move-cursor-end (cursor model) (find-cursor-end model)))
+;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
   (loop for c in (seen-chars model)
@@ -146,7 +146,6 @@
                      (~> model cursor row))
         when found
           maximize (col c)))
-
 (defmethod find-cursor-position ((model basic-editor-model))
   (loop for c in (seen-chars model)
         for found = (and
@@ -160,7 +159,6 @@
         finally (return (if found
                             (~> c pos)
                             nil))))
-
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
@@ -177,7 +175,6 @@
 (defmethod find-page-rows ((model basic-editor-model))
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
-
 (defmethod find-last-row ((model basic-editor-model))
   12345)
 
