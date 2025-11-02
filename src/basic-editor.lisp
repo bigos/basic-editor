@@ -195,6 +195,7 @@
   (format nil "~%"))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
+  ;; TODO this desperately needs improving and testing
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
         (progn                          ;then
