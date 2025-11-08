@@ -610,7 +610,11 @@
        ;; (gtk4:widget-grab-focus (gui-window:gir-window lisp-window))
 
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
-       (handle-key-pressed entered key-name key-code mods)))
+       (if (equal key-name "F9")
+           ;; then
+           (setf (gtk4:widget-focus-p  (gui-window:gir-window)) T)
+           ;; else
+           (handle-key-pressed entered key-name key-code mods))))
     (:menu-simple
      (destructuring-bind ((action)) args
        (cond
