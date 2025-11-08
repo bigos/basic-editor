@@ -612,7 +612,7 @@
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
        (if (equal key-name "F9")
            ;; then
-           (setf (gtk4:widget-focus-p  (gui-window:gir-window)) T)
+           (gtk4:widget-grab-focus (gui-window:gir-canvas lisp-window))
            ;; else
            (handle-key-pressed entered key-name key-code mods))))
     (:menu-simple
@@ -647,7 +647,10 @@
           (format T "menu selected about~%")
           (gui-window-gtk:present-about-dialog (about-dialog)))
          (T
-          (format T "unhandled menu action ~S~%" action)))))
+          (format T "unhandled menu action ~S~%" action)))
+       ;; possibly steal menu focus
+       ;; (setf (gtk4:widget-focus-p  (gui-window:gir-window lisp-window)) T)
+       ))
     (otherwise
      (warn "not handled event ~S ~S" event args)))
 
