@@ -610,11 +610,7 @@
        ;; (gtk4:widget-grab-focus (gui-window:gir-window lisp-window))
 
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
-       (if (equal key-name "F9")
-           ;; then
-           (gtk4:widget-grab-focus (gui-window:gir-canvas lisp-window))
-           ;; else
-           (handle-key-pressed entered key-name key-code mods))))
+       (handle-key-pressed entered key-name key-code mods)))
     (:menu-simple
      (destructuring-bind ((action)) args
        (cond
@@ -649,7 +645,6 @@
          (T
           (format T "unhandled menu action ~S~%" action)))
        ;; possibly steal menu focus
-       ;; (setf (gtk4:widget-focus-p  (gui-window:gir-window lisp-window)) T)
        ))
     (otherwise
      (warn "not handled event ~S ~S" event args)))
@@ -718,7 +713,9 @@
    gui-window-gtk:*initial-window-width*    600
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
-   gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
+   ;; unless i cen fix the problem of unwanted menu focus
+   ;; I will not use Gtk4 menu
+   ;; gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
    gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
    gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
