@@ -48,6 +48,15 @@
   :description "Suite for text scrolling"
   :in basic-editor-text)
 
+(def-suite basic-editor-text-first-line-left
+  :description "Suite for text scrolling of first line"
+  :in basic-editor-text)
+
+(def-suite basic-editor-text-last-line-right
+  :description "Suite for text scrolling of last line"
+  :in basic-editor-text)
+
+
 (in-suite equality)        ; ==================================
 
 (test test-equality

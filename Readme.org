@@ -109,7 +109,9 @@ file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-w
 
 
 **** testing cursor movement
+file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 
 ***** first line left and up
+[[file:tests/basic-editor-tests.lisp::(def-suite basic-editor-text-first-line-left]]
 
 ***** last line right and bottom
