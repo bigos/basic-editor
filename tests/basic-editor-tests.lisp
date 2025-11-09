@@ -192,3 +192,7 @@
           (is (equal #\a (be::bchar (nth 6 children))))
           (is (equal #\s (be::bchar (nth 7 children))))
           (is (equal #\h (be::bchar (nth 8 children)))))))
+
+(in-suite basic-editor-text)           ; ==================================
+(in-suite basic-editor-text-first-line-left)           ; ==================================
+(in-suite basic-editor-text-first-line-right)           ; ==================================
