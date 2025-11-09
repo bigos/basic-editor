@@ -1,0 +1,3 @@
+I need to make sure
+three lines movements
+works as expected.

@@ -27,7 +27,6 @@ file:~/Programming/Lisp/basic-editor/tests/
 defsystem
 [[file:~/Programming/Lisp/clops-gui/clops-gui.asd]]
 
-
 ** Old Notes
 Below are my old notes
 
@@ -80,13 +79,11 @@ https://www.youtube.com/watch?v=TBnPxe4e6Ek
 https://www.youtube.com/watch?v=dP1xVpMPn8M
 https://github.com/jinyangustc/acme-editor
 
-*** notes
+** notes
 
 **** clops gui
 [[file:~/Programming/Lisp/clops-gui/README.org::*Clops-Gui][Clops-Gui]]
 file:~/Programming/Lisp/clops-gui/src/packages.lisp::1
-beginning of file dialog
-[[file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::defun present-file-dialog-save (]]
 
 **** FileDialog
 https://docs.gtk.org/gtk4/class.FileDialog.html
@@ -104,8 +101,15 @@ drawfunc  callback
 dialogs
 [[file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::defun present-about-dialog (data]]
 
-correcting fir wrapper
+correcting gir wrapper
 https://github.com/bohonghuang/cl-gobject-introspection-wrapper
 
 file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-wrapper-20230426155536/desc.lisp::1
 file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-wrapper-20230426155536/macro.lisp::1
+
+
+**** testing cursor movement
+
+***** first line left and up
+
+***** last line right and bottom
