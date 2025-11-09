@@ -285,9 +285,9 @@
                ((font-size 18)
                 (margin-horizontal 0)
                 (margin-vertical 0)
-
-                (text-data (text-size "pOly()/_" font-size ))
-                (twidth (floor (/ (getf text-data :width) 4)))
+                (text-for-size  "pOly()/_")
+                (text-data (text-size text-for-size font-size ))
+                (twidth (floor (/ (getf text-data :width) (length text-for-size))))
                 (theight          (getf text-data :height))
 
                 (bwidth  (+ twidth  0))
@@ -366,8 +366,8 @@
 
 (defun text-size (text text-size)
   (cairo:select-font-face
-   ;; "Ubuntu Mono"
-   "Advaita Mono"
+   "Ubuntu Mono"
+   ;;"Advaita Mono"
    ;; "Liberation Mono"
                           :normal :normal)
   (cairo:set-font-size text-size)
