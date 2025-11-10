@@ -30,6 +30,15 @@
 (defun file-single-line-content ()
   (alexandria:read-file-into-string (file-single-line-fname)))
 
+(defun file-three-lines-fname ()
+  (merge-pathnames
+   "tests/example_texts/three_lines.txt"
+   (asdf:system-source-directory :basic-editor/tests)))
+
+(defun file-three-lines-content ()
+  (alexandria:read-file-into-string (file-three-lines-fname)))
+
+;;; ============= suites ================================================
 (def-suite equality
   :description "Suite to test if 2 and 2 is 4")
 
@@ -163,6 +172,19 @@
              (format nil
                      "Ala ma kota.~%"))))
 
+(test test-three-lines-fname
+      "test three-lines.txt file name"
+      (is (equal (namestring (file-three-lines-fname))
+                 "/home/jacek/Programming/Lisp/basic-editor/tests/example_texts/three_lines.txt")))
+
+(test test-three-lines-content
+      "test three-lines.txt file content"
+      (is (equal (file-three-lines-content)
+                 "I need to make sure
+three lines movements
+works as expected.
+")))
+
 (test char-children
       "children for the characters"
       (let ((experimental-window (main :testing T))
@@ -176,7 +198,10 @@
         (is (= 420 (height experimental-window)))
 
         (be::new-file)
-        (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
+        (be::open-file (cons :selected
+                             (format nil "file://~A"
+                                     ;; (file-three-lines-fname)
+                                     "/home/jacek/Programming/Lisp/basic-editor/tests/example_texts/three_lines.txt")))
 
         (setf (be::world model) world)
         (basic-editor::adding-children world)
@@ -185,14 +210,16 @@
                (loaded-text (sycamore:rope-string (be::text model))))
 
           (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-          (is (equal (subseq loaded-text 0 11) "# ~/.bashrc"))
+          (is (equal (subseq loaded-text 0 14) "I need to make"))
 
-          (is (= 316 (length children)))
-          (is (equal #\b (be::bchar (nth 5 children))))
-          (is (equal #\a (be::bchar (nth 6 children))))
-          (is (equal #\s (be::bchar (nth 7 children))))
-          (is (equal #\h (be::bchar (nth 8 children)))))))
+          (is (= 61 (length children)))
+          (is (equal #\d (be::bchar (nth 5 children))))
+          (is (equal #\Space (be::bchar (nth 6 children))))
+          (is (equal #\t (be::bchar (nth 7 children))))
+          (is (equal #\o (be::bchar (nth 8 children)))))))
 
 (in-suite basic-editor-text)           ; ==================================
+
 (in-suite basic-editor-text-first-line-left)           ; ==================================
-(in-suite basic-editor-text-first-line-right)           ; ==================================
+
+(in-suite basic-editor-text-last-line-right)           ; ==================================
