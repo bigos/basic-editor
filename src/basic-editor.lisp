@@ -109,15 +109,18 @@
    (row cursor) (row cursor)
    (col cursor) last-col))
 ;;; ============================================================================
+(defun is-first-line (model)
+  (zerop  (~> model cursor row)))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 (defmethod move-cursor-left ((model basic-editor-model))
   (if (> (~> model cursor col) 0)
       (move-cursor-left (cursor model))
-      (progn
+      (unless (is-first-line model)
         (move-cursor-up model)
         (move-cursor-end model :ignored))))
+
 (defmethod move-cursor-right ((model basic-editor-model))
   (if (>=
           (~> model cursor col)
