@@ -115,3 +115,10 @@ file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 [[file:tests/basic-editor-tests.lisp::(def-suite basic-editor-text-first-line-left]]
 
 ***** last line right and bottom
+
+**** revisit lines
+we have
+[[file:src/basic-editor.lisp::for row = 0 then (if (or (equal last-char #\Newline)]]
+
+but we also need for cursor
+[[file:src/basic-editor.lisp::(defmethod find-last-row]]
