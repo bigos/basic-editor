@@ -97,7 +97,8 @@
 (defmethod move-cursor-down ((cursor cursor) last-row)
   (setf
    (row cursor) (if (<= (row cursor) (1+ last-row))
-                    (1+ (row cursor)))
+                    (1+ (row cursor))
+                    (row cursor))
    (col cursor) (col cursor)))
 (defmethod move-cursor-home ((cursor cursor))
   (setf
