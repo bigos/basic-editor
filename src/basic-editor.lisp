@@ -112,6 +112,13 @@
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
+(defun is-last-line (model)
+  (let ((found-last-row (find-last-row model)))
+    (>=
+     (~> model cursor row)
+     found-last-row)))
+
+
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 (defmethod move-cursor-left ((model basic-editor-model))
@@ -133,8 +140,9 @@
 (defmethod move-cursor-up ((model basic-editor-model))
   (move-cursor-up (cursor model)))
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
-  (let ((last-row (all-lines-count model)))
-    (when last-row
+  (let ((last-row (find-last-row model)))
+
+    (unless (is-last-line model)
       (move-cursor-down (cursor model) last-row))))
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
@@ -182,11 +190,9 @@
 
   (loop for last-char = nil then c
         for c across (~> model text sycamore:rope-string)
-        for row = 0 then (if (or (equal last-char #\Newline)
-                                 (>= col wrap-column))
+        for row = 0 then (if (equal last-char #\Newline)
                              (1+ row) row)
-        for col = 0 then (if (or (equal last-char #\Newline)
-                                 (>= col wrap-column))
+        for col = 0 then (if (equal last-char #\Newline)
                              0 (1+ col))
         for pos = 0  then (1+ pos)
         finally
