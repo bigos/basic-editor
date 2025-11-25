@@ -96,9 +96,8 @@
    (col cursor) (col cursor)))
 (defmethod move-cursor-down ((cursor cursor) last-row)
   (setf
-   (row cursor) (if (< (row cursor) (1+ last-row))
-                    (1+ (row cursor))
-                    last-row)
+   (row cursor) (if (<= (row cursor) (1+ last-row))
+                    (1+ (row cursor)))
    (col cursor) (col cursor)))
 (defmethod move-cursor-home ((cursor cursor))
   (setf
@@ -113,10 +112,11 @@
   (zerop  (~> model cursor row)))
 
 (defun is-last-line (model)
-  (let ((found-last-row (find-last-row model)))
+  (let ((found-last-row (all-lines-count model)))
     (>=
      (~> model cursor row)
-     found-last-row)))
+     (+ 2
+      found-last-row))))
 
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
