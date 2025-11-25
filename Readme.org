@@ -122,3 +122,6 @@ we have
 
 but we also need for cursor
 [[file:src/basic-editor.lisp::(defmethod find-last-row]]
+
+is-first-line
+[[file:src/basic-editor.lisp::defun is-first-line (model]]

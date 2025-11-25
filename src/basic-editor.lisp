@@ -179,7 +179,18 @@
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
 (defmethod find-last-row ((model basic-editor-model))
-  12345)
+
+  (loop for last-char = nil then c
+        for c across (~> model text sycamore:rope-string)
+        for row = 0 then (if (or (equal last-char #\Newline)
+                                 (>= col wrap-column))
+                             (1+ row) row)
+        for col = 0 then (if (or (equal last-char #\Newline)
+                                 (>= col wrap-column))
+                             0 (1+ col))
+        for pos = 0  then (1+ pos)
+        finally
+        (return row)))
 
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (find-cursor-position model)))
