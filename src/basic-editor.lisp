@@ -114,10 +114,9 @@
 
 (defun is-last-line (model)
   (let ((found-last-row (all-lines-count model)))
-    (>
+    (>=
      (~> model cursor row)
-     (+ 1
-      found-last-row))))
+     found-last-row)))
 
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
@@ -130,18 +129,30 @@
         (move-cursor-end model :ignored))))
 
 (defmethod move-cursor-right ((model basic-editor-model))
-  (if (>=
-          (~> model cursor col)
-          (find-cursor-end model))
+  (let ((last-row (car (find-last-row model)))
+        (last-col (cdr (find-last-row model))))
+    (warn "last row ~S - ~S" last-row last-col)
+    (warn "current position ~S = ~S"
+          (~> model cursor row)
+          (~> model cursor col))
+    (unless (and (is-last-line model)
+                 (>= (~> model cursor col)
+                     last-col))
       (progn
-        (move-cursor-down model (all-lines-count model))
-        (move-cursor-home model))
+        (warn "test passed ~S" (is-last-line model))
+        (if (>=
+             (~> model cursor col)
+             (find-cursor-end model))
+            (progn
+              (move-cursor-down model (all-lines-count model))
+              (move-cursor-home model))
 
-      (move-cursor-right (cursor model))))
+            (move-cursor-right (cursor model))))))
+  )
 (defmethod move-cursor-up ((model basic-editor-model))
   (move-cursor-up (cursor model)))
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
-  (let ((last-row (find-last-row model)))
+  (let ((last-row (car (find-last-row model))))
 
     (unless (is-last-line model)
       (move-cursor-down (cursor model) last-row))))
@@ -196,7 +207,7 @@
                              0 (1+ col))
         for pos = 0  then (1+ pos)
         finally
-        (return row)))
+           (return (cons row col))))
 
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (find-cursor-position model)))
