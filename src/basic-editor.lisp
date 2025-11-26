@@ -96,7 +96,7 @@
    (col cursor) (col cursor)))
 (defmethod move-cursor-down ((cursor cursor) last-row)
   (setf
-   (row cursor) (if (<= (row cursor) (1+ last-row))
+   (row cursor) (if (<= (row cursor) last-row)
                     (1+ (row cursor))
                     (row cursor))
    (col cursor) (col cursor)))
@@ -114,9 +114,9 @@
 
 (defun is-last-line (model)
   (let ((found-last-row (all-lines-count model)))
-    (>=
+    (>
      (~> model cursor row)
-     (+ 2
+     (+ 1
       found-last-row))))
 
 
@@ -188,7 +188,6 @@
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
 (defmethod find-last-row ((model basic-editor-model))
-
   (loop for last-char = nil then c
         for c across (~> model text sycamore:rope-string)
         for row = 0 then (if (equal last-char #\Newline)
