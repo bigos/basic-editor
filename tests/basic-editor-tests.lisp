@@ -323,7 +323,6 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 1 (~> model be::cursor be::col)))
 
-
           (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 2 (~> model be::cursor be::col)))
@@ -371,20 +370,19 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
-          ;; on last row, do not go to the next row
-          ;; first wrong
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
-          (is (eq 1 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
-
-          ;; second wrong
+          ;; ;; on last row, do not go to the next row
           (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+          (is (eq 12 (~> model be::cursor be::col)))
 
-          ;; third wrong
+          ;; ;; but stay on last position
           (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 1 (~> model be::cursor be::col)))
+          (is (eq 12 (~> model be::cursor be::col)))
+
+          ;; ;; and stay on last position
+          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (is (eq 0 (~> model be::cursor be::row)))
+          (is (eq 12 (~> model be::cursor be::col)))
 
           )))
