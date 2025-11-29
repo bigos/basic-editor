@@ -285,6 +285,59 @@ works as expected.
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
 
+(test three-lines-moving-right
+      "three lines moving lines"
+      (let ((experimental-window (main :testing T))
+            (world (boxes::make-node-down
+                    0 0 600 400 "#cccccc88"))
+            (model *basic-editor-model*))
+
+        (process-event experimental-window :resize '(710 250))
+        ;; (snapshot experimental-window "what-is-the-size")
+        (is (= 710 (width experimental-window)))
+        (is (= 250 (height experimental-window)))
+
+        (be::new-file)
+        (be::open-file (cons :selected
+                             (format nil "file://~A"
+                                     (file-three-lines-fname))))
+        (setf (be::world model) world)
+        (basic-editor::adding-children world)
+        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
+                 (char-kids model))
+               (loaded-text (sycamore:rope-string (be::text model))))
+
+          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+          (is (equal (subseq loaded-text 0 20) (format nil
+                                                       "I need to make sure~%")))
+          (is (= 61 (length children)))
+
+          ;; TODO finish the tests and response to moving cursor
+
+          (snapshot experimental-window "loaded")
+          (is (eq 0 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
+
+          ;; move 2 rows down
+
+          (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+          (is (eq 1 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
+
+          (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
+
+          ;; move to the right
+          (loop for x from 1 to 16
+                do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 16 (~> model be::cursor be::col)))
+
+
+         )
+        )
+      )
 
 (test single-line-moving-right
       "single line moving right"
