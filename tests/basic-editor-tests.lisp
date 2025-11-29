@@ -336,11 +336,9 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 4 (~> model be::cursor be::col)))
 
-          ;; fis those failing tests
           (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 5 (~> model be::cursor be::col)))
-
 
           (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
