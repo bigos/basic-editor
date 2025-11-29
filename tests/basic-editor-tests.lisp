@@ -334,6 +334,23 @@ works as expected.
           (is (eq 2 (~> model be::cursor be::row)))
           (is (eq 16 (~> model be::cursor be::col)))
 
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 17 (~> model be::cursor be::col)))
+
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 18 (~> model be::cursor be::col)))
+
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 18 (~> model be::cursor be::col)))
+
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+          (is (eq 2 (~> model be::cursor be::row)))
+          (is (eq 18 (~> model be::cursor be::col)))
+
+
 
          )
         )
@@ -381,58 +398,58 @@ works as expected.
           (is (eq 2 (~> model be::cursor be::col)))
 
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 3 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 4 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 5 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 6 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 7 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 8 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 9 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 10 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 11 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
           ;; ;; on last row, do not go to the next row
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
           ;; ;; but stay on last position
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
           ;; ;; and stay on last position
-          (process-event experimental-window :key-pressed '("" "Right" 113 NIL))
+          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
