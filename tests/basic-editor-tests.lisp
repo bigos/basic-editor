@@ -493,4 +493,12 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 0 (~> model be::cursor be::col)))
 
+          (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+          (is (eq 0 (~> model be::cursor be::row)))
+          (is (eq 12 (~> model be::cursor be::col)))
+
+          (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+          (is (eq 0 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
+
           )))
