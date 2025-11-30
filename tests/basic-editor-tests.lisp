@@ -65,6 +65,10 @@
   :description "Suite for text scrolling of last line"
   :in basic-editor-text)
 
+(def-suite basic-editor-text-pressing-enter
+  :description "Suite for testing Enter"
+  :in basic-editor-text)
+
 
 (in-suite equality)        ; ==================================
 
@@ -221,7 +225,6 @@ works as expected.
 
 (in-suite basic-editor-text-first-line-left)           ; ==================================
 
-;; (run 'single-line-moving-left)
 (test single-line-moving-left
       "single line moving left"
       (let ((experimental-window (main :testing T))
@@ -452,5 +455,42 @@ works as expected.
           (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
+
+          )))
+
+(in-suite basic-editor-text-pressing-enter)           ; ==================================
+
+(test single-line-moving-left
+      "single line moving left"
+      (let ((experimental-window (main :testing T))
+            (world (boxes::make-node-down
+                    0 0 600 400 "#cccccc88"))
+            (model *basic-editor-model*))
+
+        (process-event experimental-window :resize '(710 250))
+        ;; (snapshot experimental-window "what-is-the-size")
+        (is (= 710 (width experimental-window)))
+        (is (= 250 (height experimental-window)))
+
+        (be::new-file)
+        (be::open-file (cons :selected
+                             (format nil "file://~A"
+                                     (file-single-line-fname))))
+
+        (setf (be::world model) world)
+        (basic-editor::adding-children world)
+        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
+                 (char-kids model))
+               (loaded-text (sycamore:rope-string (be::text model))))
+
+          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+          (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+          (is (= 13 (length children)))
+
+          ;; TODO finish the tests and response to moving cursor
+
+          (snapshot experimental-window "loaded")
+          (is (eq 0 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
 
           )))
