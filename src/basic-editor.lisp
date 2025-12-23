@@ -784,6 +784,8 @@
         (gui-window-gtk:window-main (make-instance 'basic-editor-window)))))
 
 ;; (main)
+;;; type annotations
+(serapeum:-> experiment (null) null)
 (defun experiment ()
   (let ((ew (main :testing T)))
     (process-event ew :resize '(400 500))
