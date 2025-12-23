@@ -1,5 +1,5 @@
 (defpackage #:basic-editor
-  (:use #:cl #:defstar)
+  (:use #:cl)
   (:import-from :serapeum
                 ~>)
   (:import-from :defclass-std

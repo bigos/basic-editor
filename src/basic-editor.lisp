@@ -784,8 +784,7 @@
         (gui-window-gtk:window-main (make-instance 'basic-editor-window)))))
 
 ;; (main)
-;;; defstar allows to declare no value returned
-(defstar:defun* (experiment -> :void) ()
+(defun experiment ()
   (let ((ew (main :testing T)))
     (process-event ew :resize '(400 500))
     (process-event ew :motion-enter '(0 0))
