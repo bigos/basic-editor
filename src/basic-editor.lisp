@@ -277,7 +277,7 @@
 (defun new-file ()
   (let ((model *basic-editor-model*))
     (setf
-     (text model) (sycamore:rope "")
+     (text model) (sycamore:rope "edit something")
      (current-file model) nil)))
 
 ;; (funcall *client-fn-open-file* (cancelled-value))
@@ -543,6 +543,12 @@
             (equal mods '(:Alt)))
        (format T "keyboard selected open~%")
        (gui-window-gtk:present-file-open-dialog))
+
+      ((and (equal key-name "s")
+            (equal mods '(:Alt)))
+       (format T "keyboard selected save~%")
+       (error "finish me TODO"))
+
       ((and (equal key-name "a")
             (equal mods '(:Alt)))
        (format T "keyboard selected about~%")

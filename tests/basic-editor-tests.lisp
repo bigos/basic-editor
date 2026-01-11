@@ -39,35 +39,36 @@
   (alexandria:read-file-into-string (file-three-lines-fname)))
 
 ;;; ============= suites ================================================
-(def-suite equality
-  :description "Suite to test if 2 and 2 is 4")
+(progn                                  ; suites
+  (def-suite equality
+      :description "Suite to test if 2 and 2 is 4")
 
-(def-suite basic-editor-suite
-  :description "Suite to hold other suites and tests")
+  (def-suite basic-editor-suite
+      :description "Suite to hold other suites and tests")
 
-(def-suite basic-editor-resizing
-  :description "Suite for resizing"
-  :in basic-editor-suite)
+  (def-suite basic-editor-resizing
+      :description "Suite for resizing"
+      :in basic-editor-suite)
 
-(def-suite basic-editor-text
-  :description "Suite for text"
-  :in basic-editor-suite)
+  (def-suite basic-editor-text
+      :description "Suite for text"
+      :in basic-editor-suite)
 
-(def-suite basic-editor-text-scrolling
-  :description "Suite for text scrolling"
-  :in basic-editor-text)
+  (def-suite basic-editor-text-scrolling
+      :description "Suite for text scrolling"
+      :in basic-editor-text)
 
-(def-suite basic-editor-text-first-line-left
-  :description "Suite for text scrolling of first line"
-  :in basic-editor-text)
+  (def-suite basic-editor-text-first-line-left
+      :description "Suite for text scrolling of first line"
+      :in basic-editor-text)
 
-(def-suite basic-editor-text-last-line-right
-  :description "Suite for text scrolling of last line"
-  :in basic-editor-text)
+  (def-suite basic-editor-text-last-line-right
+      :description "Suite for text scrolling of last line"
+      :in basic-editor-text)
 
-(def-suite basic-editor-text-pressing-enter
-  :description "Suite for testing Enter"
-  :in basic-editor-text)
+  (def-suite basic-editor-text-pressing-enter
+      :description "Suite for testing Enter"
+      :in basic-editor-text))
 
 
 (in-suite equality)        ; ==================================
