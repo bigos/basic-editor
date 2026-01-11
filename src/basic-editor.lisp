@@ -517,6 +517,7 @@
        (warn "F1 = help")
        (warn "Alt-n = new file")
        (warn "Alt-f = open file")
+       (warn "Alt-s = save file")
        (warn "Alt-a = about")
        (warn "Ctrl-p = previous line")
        (warn "Ctrl-n = next line")
