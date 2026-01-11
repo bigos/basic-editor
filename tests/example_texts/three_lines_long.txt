@@ -1,0 +1,3 @@
+I need to make sure that three lines movements work as expected, because I must handle long lines in trim and wrap mode.
+To make matters worse in from mode horizontal scrolling on text could go wrong. In need to ensure horizontal scrolling and moving between home and end positions work correctly.
+Another thing is resizing the window with short and long lines.Long lines are the lines that would have their fragments hidden in the trim mode.

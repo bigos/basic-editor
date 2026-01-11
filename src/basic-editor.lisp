@@ -9,6 +9,10 @@
 
 (defparameter *environment* nil)
 
+(defun pseudo (default &rest rest-args )
+  (warn "running pseudo ~S" (list default rest-args ))
+  default)
+
 ;;; minimal window -------------------------------------------------------------
 (defparameter *basic-editor-model* nil)
 
@@ -785,12 +789,10 @@
 
 ;; (main)
 ;;; type annotations
-(serapeum:-> experiment (null) null)
+(-> experiment () null)
 (defun experiment ()
   (let ((ew (main :testing T)))
     (process-event ew :resize '(400 500))
     (process-event ew :motion-enter '(0 0))
     (process-event ew :motion '(10 10))
-
-    ;;
-    ))
+    nil))
