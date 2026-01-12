@@ -70,7 +70,6 @@
       :description "Suite for testing Enter"
       :in basic-editor-text))
 
-
 (in-suite equality)        ; ==================================
 
 (test test-equality
