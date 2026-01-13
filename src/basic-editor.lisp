@@ -507,7 +507,7 @@
         (cairo:fill-path)))))
 
 ;;; events =====================================================================
-(defun handle-key-pressed (entered key-name key-code mods)
+(defun handle-key-pressed (entered key-name key-code mods lisp-window)
   (let ((model *basic-editor-model*))
     (cond
 
@@ -515,6 +515,7 @@
             (null mods))
        (warn "------------ F1 Help --------------------")
        (warn "F1 = help")
+       (warn "F8 = debug")
        (warn "Alt-n = new file")
        (warn "Alt-f = open file")
        (warn "Alt-s = save file")
@@ -666,7 +667,7 @@
        ;; (gtk4:widget-grab-focus (gui-window:gir-window lisp-window))
 
        (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
-       (handle-key-pressed entered key-name key-code mods)))
+       (handle-key-pressed entered key-name key-code mods lisp-window)))
     (:menu-simple
      (destructuring-bind ((action)) args
        (cond
