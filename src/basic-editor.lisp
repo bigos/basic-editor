@@ -275,7 +275,12 @@
              (move-cursor-home model))
             (T
              (warn "move cursor normal 2")
-             (move-cursor-right model)))))))
+             (move-cursor-right model))))))
+  (progn
+    (warn "---------- done insert --------------")
+    (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+    (warn "cursor ~S" (sycamore:rope-string (~> model text)))
+    (warn "---------- finished insert --------------")))
 
 (defun new-file ()
   (let ((model *basic-editor-model*))
@@ -532,6 +537,13 @@
       ((and (equal key-name "F8")
             (null mods))
        (break "examine the models ~S" (list lisp-window *basic-editor-model*) ))
+
+      ((and (equal key-name "F9")
+            (null mods))
+       (progn
+         (warn "examine model ------------------------------")
+         (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+         (warn "text ~S" (sycamore:rope-string (text model)))))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
             (equal mods '(:CTRL)))
