@@ -118,9 +118,10 @@
 
 (defun is-last-line (model)
   (let ((found-last-row (all-lines-count model)))
-    (>=
-     (~> model cursor row)
-     found-last-row)))
+    (when found-last-row
+      (>=
+       (~> model cursor row)
+       found-last-row))))
 
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
@@ -219,12 +220,13 @@
           (~> model cursor row)
           (~> model cursor col)
           cur-pos)
-
-    (setf (text model) (sycamore:rope
-                        (sycamore:subrope (text model) :start 0
-                                                       :end cur-pos)
-                        (sycamore:subrope (text model) :start (1+ cur-pos)
-                                                       :end (sycamore:rope-length (text model)))))))
+    (if cur-pos
+        (setf (text model) (sycamore:rope
+                            (sycamore:subrope (text model) :start 0
+                                                           :end cur-pos)
+                            (sycamore:subrope (text model) :start (1+ cur-pos)
+                                                           :end (sycamore:rope-length (text model)))))
+        (warn "No cursor position found, possibly no text"))))
 
 (defun for-enter ()
   (format nil "~%"))
