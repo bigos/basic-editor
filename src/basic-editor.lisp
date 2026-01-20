@@ -616,7 +616,13 @@
        (if (equal entered "")
            (format t "unhandled key ~S~%" (list entered key-name key-code mods))
            (progn
-             (insert-character-at-cursor model entered key-name)))))))
+             (if (equal key-name "Return")
+                 (progn
+                   (warn "going to insert Return character for ~S ~S" entered key-name)
+                   (insert-character-at-cursor model entered key-name))
+                 (progn
+                   (warn "going to insert character for ~S ~S" entered key-name)
+                   (insert-character-at-cursor model entered key-name)))))))))
 
 (defmethod process-event ((lisp-window basic-editor-window) event &rest args)
   (unless (member event '(:timeout :motion))

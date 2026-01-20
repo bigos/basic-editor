@@ -81,11 +81,11 @@ https://github.com/jinyangustc/acme-editor
 
 ** notes
 
-**** clops gui
+*** clops gui
 [[file:~/Programming/Lisp/clops-gui/README.org::*Clops-Gui][Clops-Gui]]
 file:~/Programming/Lisp/clops-gui/src/packages.lisp::1
 
-**** FileDialog
+*** FileDialog
 https://docs.gtk.org/gtk4/class.FileDialog.html
 
 window and callback
@@ -108,15 +108,15 @@ file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-w
 file:~/quicklisp/dists/ultralisp/software/bohonghuang-cl-gobject-introspection-wrapper-20230426155536/macro.lisp::1
 
 
-**** testing cursor movement
+*** testing cursor movement
 file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 
-***** first line left and up
+**** first line left and up
 [[file:tests/basic-editor-tests.lisp::(def-suite basic-editor-text-first-line-left]]
 
-***** last line right and bottom
+**** last line right and bottom
 
-**** revisit lines
+*** revisit lines
 we have
 [[file:src/basic-editor.lisp::for row = 0 then (if (or (equal last-char #\Newline)]]
 
@@ -125,3 +125,6 @@ but we also need for cursor
 
 is-first-line
 [[file:src/basic-editor.lisp::defun is-first-line (model]]
+
+*** testing enter on last line
+file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::464
