@@ -159,8 +159,7 @@
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((last-row (car (find-last-row model))))
 
-    (unless (is-last-line model)
-      (move-cursor-down (cursor model) last-row))))
+    (move-cursor-down (cursor model) last-row)))
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
@@ -196,7 +195,7 @@
 (defmethod find-first-visible-col ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c col)))
-(defmethod find-last-visible-col ((model basyic-editor-model))
+(defmethod find-last-visible-col ((model basic-editor-model))
   (loop for c in (seen-chars model)
         maximize (~> c col)))
 
