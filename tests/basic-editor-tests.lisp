@@ -462,7 +462,7 @@ works as expected.
           (process-event experimental-window :key-pressed '("" "Return" 36 NIL) )
           (is (eq 1 (~> model be::cursor be::row)))
           (is (eq 0 (~> model be::cursor be::col)))
-        ;  (is (equal (be::text model) (format nil "Ala ma kota.~%~%")))
+          (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
 
           )))
 
