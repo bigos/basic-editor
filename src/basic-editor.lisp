@@ -196,7 +196,7 @@
 (defmethod find-first-visible-col ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c col)))
-(defmethod find-last-visible-col ((model basic-editor-model))
+(defmethod find-last-visible-col ((model basyic-editor-model))
   (loop for c in (seen-chars model)
         maximize (~> c col)))
 
@@ -239,25 +239,28 @@
 
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
-        (progn                          ;then
+        (progn                          ; then
           (setf (text model) (sycamore:rope
+                              ;;  pre insert
                               (sycamore:subrope (text model) :start 0
                                                              :end cur-pos)
+                              ;; the insert
                               (cond
                                 ((equal key-name "Return")
                                  (for-enter))
                                 (T entered))
+                              ;; post insert
                               (sycamore:subrope (text model) :start (+ 0 cur-pos)
                                                              :end (sycamore:rope-length (text model)))))
           (cond
             ((equal key-name "Return")
-             (warn "move cursor return")
+             (warn "move cursor return 1")
              (move-cursor-down model :ignored)
              (move-cursor-home model))
             (T
-             (warn "move cursor normal")
-             (move-cursor-right model)))
-          )
+             (warn "move cursor normal 1")
+             (move-cursor-right model))))
+
         (progn                          ; else
           ;; TODO start adding tests
           (warn "cursor pos is NIL")
@@ -268,13 +271,12 @@
                                 (T entered))))
           (cond
             ((equal key-name "Return")
-             (warn "move cursor return")
+             (warn "move cursor return 2")
              (move-cursor-down model :ignored)
              (move-cursor-home model))
             (T
-             (warn "move cursor normal")
-             (move-cursor-right model)))
-          ))))
+             (warn "move cursor normal 2")
+             (move-cursor-right model)))))))
 
 (defun new-file ()
   (let ((model *basic-editor-model*))
