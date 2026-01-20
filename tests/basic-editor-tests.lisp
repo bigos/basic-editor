@@ -456,6 +456,14 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::row)))
           (is (eq 12 (~> model be::cursor be::col)))
 
+          (is (equal (be::text model) (format nil "Ala ma kota.~%")))
+          ;; and try pressing the dreaded Enter
+          ;; TODO failing test
+          (process-event experimental-window :key-pressed '("" "Return" 36 NIL) )
+          (is (eq 1 (~> model be::cursor be::row)))
+          (is (eq 0 (~> model be::cursor be::col)))
+        ;  (is (equal (be::text model) (format nil "Ala ma kota.~%~%")))
+
           )))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
