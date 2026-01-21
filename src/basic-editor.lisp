@@ -164,6 +164,12 @@
   (move-cursor-home (cursor model)))
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
   (move-cursor-end (cursor model) (find-cursor-end model)))
+
+(defmethod move-cursor-first-line-home ((model basic-editor-model))
+  (move-cursor-to model 0 0))
+(defmethod move-cursor-last-line-end ((model basic-editor-model))
+  (let ((last-row-cons (find-last-row model)))
+    (move-cursor-to model (car last-row-cons) (cdr last-row-cons))))
 ;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
@@ -528,6 +534,8 @@
        (warn "Alt-f = open file")
        (warn "Alt-s = save file")
        (warn "Alt-a = about")
+       (warn "Alt-Home = move cursor to first row Home")
+       (warn "Alt-End =  move cursor to last  row End")
        (warn "Ctrl-p = previous line")
        (warn "Ctrl-n = next line")
        (warn "Ctrl-b = backwards character")
@@ -570,6 +578,16 @@
             (equal mods '(:Alt)))
        (format T "keyboard selected about~%")
        (gui-window-gtk:present-about-dialog (about-dialog)))
+
+      ((and (equal key-name "Home")
+            (equal mods '(:Alt)))
+       (format T "keyboard selected Alt Home~%")
+       (move-cursor-first-line-home model))
+      ((and (equal key-name "End")
+            (equal mods '(:Alt)))
+       (format T "keyboard selected Alt End~%")
+       (move-cursor-last-line-end model))
+
       ((and (equal key-name "p")
             (equal mods '(:CTRL)))
        (setf (view-port-first-line model) (1- (view-port-first-line model)) ))
