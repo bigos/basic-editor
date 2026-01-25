@@ -620,6 +620,8 @@
       ((equal key-name "Up")
        (move-cursor-up model)
        (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
+             (~> model cursor row)
+             (~> model view-port-first-line))
        (when (< (~> model cursor row)
                 (view-port-first-line model))
          (setf (view-port-first-line model) (~> model cursor row))))
