@@ -625,6 +625,9 @@
       ((equal key-name "Down")
        (move-cursor-down model :ignored)
        (let ((pr (find-page-rows model)))
+         (warn "cursor on last line -- row ~S --first line ~S"
+               (~> model cursor row)
+               (~> model view-port-first-line))
          (when (> (~> model cursor row)
                   (+
                    (view-port-first-line model)
