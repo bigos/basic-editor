@@ -272,28 +272,28 @@ works as expected.
         (is (eq 1 (~> model be::cursor be::col)))
 
 
-        ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        ;; (is (eq 0 (~> model be::cursor be::row)))
-        ;; (is (eq 2 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 2 (~> model be::cursor be::col)))
 
 
-        ;; (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        ;; (is (eq 0 (~> model be::cursor be::row)))
-        ;; (is (eq 1 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 1 (~> model be::cursor be::col)))
 
-        ;; (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        ;; (is (eq 0 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-        ;; ;; fis those failing tests
-        ;; (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        ;; (is (eq 0 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
+        ;; fis those failing tests
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
 
-        ;; (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        ;; (is (eq 0 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
         ))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
@@ -471,12 +471,11 @@ works as expected.
 
         (process-event experimental-window :key-pressed '("" "End" 115 NIL))
         (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 12 (~> model be::cursor be::col)))
+        (is (eq 11 (~> model be::cursor be::col)))
 
         (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
         (is (eq 0 (~> model be::cursor be::row)))
         (is (eq 0 (~> model be::cursor be::col)))
-
         ))
 
 (in-suite basic-editor-text)           ; ==================================

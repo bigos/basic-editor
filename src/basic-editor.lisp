@@ -195,12 +195,12 @@
            (warn "doing length 0")
            0)
           (T
-           (break "doing length ~S and last ~S" row-chars-length (last row-chars))
+           (warn "doing length ~S and last ~S" row-chars-length (last row-chars))
            (let* ((last-row-chars (car (last row-chars)))
                   (dv
                     (if (equal (bchar last-row-chars) #\Newline)
-                        (- 2 row-chars-length)
-                        (- 1 row-chars-length))))
+                        (- row-chars-length 2)
+                        (- row-chars-length 1))))
              (warn "calculated ~S" dv)
              dv)))))
 
