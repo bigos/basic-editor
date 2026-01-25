@@ -9,4 +9,15 @@
 (in-package #:basic-editor-test)
 (test-all)
 
-(sb-ext:quit)
+(defun in-replp ()
+  (equalp
+   (package-name (symbol-package
+                  (slot-value *standard-output* 'symbol)))
+   "SWANK"))
+
+(if (in-replp)
+    (progn
+      (warn "finished running the tests in REPL"))
+    (progn
+      (warn "finished running the test in the terminal, quitting")
+      (sb-ext:quit)))
