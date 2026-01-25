@@ -13,13 +13,13 @@
 ;;       (package-name (symbol-package
 ;;                      (slot-value *standard-output* 'symbol))))
 
-(defun in-replp ()
+(defun in-repl? ()
   (equalp (package-name
            (symbol-package
             (slot-value *standard-output* 'symbol)))
           "SWANK")) ; terminal package name is SB-SYS
 
-(if (in-replp)
+(if (in-repl?)
     (progn
       (warn "finished running the tests in REPL"))
     (progn
