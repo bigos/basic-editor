@@ -552,4 +552,8 @@ works as expected.
 
 (test single-line-one-character-with-newline
       "one character file with NEWLINE"
-      )
+      (let* ((d (load-file-and-model (file-single-line-one-character-with-newline-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model))))
+        (is (equal loaded-text (format nil "b~%")))))
