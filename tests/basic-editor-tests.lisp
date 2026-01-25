@@ -20,11 +20,7 @@
         (world (boxes::make-node-down
                 0 0 600 400 "#cccccc88"))
         (model *basic-editor-model*))
-
     (process-event experimental-window :resize '(710 250))
-    ;; (snapshot experimental-window "what-is-the-size")
-    (is (= 710 (width experimental-window)))
-    (is (= 250 (height experimental-window)))
 
     (be::new-file)
     (be::open-file (cons :selected
@@ -234,35 +230,20 @@ works as expected.
 
 (test char-children
       "children for the characters"
-      (let ((experimental-window (main :testing T))
-            (world (boxes::make-node-down
-                    0 0 600 400 "#cccccc88"))
-            (model *basic-editor-model*))
+      (let* ((d (load-file-and-model (file-three-lines-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model)))
+             (children (char-kids model)))
 
-        (process-event experimental-window :resize '(710 420))
-        ;; (snapshot experimental-window "what-is-the-size")
-        (is (= 710 (width experimental-window)))
-        (is (= 420 (height experimental-window)))
+        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+        (is (equal (subseq loaded-text 0 14) "I need to make"))
 
-        (be::new-file)
-        (be::open-file (cons :selected
-                             (format nil "file://~A"
-                                     (file-three-lines-fname))))
-
-        (setf (be::world model) world)
-        (basic-editor::adding-children world)
-        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
-                 (char-kids model))
-               (loaded-text (sycamore:rope-string (be::text model))))
-
-          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-          (is (equal (subseq loaded-text 0 14) "I need to make"))
-
-          (is (= 61 (length children)))
-          (is (equal #\d (be::bchar (nth 5 children))))
-          (is (equal #\Space (be::bchar (nth 6 children))))
-          (is (equal #\t (be::bchar (nth 7 children))))
-          (is (equal #\o (be::bchar (nth 8 children)))))))
+        (is (= 61 (length children)))
+        (is (equal #\d (be::bchar (nth 5 children))))
+        (is (equal #\Space (be::bchar (nth 6 children))))
+        (is (equal #\t (be::bchar (nth 7 children))))
+        (is (equal #\o (be::bchar (nth 8 children))))))
 
 (in-suite basic-editor-text)           ; ==================================
 
@@ -270,244 +251,201 @@ works as expected.
 
 (test single-line-moving-left
       "single line moving left"
-      (let ((experimental-window (main :testing T))
-            (world (boxes::make-node-down
-                    0 0 600 400 "#cccccc88"))
-            (model *basic-editor-model*))
+      (let* ((d (load-file-and-model (file-single-line-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model)))
+             (children (char-kids model)))
 
-        (process-event experimental-window :resize '(710 250))
-        ;; (snapshot experimental-window "what-is-the-size")
-        (is (= 710 (width experimental-window)))
-        (is (= 250 (height experimental-window)))
+        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+        (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+        (is (= 13 (length children)))
 
-        (be::new-file)
-        (be::open-file (cons :selected
-                             (format nil "file://~A"
-                                     (file-single-line-fname))))
+        ;; TODO finish the tests and response to moving cursor
 
-        (setf (be::world model) world)
-        (basic-editor::adding-children world)
-        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
-                 (char-kids model))
-               (loaded-text (sycamore:rope-string (be::text model))))
+        (snapshot experimental-window "loaded")
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-          (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
-          (is (= 13 (length children)))
-
-          ;; TODO finish the tests and response to moving cursor
-
-          (snapshot experimental-window "loaded")
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
-
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 1 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 1 (~> model be::cursor be::col)))
 
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 2 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 2 (~> model be::cursor be::col)))
 
 
-          (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 1 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 1 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          ;; fis those failing tests
-          (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+        ;; fis those failing tests
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
 
-          (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col))))))
+        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
 
 (test three-lines-moving-right
       "three lines moving lines"
-      (let ((experimental-window (main :testing T))
-            (world (boxes::make-node-down
-                    0 0 600 400 "#cccccc88"))
-            (model *basic-editor-model*))
+      (let* ((d (load-file-and-model (file-three-lines-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model)))
+             (children (char-kids model)))
 
-        (process-event experimental-window :resize '(710 250))
-        ;; (snapshot experimental-window "what-is-the-size")
-        (is (= 710 (width experimental-window)))
-        (is (= 250 (height experimental-window)))
+        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+        (is (equal (subseq loaded-text 0 20) (format nil
+                                                     "I need to make sure~%")))
+        (is (= 61 (length children)))
 
-        (be::new-file)
-        (be::open-file (cons :selected
-                             (format nil "file://~A"
-                                     (file-three-lines-fname))))
-        (setf (be::world model) world)
-        (basic-editor::adding-children world)
-        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
-                 (char-kids model))
-               (loaded-text (sycamore:rope-string (be::text model))))
+        ;; TODO finish the tests and response to moving cursor
 
-          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-          (is (equal (subseq loaded-text 0 20) (format nil
-                                                       "I need to make sure~%")))
-          (is (= 61 (length children)))
+        (snapshot experimental-window "loaded")
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          ;; TODO finish the tests and response to moving cursor
+        ;; move 2 rows down
 
-          (snapshot experimental-window "loaded")
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+        (is (eq 1 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          ;; move 2 rows down
+        (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-          (is (eq 1 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+        ;; move to the right
+        (loop for x from 1 to 16
+              do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 16 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 17 (~> model be::cursor be::col)))
 
-          ;; move to the right
-          (loop for x from 1 to 16
-                do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 16 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 18 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 17 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 18 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 18 (~> model be::cursor be::col)))
-
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 18 (~> model be::cursor be::col)))
-
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 2 (~> model be::cursor be::row)))
-          (is (eq 18 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 2 (~> model be::cursor be::row)))
+        (is (eq 18 (~> model be::cursor be::col)))
 
 
 
-         )
         )
+
       )
 
 (test single-line-moving-right
       "single line moving right"
-      (let ((experimental-window (main :testing T))
-            (world (boxes::make-node-down
-                    0 0 600 400 "#cccccc88"))
-            (model *basic-editor-model*))
+      (let* ((d (load-file-and-model (file-single-line-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model)))
+             (children ;;(~> world boxes::children (nth 1 _) boxes::children)
+              (char-kids model)))
 
-        (process-event experimental-window :resize '(710 250))
-        ;; (snapshot experimental-window "what-is-the-size")
-        (is (= 710 (width experimental-window)))
-        (is (= 250 (height experimental-window)))
+        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+        (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+        (is (= 13 (length children)))
 
-        (be::new-file)
-        (be::open-file (cons :selected
-                             (format nil "file://~A"
-                                     (file-single-line-fname))))
+        ;; TODO finish the tests and response to moving cursor
 
-        (setf (be::world model) world)
-        (be::adding-children world)
-        (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
-                 (char-kids model))
-               (loaded-text (sycamore:rope-string (be::text model))))
+        (snapshot experimental-window "loaded")
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-          (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-          (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
-          (is (= 13 (length children)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 1 (~> model be::cursor be::col)))
 
-          ;; TODO finish the tests and response to moving cursor
-
-          (snapshot experimental-window "loaded")
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
-
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 1 (~> model be::cursor be::col)))
-
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 2 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 2 (~> model be::cursor be::col)))
 
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 3 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 3 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 4 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 4 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 5 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 5 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 6 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 6 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 7 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 7 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 8 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 8 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 9 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 9 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 10 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 10 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 11 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 11 (~> model be::cursor be::col)))
 
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 12 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 12 (~> model be::cursor be::col)))
 
-          ;; ;; on last row, do not go to the next row
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 12 (~> model be::cursor be::col)))
+        ;; ;; on last row, do not go to the next row
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 12 (~> model be::cursor be::col)))
 
-          ;; ;; but stay on last position
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 12 (~> model be::cursor be::col)))
+        ;; ;; but stay on last position
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 12 (~> model be::cursor be::col)))
 
-          ;; ;; and stay on last position
-          (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-          (is (eq 0 (~> model be::cursor be::row)))
-          (is (eq 12 (~> model be::cursor be::col)))
+        ;; ;; and stay on last position
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 12 (~> model be::cursor be::col)))
 
-          (is (equal (be::text model) (format nil "Ala ma kota.~%")))
-          ;; and try pressing the dreaded Enter
-          ;; TODO failing test
-          (process-event experimental-window :key-pressed '("" "Return" 36 NIL) )
-          (is (eq 1 (~> model be::cursor be::row)))
-          (is (eq 0 (~> model be::cursor be::col)))
-          (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
+        (is (equal (be::text model) (format nil "Ala ma kota.~%")))
+        ;; and try pressing the dreaded Enter
+        ;; TODO failing test
+        (process-event experimental-window :key-pressed '("" "Return" 36 NIL) )
+        (is (eq 1 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
+        (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
 
-          )))
+        ))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
 
@@ -544,10 +482,13 @@ works as expected.
 
 (test single-line-one-character-no-newline
       "one character file without NEWLINE"
-      (let* ((d (load-file-and-model (file-single-line-one-character-no-newline-fname)))
+      (let* (
+             (d (load-file-and-model (file-single-line-one-character-no-newline-fname)))
              (model (getf d :model))
              (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model))))
+             (loaded-text (sycamore:rope-string (be::text model)))
+             (children (char-kids model))
+             )
         (is (equal loaded-text (format nil "a")))))
 
 (test single-line-one-character-with-newline
