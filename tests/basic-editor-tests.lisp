@@ -15,6 +15,25 @@
 (defun snapshot (experimental-window &optional log)
   (gui-drawing:simulate-draw-func experimental-window log))
 
+(defun load-file-and-model (fname)
+  (let ((experimental-window (main :testing T))
+        (world (boxes::make-node-down
+                0 0 600 400 "#cccccc88"))
+        (model *basic-editor-model*))
+
+    (process-event experimental-window :resize '(710 250))
+    ;; (snapshot experimental-window "what-is-the-size")
+    (is (= 710 (width experimental-window)))
+    (is (= 250 (height experimental-window)))
+
+    (be::new-file)
+    (be::open-file (cons :selected
+                         (format nil "file://~A" fname)))
+    (setf (be::world model) world)
+    (be::adding-children world)
+
+    (list :model model :experimental-window experimental-window)))
+
 (defun char-kids (model)
   (serapeum:~>  model
                 basic-editor::world
@@ -37,6 +56,30 @@
 
 (defun file-three-lines-content ()
   (alexandria:read-file-into-string (file-three-lines-fname)))
+
+(defun file-single-line-empty-fname ()
+  (merge-pathnames
+   "tests/example_texts/single_line_empty.txt"
+   (asdf:system-source-directory :basic-editor/tests)))
+
+(defun file-single-line-empty-content ()
+  (alexandria:read-file-into-string (file-single-line-empty-fname)))
+
+(defun file-single-line-one-character-no-newline-fname ()
+  (merge-pathnames
+   "tests/example_texts/single_line_one_character_no_newline.txt"
+   (asdf:system-source-directory :basic-editor/tests)))
+
+(defun file-single-line-empty-one-character-no-newline-content ()
+  (alexandria:read-file-into-string (file-single-line-empty-fname)))
+
+(defun file-single-line-one-character-with-newline-fname ()
+  (merge-pathnames
+   "tests/example_texts/single_line_one_character_with_newline.txt"
+   (asdf:system-source-directory :basic-editor/tests)))
+
+(defun file-single-line-empty-one-character-with-newline-content ()
+  (alexandria:read-file-into-string (file-single-line-one-character-with-newline-fname)))
 
 ;;; ============= suites ================================================
 (progn                                  ; suites
@@ -377,7 +420,7 @@ works as expected.
                                      (file-single-line-fname))))
 
         (setf (be::world model) world)
-        (basic-editor::adding-children world)
+        (be::adding-children world)
         (let* ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
                  (char-kids model))
                (loaded-text (sycamore:rope-string (be::text model))))
@@ -510,3 +553,17 @@ works as expected.
           (is (eq 0 (~> model be::cursor be::col)))
 
           )))
+
+(in-suite basic-editor-text)           ; ==================================
+
+(test single-line-one-character-no-newline
+      "one character file without NEWLINE"
+      (let* ((d (load-file-and-model (file-single-line-one-character-no-newline-fname)))
+             (model (getf d :model))
+             (experimental-window (getf d :experimental-window))
+             (loaded-text (sycamore:rope-string (be::text model))))
+        (is (equal loaded-text (format nil "a")))))
+
+(test single-line-one-character-with-newline
+      "one character file with NEWLINE"
+      )
