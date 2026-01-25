@@ -9,11 +9,15 @@
 (in-package #:basic-editor-test)
 (test-all)
 
+;; (warn "standard output package ~s"
+;;       (package-name (symbol-package
+;;                      (slot-value *standard-output* 'symbol))))
+
 (defun in-replp ()
-  (equalp
-   (package-name (symbol-package
-                  (slot-value *standard-output* 'symbol)))
-   "SWANK"))
+  (equalp (package-name
+           (symbol-package
+            (slot-value *standard-output* 'symbol)))
+          "SWANK")) ; terminal package name is SB-SYS
 
 (if (in-replp)
     (progn
