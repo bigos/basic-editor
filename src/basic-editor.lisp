@@ -173,12 +173,37 @@
 ;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
-  (loop for c in (seen-chars model)
-        for found = (equal
-                     (~> c row)
-                     (~> model cursor row))
-        when found
-          maximize (col c)))
+  (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (bchar c)))
+
+  (let* ((row-chars (loop
+                      for c in (seen-chars model)
+                      for found = (and (equal
+                                        (~> c row)
+                                        (~> model cursor row)))
+                      when found
+                        collect c))
+         (row-chars-length (length row-chars)))
+    (warn "model cursor ~S and row chars ~S and row length ~S"
+          (~> model cursor)
+          (mapcar (lambda (c) (bchar c)) row-chars)
+          row-chars-length)
+
+    (cond ((equal row-chars-length 0)
+           (warn "doing length 0")
+           0)
+          ((equal row-chars-length 1)
+           (warn "doing length 0")
+           0)
+          (T
+           (break "doing length ~S and last ~S" row-chars-length (last row-chars))
+           (let* ((last-row-chars (car (last row-chars)))
+                  (dv
+                    (if (equal (bchar last-row-chars) #\Newline)
+                        (- 2 row-chars-length)
+                        (- 1 row-chars-length))))
+             (warn "calculated ~S" dv)
+             dv)))))
+
 (defmethod find-cursor-position ((model basic-editor-model))
   (loop for c in (seen-chars model)
         for found = (and
