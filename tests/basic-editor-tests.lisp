@@ -489,7 +489,17 @@ works as expected.
              (loaded-text (sycamore:rope-string (be::text model)))
              (children (char-kids model))
              )
-        (is (equal loaded-text (format nil "a")))))
+        (is (equal loaded-text (format nil "a")))
+
+        (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
+
+        (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
+
+        ))
 
 (test single-line-one-character-with-newline
       "one character file with NEWLINE"
@@ -497,4 +507,13 @@ works as expected.
              (model (getf d :model))
              (experimental-window (getf d :experimental-window))
              (loaded-text (sycamore:rope-string (be::text model))))
-        (is (equal loaded-text (format nil "b~%")))))
+        (is (equal loaded-text (format nil "b~%")))
+
+        (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
+
+        (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
+))
