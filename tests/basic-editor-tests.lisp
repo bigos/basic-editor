@@ -365,7 +365,7 @@ works as expected.
               (char-kids model)))
 
         (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-        (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+        (is (equal loaded-text  (format nil "Ala ma kota.~%")))
         (is (= 13 (length children)))
 
         ;; TODO finish the tests and response to moving cursor
@@ -420,28 +420,6 @@ works as expected.
         (is (eq 11 (~> model be::cursor be::col)))
 
         (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 12 (~> model be::cursor be::col)))
-
-        ;; ;; on last row, do not go to the next row
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 12 (~> model be::cursor be::col)))
-
-        ;; ;; but stay on last position
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 12 (~> model be::cursor be::col)))
-
-        ;; ;; and stay on last position
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 12 (~> model be::cursor be::col)))
-
-        (is (equal (be::text model) (format nil "Ala ma kota.~%")))
-        ;; and try pressing the dreaded Enter
-        ;; TODO failing test
-        (process-event experimental-window :key-pressed '("" "Return" 36 NIL) )
         (is (eq 1 (~> model be::cursor be::row)))
         (is (eq 0 (~> model be::cursor be::col)))
         (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))

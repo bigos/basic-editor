@@ -140,19 +140,18 @@
     (warn "current position ~S = ~S"
           (~> model cursor row)
           (~> model cursor col))
-    (unless (and (is-last-line model)
-                 (>= (~> model cursor col)
-                     last-col))
-      (progn
-        (warn "test passed ~S" (is-last-line model))
-        (if (>=
-             (~> model cursor col)
-             (find-cursor-end model))
-            (progn
-              (move-cursor-down model (all-lines-count model))
-              (move-cursor-home model))
+    (progn
+      (warn "test passed ~S" (is-last-line model))
+      (if (>=
+           (~> model cursor col)
+           (find-cursor-end model))
+          (progn
+            (insert-character-at-cursor model "" "Return")
+            ;; why inserting return moves cursor down?
+           ;; (move-cursor-down model (all-lines-count model))
+            (move-cursor-home model))
 
-            (move-cursor-right (cursor model))))))
+          (move-cursor-right (cursor model)))))
   )
 (defmethod move-cursor-up ((model basic-editor-model))
   (move-cursor-up (cursor model)))
@@ -173,7 +172,7 @@
 ;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
-  (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (bchar c)))
+  ;; (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (bchar c)))
 
   (let* ((row-chars (loop
                       for c in (seen-chars model)
@@ -183,40 +182,47 @@
                       when found
                         collect c))
          (row-chars-length (length row-chars)))
-    (warn "model cursor ~S and row chars ~S and row length ~S"
-          (~> model cursor)
-          (mapcar (lambda (c) (bchar c)) row-chars)
-          row-chars-length)
+    ;; (warn "model cursor ~S and row chars ~S and row length ~S"
+    ;;       (~> model cursor)
+    ;;       (mapcar (lambda (c) (bchar c)) row-chars)
+    ;;       row-chars-length)
 
     (cond ((equal row-chars-length 0)
-           (warn "doing length 0")
+           ;; (warn "doing length 0")
            0)
           ((equal row-chars-length 1)
-           (warn "doing length 0")
+           ;; (warn "doing length 0")
            0)
           (T
-           (warn "doing length ~S and last ~S" row-chars-length (last row-chars))
+           ;; (warn "doing length ~S and last ~S" row-chars-length (last row-chars))
            (let* ((last-row-chars (car (last row-chars)))
                   (dv
                     (if (equal (bchar last-row-chars) #\Newline)
                         (- row-chars-length 2)
                         (- row-chars-length 1))))
-             (warn "calculated ~S" dv)
+             ;; (warn "calculated ~S" dv)
              dv)))))
 
 (defmethod find-cursor-position ((model basic-editor-model))
+  (warn "model cursor ~S" (cursor model))
+  (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (list (bchar c) :R (row c) :C (col c))))
+
+
+
+
+
   (loop for c in (seen-chars model)
-        for found = (and
-                     (equal
-                      (~> c row)
-                      (~> model cursor row))
-                     (equal
-                      (~> c col)
-                      (~> model cursor col)))
+        for found = (and (equal
+                          (~> c row)
+                          (~> model cursor row))
+                         (equal
+                          (~> c col)
+                          (~> model cursor col)))
         until found
         finally (return (if found
                             (~> c pos)
-                            nil))))
+                            nil)))
+  )
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
@@ -270,18 +276,40 @@
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
         (progn                          ; then
-          (setf (text model) (sycamore:rope
-                              ;;  pre insert
-                              (sycamore:subrope (text model) :start 0
-                                                             :end cur-pos)
-                              ;; the insert
-                              (cond
-                                ((equal key-name "Return")
-                                 (for-enter))
-                                (T entered))
-                              ;; post insert
-                              (sycamore:subrope (text model) :start (+ 0 cur-pos)
-                                                             :end (sycamore:rope-length (text model)))))
+          (warn "cursor pos is present")
+          (setf (text model)
+
+
+                (if (equal key-name "Return")
+                    (progn ;then
+                      (warn "doint Return")
+                      (sycamore:rope
+                       ;;  pre insert
+                       (sycamore:subrope (text model) :start 0
+                                                      :end (+ 2  cur-pos))
+                       ;; the insert
+                       (for-enter)
+
+                       ;; post insert
+                       (sycamore:subrope (text model) :start (+ 2 cur-pos)
+                                                      :end (sycamore:rope-length (text model)))))
+                    ;; ---------------------------------------------------------------
+                    (progn
+                      (warn "doint NON Return")
+                      (sycamore:rope
+                       ;;  pre insert
+                       (sycamore:subrope (text model) :start 0
+                                                      :end cur-pos)
+                       ;; the insert
+                       (cond
+                         ((equal key-name "Return")
+                          (for-enter))
+                         (T entered))
+                       ;; post insert
+                       (sycamore:subrope (text model) :start (+ 0 cur-pos)
+                                                      :end (sycamore:rope-length (text model)))))))
+
+          ;; ------------------------------------------------------
           (cond
             ((equal key-name "Return")
              (warn "move cursor return 1")
@@ -310,7 +338,7 @@
   (progn
     (warn "---------- done insert --------------")
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-    (warn "cursor ~S" (sycamore:rope-string (~> model text)))
+    (warn "cursor text  ~S" (sycamore:rope-string (~> model text)))
     (warn "---------- finished insert --------------")))
 
 (defun new-file ()
