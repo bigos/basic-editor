@@ -338,18 +338,12 @@ works as expected.
         (is (eq 17 (~> model be::cursor be::col)))
 
         (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 18 (~> model be::cursor be::col)))
+        (is (eq 3 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
         (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 18 (~> model be::cursor be::col)))
-
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 18 (~> model be::cursor be::col)))
-
-
+        (is (eq 4 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
         )
 
