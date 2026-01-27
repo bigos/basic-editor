@@ -203,12 +203,15 @@
              ;; (warn "calculated ~S" dv)
              dv)))))
 
+(defmethod looping-seen-chars ((model basic-editor-model) msg)
+  (warn "looping seen-chars ~S ~S"
+        msg
+        (loop for c in (seen-chars model)
+              collecting (list (bchar c) :R (row c) :C (col c)))))
+
 (defmethod find-cursor-position ((model basic-editor-model))
   (warn "model cursor ~S" (cursor model))
-  (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (list (bchar c) :R (row c) :C (col c))))
-
-
-
+  (looping-seen-chars model "")
 
 
   (loop for c in (seen-chars model)
@@ -339,7 +342,9 @@
     (warn "---------- done insert --------------")
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
     (warn "cursor text  ~S" (sycamore:rope-string (~> model text)))
-    (warn "---------- finished insert --------------")))
+    (warn "---------- finished insert --------------")
+    (looping-seen-chars model "after finished insert")
+    ))
 
 (defun new-file ()
   (let ((model *basic-editor-model*))
