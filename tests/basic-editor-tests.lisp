@@ -2,6 +2,8 @@
 
 (in-package #:basic-editor-test)
 
+(setf 5am:*debug-on-error* T)
+
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
 ;; (run! 'basic-editor-suite)
@@ -341,23 +343,30 @@ works as expected.
         (is (equal loaded-text  (format nil
                                         "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        (warn "============================== before the problematic Right")
         (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (warn "============================== after the problematic Right")
         (is (eq 3 (~> model be::cursor be::row)))
         (is (eq 0 (~> model be::cursor be::col)))
         (is (equal loaded-text  (format nil
-                                        "I need to make sure~%three lines movements~%works as expected.~%~%")))
+                                        "I need to make sure~%three lines movements~%works as expected.~%")))
+
+        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        ;; (is (eq 4 (~> model be::cursor be::row)))
+        ;; (is (eq 0 (~> model be::cursor be::col)))
+        ;; (is (equal loaded-text  (format nil
+        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
         ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
         ;; (is (eq 4 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+        ;; (is (eq 0 (~> model be::cursor be::col)))
         ;; (is (equal loaded-text  (format nil
-        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%~%~%")))
+        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        )
-
-      )
+        ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+        ;; (is (eq 4 (~> model be::cursor be::row)))
+        ;; (is (eq 0 (~> model be::cursor be::col)))
+        ;; (is (equal loaded-text  (format nil
+        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+        ))
 
 (test single-line-moving-right
       "single line moving right"
