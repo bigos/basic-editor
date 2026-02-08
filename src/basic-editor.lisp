@@ -288,14 +288,20 @@
                       (warn "doint Return")
                       (sycamore:rope
                        ;;  pre insert
+                       ;; TODO it fails here, we need to test extensively this part in different cases
+                       (warn "pre insert")
                        (sycamore:subrope (text model) :start 0
                                                       :end (+ 2  cur-pos))
                        ;; the insert
+                       (warn "the insert")
                        (for-enter)
 
                        ;; post insert
+                       (warn "post insert")
                        (sycamore:subrope (text model) :start (+ 2 cur-pos)
-                                                      :end (sycamore:rope-length (text model)))))
+                                                      :end (sycamore:rope-length (text model)))
+                       (warn "after post insert")
+                       ))
                     ;; ---------------------------------------------------------------
                     (progn
                       (warn "doint NON Return")
