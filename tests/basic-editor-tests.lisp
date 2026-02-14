@@ -263,6 +263,7 @@ works as expected.
 
 (in-suite basic-editor-text-first-line-left)           ; ==================================
 
+;;; add fixture
 (test single-line-moving-left
       "single line moving left"
       (let* ((d (load-file-and-model (file-single-line-fname)))
