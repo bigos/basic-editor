@@ -380,7 +380,7 @@ works as expected.
 
 (test single-line-moving-right
   "single line moving right"
-  (with-fixture prepare-text ((file-single-line-empty-fname))
+  (with-fixture prepare-text ((file-single-line-fname))
     (let ((children ;;(~> world boxes::children (nth 1 _) boxes::children)
             (char-kids model)))
       (is (= 13 (length children))))
