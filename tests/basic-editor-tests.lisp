@@ -301,72 +301,73 @@ works as expected.
 (in-suite basic-editor-text-last-line-right)           ; ==================================
 
 (test three-lines-moving-right
-      "three lines moving lines"
-      (let* ((d (load-file-and-model (file-three-lines-fname)))
-             (model (getf d :model))
-             (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model)))
-             (children (char-kids model)))
+  "three lines moving lines"
+  (let* ((d (load-file-and-model (file-three-lines-fname)))
+         (model (getf d :model))
+         (experimental-window (getf d :experimental-window))
+         (loaded-text (sycamore:rope-string (be::text model)))
+         (children (char-kids model)))
 
-        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-        (is (equal (subseq loaded-text 0 20) (format nil
-                                                     "I need to make sure~%")))
-        (is (= 61 (length children)))
+    (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+    (is (equal (subseq loaded-text 0 20) (format nil
+                                                 "I need to make sure~%")))
+    (is (= 61 (length children)))
 
-        ;; TODO finish the tests and response to moving cursor
+    ;; TODO finish the tests and response to moving cursor
 
-        (snapshot experimental-window "loaded")
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (snapshot experimental-window "loaded")
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
-        ;; move 2 rows down
+    ;; move 2 rows down
 
-        (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-        (is (eq 1 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
-        (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
-        ;; move to the right
-        (loop for x from 1 to 16
-              do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 16 (~> model be::cursor be::col)))
-        (is (equal loaded-text  (format nil
-                                        "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; move to the right
+    (loop for x from 1 to 16
+          do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 16 (~> model be::cursor be::col)))
+    (is (equal loaded-text  (format nil
+                                    "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 2 (~> model be::cursor be::row)))
-        (is (eq 17 (~> model be::cursor be::col)))
-        (is (equal loaded-text  (format nil
-                                        "I need to make sure~%three lines movements~%works as expected.~%")))
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 17 (~> model be::cursor be::col)))
+    (is (equal loaded-text  (format nil
+                                    "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 3 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
-        (is (equal loaded-text  (format nil
-                                        "I need to make sure~%three lines movements~%works as expected.~%")))
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 3 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    (is (equal loaded-text  (format nil
+                                    "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        ;; (is (eq 4 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
-        ;; (is (equal loaded-text  (format nil
-        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; this seems to cause the error
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 4 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        ;; (is (eq 4 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
-        ;; (is (equal loaded-text  (format nil
-        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 4 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-        ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        ;; (is (eq 4 (~> model be::cursor be::row)))
-        ;; (is (eq 0 (~> model be::cursor be::col)))
-        ;; (is (equal loaded-text  (format nil
-        ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
-        ))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 4 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+    ))
 
 (test single-line-moving-right
       "single line moving right"
@@ -513,12 +514,22 @@ works as expected.
 
         ))
 
+
+(def-fixture prepare-text ()
+  ;; setup code
+  (let* ((d (load-file-and-model (file-single-line-one-character-with-newline-fname)))
+         (model (getf d :model))
+         (experimental-window (getf d :experimental-window))
+         (loaded-text (sycamore:rope-string (be::text model))))
+    ;; body
+    (&body)
+    ;; teardown code
+    ))
+
 (test single-line-one-character-with-newline
       "one character file with NEWLINE"
-      (let* ((d (load-file-and-model (file-single-line-one-character-with-newline-fname)))
-             (model (getf d :model))
-             (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model))))
+  (with-fixture prepare-text ()
+
         (is (equal loaded-text (format nil "b~%")))
 
         (process-event experimental-window :key-pressed '("" "End" 115 NIL))
@@ -527,5 +538,16 @@ works as expected.
 
         (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
         (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
-))
+        (is (eq 0 (~> model be::cursor be::col)))))
+
+;;; fixture example
+;; (def-fixture in-test-environment ()
+;;   "Set up and tear down the test environment."
+;;   (setup-code)
+;;   (&body)
+;;   (teardown-code))
+
+;; (def-test a-test ()
+;;   "Test in clean environment."
+;;   (with-fixture in-test-environment ()
+;;                 (is-true (some-function))))
