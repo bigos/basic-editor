@@ -495,41 +495,23 @@ works as expected.
 
 (test single-line-one-character-no-newline
       "one character file without NEWLINE"
-      (let* (
-             (d (load-file-and-model (file-single-line-one-character-no-newline-fname)))
-             (model (getf d :model))
-             (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model)))
-             (children (char-kids model))
-             )
-        (is (equal loaded-text (format nil "a")))
+  (with-fixture prepare-text ((file-single-line-one-character-no-newline-fname))
+    (is (equal loaded-text (format nil "a")))
 
-        (process-event experimental-window :key-pressed '("" "End" 115 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
-        (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col))))
 
-        ))
+        )
 
-
-(def-fixture prepare-text ()
-  ;; setup code
-  (let* ((d (load-file-and-model (file-single-line-one-character-with-newline-fname)))
-         (model (getf d :model))
-         (experimental-window (getf d :experimental-window))
-         (loaded-text (sycamore:rope-string (be::text model))))
-    ;; body
-    (&body)
-    ;; teardown code
-    ))
 
 (test single-line-one-character-with-newline
       "one character file with NEWLINE"
-  (with-fixture prepare-text ()
-
+  (with-fixture prepare-text ((file-single-line-one-character-with-newline-fname))
         (is (equal loaded-text (format nil "b~%")))
 
         (process-event experimental-window :key-pressed '("" "End" 115 NIL))
@@ -540,14 +522,15 @@ works as expected.
         (is (eq 0 (~> model be::cursor be::row)))
         (is (eq 0 (~> model be::cursor be::col)))))
 
-;;; fixture example
-;; (def-fixture in-test-environment ()
-;;   "Set up and tear down the test environment."
-;;   (setup-code)
-;;   (&body)
-;;   (teardown-code))
 
-;; (def-test a-test ()
-;;   "Test in clean environment."
-;;   (with-fixture in-test-environment ()
-;;                 (is-true (some-function))))
+(def-fixture prepare-text (fpath)
+  ;; setup code
+  (let* ((d (load-file-and-model fpath ;(file-single-line-one-character-with-newline-fname)
+                                 ))
+         (model (getf d :model))
+         (experimental-window (getf d :experimental-window))
+         (loaded-text (sycamore:rope-string (be::text model))))
+    ;; body
+    (&body)
+    ;; teardown code
+    ))
