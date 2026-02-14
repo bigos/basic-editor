@@ -16,6 +16,10 @@ can develop.
 
 ** Testing
 
+*** 5am
+how to write fixtures
+https://www.darkchestnut.com/2018/how-to-write-5am-test-fixtures/
+
 *** basic editor
 defsystem
 [[file:basic-editor.asd::(defsystem "basic-editor/tests"]]
