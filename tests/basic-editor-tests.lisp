@@ -469,6 +469,43 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))))
 
+(test single-line-moving-left2
+  "single line moving left"
+  (with-fixture prepare-text ((file-single-line-fname))
+    (let ((children (char-kids model)))
+      (is (= 13 (length children))))
+
+    (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+    (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+
+    ;; TODO finish the tests and response to moving cursor
+
+    (snapshot experimental-window "loaded")
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 11 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 10 (~> model be::cursor be::col)))
+
+    (loop for x from 1 to 4 do
+      (process-event experimental-window :key-pressed '("" "Left" 113 NIL)))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 6 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))))
+
+
 (in-suite basic-editor-text)           ; ==================================
 
 (test single-line-empty
