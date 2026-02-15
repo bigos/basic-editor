@@ -2,12 +2,15 @@
 
 (in-package #:basic-editor-test)
 
-(setf 5am:*debug-on-error* T)
+;;(setf 5am:*on-error* T)
 
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
+;; run suites
 ;; (run! 'basic-editor-suite)
 ;; (run! 'basic-editor-resizing)
+;; run single test
+;; (run! 'single-line-moving-right )
 
 (defun test-all ()
   "Compile and run all test in one command."
@@ -440,9 +443,7 @@ works as expected.
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
-
-     ))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
 

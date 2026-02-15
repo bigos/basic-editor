@@ -284,14 +284,19 @@
 
 
                 (if (equal key-name "Return")
-                    (progn ;then
+                    (progn              ;then
                       (warn "doint Return")
                       (sycamore:rope
                        ;;  pre insert
                        ;; TODO it fails here, we need to test extensively this part in different cases
                        (warn "pre insert")
-                       (sycamore:subrope (text model) :start 0
-                                                      :end (+ 2  cur-pos))
+                       ;; (break "before subrope ~S ~S" (length (text model)) (text model))
+                       (if (> (1+ cur-pos)
+                               (length (text model)))
+                           (sycamore:subrope (text model) :start 0
+                                                          :end (+ 2  cur-pos))
+                           (sycamore:subrope (text model) :start 0
+                                                          :end (+ 0  cur-pos)))
                        ;; the insert
                        (warn "the insert")
                        (for-enter)
