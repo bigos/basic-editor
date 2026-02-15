@@ -356,7 +356,7 @@ works as expected.
                                     "I need to make sure~%three lines movements~%works as expected.~%")))
 
     ;; this seems to cause the error
-    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     ;; (is (eq 4 (~> model be::cursor be::row)))
     ;; (is (eq 0 (~> model be::cursor be::col)))
     ;; (is (equal loaded-text  (format nil
