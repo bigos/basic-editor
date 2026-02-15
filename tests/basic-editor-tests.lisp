@@ -483,10 +483,12 @@ works as expected.
     (snapshot experimental-window "loaded")
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
+    (is (eq 0 (be::find-cursor-position model)))
 
     (process-event experimental-window :key-pressed '("" "End" 115 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 11 (~> model be::cursor be::col)))
+    (is (eq 11 (be::find-cursor-position model)))
 
     (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
@@ -497,12 +499,14 @@ works as expected.
       (process-event experimental-window :key-pressed '("" "Left" 113 NIL)))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 6 (~> model be::cursor be::col)))
+    (is (eq 6 (be::find-cursor-position model)))
 
     ;; add test for character under cursor
     (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
     (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
+    (is (eq 8 (be::find-cursor-position model)))
 
     (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
