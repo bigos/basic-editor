@@ -224,8 +224,7 @@
         until found
         finally (return (if found
                             (~> c pos)
-                            nil)))
-  )
+                            nil))))
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
@@ -291,19 +290,16 @@
                        ;; TODO it fails here, we need to test extensively this part in different cases
                        (warn "pre insert")
                        ;; (break "before subrope ~S ~S" (length (text model)) (text model))
-                       (if (> (1+ cur-pos)
-                               (length (text model)))
-                           (sycamore:subrope (text model) :start 0
-                                                          :end (+ 2  cur-pos))
-                           (sycamore:subrope (text model) :start 0
-                                                          :end (+ 1  cur-pos)))
+
+                       (sycamore:subrope (text model) :start 0
+                                                      :end (+ 1  cur-pos))
                        ;; the insert
                        (warn "the insert")
                        (for-enter)
 
                        ;; post insert
                        (warn "post insert")
-                       (sycamore:subrope (text model) :start (+ 2 cur-pos)
+                       (sycamore:subrope (text model) :start (+ 1 cur-pos)
                                                       :end (sycamore:rope-length (text model)))
                        (warn "after post insert")
                        ))

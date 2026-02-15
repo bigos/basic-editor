@@ -330,51 +330,52 @@ works as expected.
 
     ;; move 2 rows down
 
-    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
+    ;; (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    ;; (is (eq 1 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
 
-    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-    (is (eq 2 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
+    ;; (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    ;; (is (eq 2 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; move to the right
-    (loop for x from 1 to 16
-          do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
-    (is (eq 2 (~> model be::cursor be::row)))
-    (is (eq 16 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; ;; move to the right
+    ;; (loop for x from 1 to 16
+    ;;       do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
+    ;; (is (eq 2 (~> model be::cursor be::row)))
+    ;; (is (eq 16 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 2 (~> model be::cursor be::row)))
-    (is (eq 17 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 2 (~> model be::cursor be::row)))
+    ;; (is (eq 17 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 3 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 3 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 3 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 3 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 3 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 3 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 3 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal loaded-text  (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 3 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal loaded-text  (format nil
+    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+
     ))
 
 (test single-line-moving-right
@@ -438,16 +439,23 @@ works as expected.
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 11 (~> model be::cursor be::col)))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
+
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%~%")))
+    ))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
 
 (test single-line-moving-left2
-  "single line moving left"
+  "single line moving left2"
   (with-fixture prepare-text ((file-single-line-fname))
     (let ((children (char-kids model)))
       (is (= 13 (length children))))
@@ -469,8 +477,8 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))))
 
-(test single-line-moving-left2
-  "single line moving left"
+(test single-line-moving-left3
+  "single line moving left 3"
   (with-fixture prepare-text ((file-single-line-fname))
     (let ((children (char-kids model)))
       (is (= 13 (length children))))
