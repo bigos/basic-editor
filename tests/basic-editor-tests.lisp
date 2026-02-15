@@ -476,7 +476,7 @@ works as expected.
       (is (= 13 (length children))))
 
     (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-    (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
+    (is (equal loaded-text (format nil "Ala ma kota.~%")))
 
     ;; TODO finish the tests and response to moving cursor
 
@@ -492,14 +492,17 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 10 (~> model be::cursor be::col)))
 
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
     (loop for x from 1 to 4 do
       (process-event experimental-window :key-pressed '("" "Left" 113 NIL)))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 6 (~> model be::cursor be::col)))
 
+    ;; add test for character under cursor
     (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
 
     (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
     (is (eq 1 (~> model be::cursor be::row)))
