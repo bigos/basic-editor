@@ -243,73 +243,69 @@ works as expected.
 ")))
 
 (test char-children
-      "children for the characters"
-      (let* ((d (load-file-and-model (file-three-lines-fname)))
-             (model (getf d :model))
-             (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model)))
-             (children (char-kids model)))
+  "children for the characters"
+  (with-fixture prepare-text ((file-three-lines-fname))
+    (let ((children (char-kids model)))
 
-        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-        (is (equal (subseq loaded-text 0 14) "I need to make"))
+      (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+      (is (equal (subseq loaded-text 0 14) "I need to make"))
 
-        (is (= 61 (length children)))
-        (is (equal #\d (be::bchar (nth 5 children))))
-        (is (equal #\Space (be::bchar (nth 6 children))))
-        (is (equal #\t (be::bchar (nth 7 children))))
-        (is (equal #\o (be::bchar (nth 8 children))))))
+      (is (= 61 (length children)))
+      (is (equal #\d (be::bchar (nth 5 children))))
+      (is (equal #\Space (be::bchar (nth 6 children))))
+      (is (equal #\t (be::bchar (nth 7 children))))
+      (is (equal #\o (be::bchar (nth 8 children)))))))
 
 (in-suite basic-editor-text)           ; ==================================
 
 (in-suite basic-editor-text-first-line-left)           ; ==================================
 
-;;; add fixture
 (test single-line-moving-left
-      "single line moving left"
-      (let* ((d (load-file-and-model (file-single-line-fname)))
-             (model (getf d :model))
-             (experimental-window (getf d :experimental-window))
-             (loaded-text (sycamore:rope-string (be::text model)))
-             (children (char-kids model)))
+  "single line moving left"
+  (with-fixture prepare-text ((file-single-line-fname))
 
-        (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
-        (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
-        (is (= 13 (length children)))
+    (let ((children (char-kids model)))
+      (is (= 13 (length children))))
 
-        ;; TODO finish the tests and response to moving cursor
+    (is (equal (type-of model) 'BE::BASIC-EDITOR-MODEL))
+    (is (equal (subseq loaded-text 0 13) (format nil "Ala ma kota.~%")))
 
-        (snapshot experimental-window "loaded")
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
-
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 1 (~> model be::cursor be::col)))
+      ;; TODO finish the tests and response to moving cursor
 
 
-        (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 2 (~> model be::cursor be::col)))
+    (snapshot experimental-window "loaded")
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 1 (~> model be::cursor be::col)))
 
 
-        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 1 (~> model be::cursor be::col)))
-
-        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
-
-        ;; fis those failing tests
-        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 2 (~> model be::cursor be::col)))
 
 
-        (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))
-        ))
+    (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 1 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+      ;; fis those failing tests
+
+    (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+
+    (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+      ))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
 
