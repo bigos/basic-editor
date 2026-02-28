@@ -80,6 +80,10 @@
 ;;; ============================================================================
 ;;; review that
 
+(defmethod cursor-position ((cursor cursor))
+  (cons (~> cursor row)
+        (~> cursor col)))
+
 (defmethod move-cursor-to ((cursor cursor) row col)
   (setf
    (row cursor) row
@@ -525,9 +529,10 @@
                                 :wrap 'truncate
                                 :text (format nil
                                               "rowcols ~S ~S, fl ~S, fc ~S"
-                                              (format nil "[~S ~S]"
-                                                      (~> *basic-editor-model* cursor row)
-                                                      (~> *basic-editor-model* cursor col))
+                                              (let ((cursor-cons (cursor-position (cursor *basic-editor-model*))))
+                                                  (format nil "[~S ~S]"
+                                                          (car cursor-cons)
+                                                          (cdr cursor-cons)))
                                               (cons
                                                (view-port-lines
                                                 *basic-editor-model*)
