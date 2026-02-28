@@ -534,22 +534,48 @@ works as expected.
 
     (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))))
+    (is (eq 0 (~> model be::cursor be::col)))
+
+    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    (is (eq 0 (~> model be::cursor be::row)) )
+    (is (eq 0 (~> model be::cursor be::col)) "2")
+
+    (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
+    (is (eq 0 (~> model be::cursor be::row)) "3")
+    (is (eq 0 (~> model be::cursor be::col)) "4")
+
+    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    (is (eq 0 (~> model be::cursor be::row)) "5")
+    (is (eq 0 (~> model be::cursor be::col)) "6")
+
+    (loop for k in '((" " "space" 65 NIL)
+                     ("m" "m" 58 NIL)
+                     ("a" "a" 38 NIL)
+                     (" " "space" 65 NIL)
+                     ("k" "k" 45 NIL)
+                     ("o" "o" 32 NIL)
+                     ("t" "t" 28 NIL)
+                     ("a" "a" 38 NIL)
+                     ("." "period" 60 NIL))
+          do (process-event experimental-window :key-pressed  k))
+    (is (eq 1  (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    ))
 
 (test single-line-one-character-no-newline
       "one character file without NEWLINE"
-  (with-fixture prepare-text ((file-single-line-one-character-no-newline-fname))
-    (is (equal loaded-text (format nil "a")))
+      (with-fixture prepare-text ((file-single-line-one-character-no-newline-fname))
+        (is (equal loaded-text (format nil "a")))
 
-    (process-event experimental-window :key-pressed '("" "End" 115 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
+        (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col)))
 
-    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col))))
+        (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+        (is (eq 0 (~> model be::cursor be::row)))
+        (is (eq 0 (~> model be::cursor be::col))))
 
-        )
+      )
 
 (test single-line-one-character-with-newline
       "one character file with NEWLINE"

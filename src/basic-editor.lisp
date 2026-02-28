@@ -528,7 +528,7 @@
                                 :color "white"
                                 :wrap 'truncate
                                 :text (format nil
-                                              "rowcols ~S ~S, fl ~S, fc ~S"
+                                              "rowcols ~S ~S, fl ~S, fc ~S ~S"
                                               (let ((cursor-cons (cursor-position (cursor *basic-editor-model*))))
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
@@ -539,7 +539,9 @@
                                                (view-port-columns
                                                 *basic-editor-model*))
                                               (view-port-first-line   *basic-editor-model*)
-                                              (view-port-first-column *basic-editor-model*))))))
+                                              (view-port-first-column *basic-editor-model*)
+                                              (sycamore:rope-string (text *basic-editor-model*))
+                                              )))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
