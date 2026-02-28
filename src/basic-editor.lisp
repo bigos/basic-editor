@@ -525,7 +525,9 @@
                                 :wrap 'truncate
                                 :text (format nil
                                               "rowcols ~S ~S, fl ~S, fc ~S"
-                                              (print-object-inner (cursor *basic-editor-model*) nil)
+                                              (format nil "[~S ~S]"
+                                                      (~> *basic-editor-model* cursor row)
+                                                      (~> *basic-editor-model* cursor col))
                                               (cons
                                                (view-port-lines
                                                 *basic-editor-model*)
