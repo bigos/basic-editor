@@ -524,7 +524,8 @@
                                 :color "white"
                                 :wrap 'truncate
                                 :text (format nil
-                                              "rowcols ~S, fl ~S, fc ~S"
+                                              "rowcols ~S ~S, fl ~S, fc ~S"
+                                              (print-object-inner (cursor *basic-editor-model*) nil)
                                               (cons
                                                (view-port-lines
                                                 *basic-editor-model*)
