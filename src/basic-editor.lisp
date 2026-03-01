@@ -597,6 +597,10 @@
 
 ;;; events =====================================================================
 (defun handle-key-pressed (entered key-name key-code mods lisp-window)
+  (alexandria:write-string-into-file
+   (format nil "~S~%" (list entered key-name key-code mods))
+   "/tmp/basic-editor-log-key-presses.txt" :if-exists :append)
+
   (let ((model *basic-editor-model*))
     (cond
 
