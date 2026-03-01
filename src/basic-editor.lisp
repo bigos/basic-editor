@@ -259,7 +259,8 @@
         finally
            (return (cons row col))))
 
-(defun for-enter ()  (format nil "~%"))
+(defun for-enter ()
+  (format nil "~%"))
 
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (find-cursor-position model)))
