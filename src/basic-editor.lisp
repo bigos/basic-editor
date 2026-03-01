@@ -595,7 +595,23 @@
          25)
         (cairo:fill-path)))))
 
-;;; events =====================================================================
+;;; key handling ===============================================================
+(defun key-handling-f1-help ()
+  (warn "------------ F1 Help --------------------")
+  (warn "F1 = help")
+  (warn "F8 = debug")
+  (warn "Alt-n = new file")
+  (warn "Alt-f = open file")
+  (warn "Alt-s = save file")
+  (warn "Alt-a = about")
+  (warn "Alt-Home = move cursor to first row Home")
+  (warn "Alt-End =  move cursor to last  row End")
+  (warn "Ctrl-p = previous line")
+  (warn "Ctrl-n = next line")
+  (warn "Ctrl-b = backwards character")
+  (warn "Ctrl-f = forwards character")
+  (warn "-----------------------------------------"))
+
 (defun handle-key-pressed (entered key-name key-code mods lisp-window)
   (alexandria:write-string-into-file
    (format nil "~S~%" (list entered key-name key-code mods))
@@ -603,24 +619,10 @@
 
   (let ((model *basic-editor-model*))
     (cond
-
       ((and (equal key-name "F1")
             (null mods))
-       (warn "------------ F1 Help --------------------")
-       (warn "F1 = help")
-       (warn "F8 = debug")
-       (warn "Alt-n = new file")
-       (warn "Alt-f = open file")
-       (warn "Alt-s = save file")
-       (warn "Alt-a = about")
-       (warn "Alt-Home = move cursor to first row Home")
-       (warn "Alt-End =  move cursor to last  row End")
-       (warn "Ctrl-p = previous line")
-       (warn "Ctrl-n = next line")
-       (warn "Ctrl-b = backwards character")
-       (warn "Ctrl-f = forwards character")
-       (warn "-----------------------------------------")
-       )
+       (key-handling-f1-help))
+
       ((and (equal key-name "F8")
             (null mods))
        (break "examine the models ~S" (list lisp-window *basic-editor-model*) ))
@@ -740,6 +742,7 @@
                    (warn "going to insert character for ~S ~S" entered key-name)
                    (insert-character-at-cursor model entered key-name)))))))))
 
+;;; events =====================================================================
 (defmethod process-event ((lisp-window basic-editor-window) event &rest args)
   (unless (member event '(:timeout :motion))
     (unless (eq *environment* :testing) (warn "event ~S ~S" event args)))
