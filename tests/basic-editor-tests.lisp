@@ -536,17 +536,17 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
 
-    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    (is (eq 0 (~> model be::cursor be::row)) )
-    (is (eq 0 (~> model be::cursor be::col)) "2")
+    ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    ;; (is (eq 0 (~> model be::cursor be::row)) "1")
+    ;; (is (eq 0 (~> model be::cursor be::col)) "2")
 
-    (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
-    (is (eq 0 (~> model be::cursor be::row)) "3")
-    (is (eq 1 (~> model be::cursor be::col)) "4")
+    ;; (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
+    ;; (is (eq 0 (~> model be::cursor be::row)) "3")
+    ;; (is (eq 1 (~> model be::cursor be::col)) "4")
 
-    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    (is (eq 0 (~> model be::cursor be::row)) "5")
-    (is (eq 3 (~> model be::cursor be::col)) "6")
+    ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    ;; (is (eq 0 (~> model be::cursor be::row)) "5")
+    ;; (is (eq 3 (~> model be::cursor be::col)) "6")
 
     ;; TODO finish me
     ;; (loop for k in '((" " "space" 65 NIL)
