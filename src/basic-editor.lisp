@@ -130,13 +130,13 @@
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
+
 (defmethod move-cursor-left ((model basic-editor-model))
   (if (> (~> model cursor col) 0)
       (move-cursor-left (cursor model))
       (unless (is-first-line model)
         (move-cursor-up model)
         (move-cursor-end model :ignored))))
-
 (defmethod move-cursor-right ((model basic-editor-model))
   (let ((last-row (car (find-last-row model)))
         (last-col (cdr (find-last-row model))))
@@ -157,12 +157,14 @@
 
           (move-cursor-right (cursor model)))))
   )
+
 (defmethod move-cursor-up ((model basic-editor-model))
   (move-cursor-up (cursor model)))
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((last-row (car (find-last-row model))))
 
     (move-cursor-down (cursor model) last-row)))
+
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
@@ -256,6 +258,8 @@
         finally
            (return (cons row col))))
 
+(defun for-enter ()  (format nil "~%"))
+
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (find-cursor-position model)))
     (warn "will delete at row ~S col ~S pos ~S"
@@ -269,10 +273,6 @@
                             (sycamore:subrope (text model) :start (1+ cur-pos)
                                                            :end (sycamore:rope-length (text model)))))
         (warn "No cursor position found, possibly no text"))))
-
-(defun for-enter ()
-  (format nil "~%"))
-
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
   (warn "before insert")
@@ -356,7 +356,7 @@
     (warn "---------- finished insert --------------")
     (looping-seen-chars model "after finished insert")
     ))
-
+;;; ----------------------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
     (setf
