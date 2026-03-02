@@ -17,12 +17,8 @@
 (defparameter *basic-editor-model* nil)
 
 (defclass/std basic-editor-model (boxes:model)
-  ;; using sycamore rope for text was a big mistake, the library seems to be
-  ;; somebody's homework, and is not ready for use
-  ;; mostly because there is no concept of empty or one character rope
-  ;; correct datastructure for larger text will be decided later
   ((text :std ""
-         :type simple-array-character
+         :type (or string sycamore:rope)
          )
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))

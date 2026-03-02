@@ -8,6 +8,7 @@
   (:import-from #:basic-editor
                 #:~>
                 #:main
+                #:basic-editor-model
                 #:*basic-editor-model*
                 #:width
                 #:height

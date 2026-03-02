@@ -2,7 +2,7 @@
 
 (in-package #:basic-editor-test)
 
-;;(setf 5am:*on-error* T)
+;;(setf 5am:*on-error* :debug)
 
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
@@ -85,10 +85,12 @@
 ;;; ================= fixtures =================================================
 (def-fixture prepare-text (fpath)
   ;; setup code
-  (let* ((d (load-file-and-model fpath))
+  (let* (
+         (d (load-file-and-model fpath))
          (model (getf d :model))
          (experimental-window (getf d :experimental-window))
-         (loaded-text (sycamore:rope-string (be::text model))))
+         (loaded-text (sycamore:rope-string (be::text model)))
+         )
     ;; body
     (&body)
     ;; teardown code
@@ -140,8 +142,7 @@
 
 (test first-resizing
   "test resizing"
-  (let ((experimental-window (main :testing T))
-        (model *basic-editor-model*))
+  (let ((experimental-window (main :testing T)))
     (is (equal nil (width experimental-window)))
     (is (equal nil (height experimental-window)))
     (process-event experimental-window :resize '(110 120))
@@ -257,7 +258,8 @@ works as expected.
       (is (equal #\d (be::bchar (nth 5 children))))
       (is (equal #\Space (be::bchar (nth 6 children))))
       (is (equal #\t (be::bchar (nth 7 children))))
-      (is (equal #\o (be::bchar (nth 8 children)))))))
+      (is (equal #\o (be::bchar (nth 8 children))))
+      )))
 
 (in-suite basic-editor-text)           ; ==================================
 
