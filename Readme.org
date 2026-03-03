@@ -85,6 +85,11 @@ https://github.com/jinyangustc/acme-editor
 
 ** notes
 
+*** REPL discovery
+I can press F8 to go to debugger. At this point the Gtk loop is suspended and I
+can use the REPL to modify the state of the app. I was able to modify the cursor
+position using REPL and the slime scratch buffer.
+
 *** clops gui
 [[file:~/Programming/Lisp/clops-gui/README.org::*Clops-Gui][Clops-Gui]]
 file:~/Programming/Lisp/clops-gui/src/packages.lisp::1
