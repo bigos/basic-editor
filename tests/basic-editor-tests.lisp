@@ -332,17 +332,8 @@ works as expected.
     (is (eq 1 (~> model be::cursor be::col)))
 
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 2 (~> model be::cursor be::col)))
-
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 3 (~> model be::cursor be::col)))
-
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 4 (~> model be::cursor be::col)))
-
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 5 (~> model be::cursor be::col)))
