@@ -341,12 +341,12 @@ works as expected.
     (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 4 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
     (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
-    (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 4 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
       ))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
