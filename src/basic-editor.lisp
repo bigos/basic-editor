@@ -599,7 +599,9 @@
 (defun key-handling-f1-help ()
   (warn "------------ F1 Help --------------------")
   (warn "F1 = help")
+  (warn "F7 = stats")
   (warn "F8 = debug")
+  (warn "F9 = examine model")
   (warn "Alt-n = new file")
   (warn "Alt-f = open file")
   (warn "Alt-s = save file")
@@ -624,6 +626,11 @@
             (null mods))
        (key-handling-f1-help))
 
+      ((and (equal key-name "F7")
+            (null mods))
+       (warn "model stats ------------------------------------------")
+       (warn "TODO - something will go here"))
+
       ((and (equal key-name "F8")
             (null mods))
        (break "examine the models ~S" (list lisp-window *basic-editor-model*) ))
@@ -633,6 +640,7 @@
        (progn
          (warn "examine model ------------------------------")
          (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+         (warn "type of text ~S" (type-of (text model)))
          (warn "text ~S" (sycamore:rope-string (text model)))))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
