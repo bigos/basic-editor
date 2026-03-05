@@ -17,9 +17,7 @@
 (defparameter *basic-editor-model* nil)
 
 (defclass/std basic-editor-model (boxes:model)
-  ((text :std ""
-         :type (or string sycamore:rope)
-         )
+  ((text :std "" :type string)
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
@@ -267,17 +265,17 @@
           (~> model cursor col)
           cur-pos)
     (if cur-pos
-        (setf (text model) (sycamore:rope
-                            (sycamore:subrope (text model) :start 0
-                                                           :end cur-pos)
-                            (sycamore:subrope (text model) :start (1+ cur-pos)
-                                                           :end (sycamore:rope-length (text model)))))
+        (setf (text model) (format nil "~A~A"
+                                   (subseq (text model) :start 0
+                                                        :end cur-pos)
+                                   (subseq (text model) :start (+ 1 cur-pos)
+                                                        :end (length (text model)))))
         (warn "No cursor position found, possibly no text"))))
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
   (warn "before insert")
   (warn "~S"
-        (sycamore:subrope (text model)))
+        (text model))
 
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
@@ -289,39 +287,39 @@
                 (if (equal key-name "Return")
                     (progn              ;then
                       (warn "doint Return")
-                      (sycamore:rope
-                       ;;  pre insert
-                       ;; TODO it fails here, we need to test extensively this part in different cases
-                       (warn "pre insert")
-                       ;; (break "before subrope ~S ~S" (length (text model)) (text model))
+                      (format nil "~A~A"
+                              ;;  pre insert
+                              ;; TODO it fails here, we need to test extensively this part in different cases
+                              (warn "pre insert")
+                              ;; (break "before subrope ~S ~S" (length (text model)) (text model))
 
-                       (sycamore:subrope (text model) :start 0
-                                                      :end (+ 1  cur-pos))
-                       ;; the insert
-                       (warn "the insert")
-                       (for-enter)
+                              (subseq (text model) :start 0
+                                                   :end (+ 0  cur-pos))
+                              ;; the insert
+                              (warn "the insert")
+                              (for-enter)
 
-                       ;; post insert
-                       (warn "post insert")
-                       (sycamore:subrope (text model) :start (+ 1 cur-pos)
-                                                      :end (sycamore:rope-length (text model)))
-                       (warn "after post insert")
-                       ))
+                              ;; post insert
+                              (warn "post insert")
+                              (subseq (text model) :start (+ 0 cur-pos)
+                                                   :end (length (text model)))
+                              (warn "after post insert")
+                              ))
                     ;; ---------------------------------------------------------------
                     (progn
                       (warn "doint NON Return")
-                      (sycamore:rope
-                       ;;  pre insert
-                       (sycamore:subrope (text model) :start 0
-                                                      :end cur-pos)
-                       ;; the insert
-                       (cond
-                         ((equal key-name "Return")
-                          (for-enter))
-                         (T entered))
-                       ;; post insert
-                       (sycamore:subrope (text model) :start (+ 0 cur-pos)
-                                                      :end (sycamore:rope-length (text model)))))))
+                      (format nil "~A~A"
+                              ;;  pre insert
+                              (subseq (text model) :start 0
+                                                   :end cur-pos)
+                              ;; the insert
+                              (cond
+                                ((equal key-name "Return")
+                                 (for-enter))
+                                (T entered))
+                              ;; post insert
+                              (subseq (text model) :start (+ 0 cur-pos)
+                                                   :end (sycamore:rope-length (text model)))))))
 
           ;; ------------------------------------------------------
           (cond
@@ -336,11 +334,10 @@
         (progn                          ; else
           ;; TODO start adding tests
           (warn "cursor pos is NIL")
-          (setf (text model) (sycamore:rope
-                              (cond
-                                ((equal key-name "Return")
-                                 (for-enter))
-                                (T entered))))
+          (setf (text model) (cond
+                               ((equal key-name "Return")
+                                (for-enter))
+                               (T entered)))
           (cond
             ((equal key-name "Return")
              (warn "move cursor return 2")
@@ -352,7 +349,7 @@
   (progn
     (warn "---------- done insert --------------")
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-    (warn "cursor text  ~S" (sycamore:rope-string (~> model text)))
+    (warn "cursor text  ~S" (~> model text))
     (warn "---------- finished insert --------------")
     (looping-seen-chars model "after finished insert")
     ))
@@ -360,7 +357,7 @@
 (defun new-file ()
   (let ((model *basic-editor-model*))
     (setf
-     (text model) (sycamore:rope "edit something")
+     (text model) "edit something"
      (current-file model) nil)))
 
 ;; (funcall *client-fn-open-file* (cancelled-value))
@@ -373,8 +370,8 @@
             (clean-filepath (subseq (cdr  filepath) 7)))
         (warn "going to load ~S" clean-filepath)
         (setf
-         (text model) (sycamore:rope
-                       (alexandria:read-file-into-string clean-filepath))
+         (text model)
+         (alexandria:read-file-into-string clean-filepath)
          (current-file model) clean-filepath)))))
 
 ;; (funcall *client-fn-save-file* (cancelled-value))
@@ -391,7 +388,7 @@
        (setf (current-file model) clean-filepath)
        ;; TODO if we edit the file in the selector the program still does not see it
        (alexandria:write-string-into-file
-        (sycamore:rope-string (text model))
+        (text model)
         clean-filepath
         :if-exists :supersede
         :if-does-not-exist :create)))))
