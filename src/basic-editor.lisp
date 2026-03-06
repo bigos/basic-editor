@@ -118,14 +118,41 @@
   (let ((length-text (length (text model))))
     (list :finish-me
           (list
+           "text length" length-text
+           (text-stats (text model))))))
+
+(defun text-stats (text)
+  (let ((length-text (length text)))
+    (list :finish-me
+          (list
            "text length" length-text)
-          (loop for c across (format nil (text model))
-                for i = 0 then (1+ i)
-                when (eq  c #\Newline)
-                  collect (cons i c) into collected-newlines
-                finally (return (list
-                                 "collected newlines" collected-newlines
-                                 "last character"(cons i c)))))))
+          (loop
+            for oldri = 0 then ri
+            for c across (format nil text )
+            for i = 0 then (1+ i)
+            for col = 0 then (if (eq c #\Newline) 0 (1+ col))
+            for row = 0 then (if (eq c #\Newline) (1+ row) row)
+            for ri = 0  then (if (eq c #\Newline) (1+ i) ri)
+            collect
+            (list c "pos" i "row-col" row col "ri" ri "line"
+                  (if (eq c #\Newline)
+                      (subseq text oldri (+ 1 i))
+                      (subseq text ri (1+ i))))
+              into collected-characters
+            when (eq  c #\Newline)
+              collect (list c
+                            "pos" i
+                            "row-col" row col
+                            (subseq text (- i col) (1+ i)))
+                into collected-newlines
+            finally (return (list
+                             "collected newlines" collected-newlines
+                             "last character"(list c
+                                                   "pos" i
+                                                   "row-col" row col
+                                                   )
+                             "collected characters" collected-characters
+                             ))))))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
