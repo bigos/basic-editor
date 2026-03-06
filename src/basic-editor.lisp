@@ -114,6 +114,19 @@
    (row cursor) (row cursor)
    (col cursor) last-col))
 ;;; ============================================================================
+(defmethod cursor-stats ((model basic-editor-model))
+  (let ((length-text (length (text model))))
+    (list :finish-me
+          (list
+           "text length" length-text)
+          (loop for c across (format nil (text model))
+                for i = 0 then (1+ i)
+                when (eq  c #\Newline)
+                  collect (cons i c) into collected-newlines
+                finally (return (list
+                                 "collected newlines" collected-newlines
+                                 "last character"(cons i c)))))))
+
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
@@ -266,10 +279,10 @@
           cur-pos)
     (if cur-pos
         (setf (text model) (format nil "~A~A"
-                                   (subseq (text model) :start 0
-                                                        :end cur-pos)
-                                   (subseq (text model) :start (+ 1 cur-pos)
-                                                        :end (length (text model)))))
+                                   (subseq (text model) 0
+                                                        cur-pos)
+                                   (subseq (text model) (+ 1 cur-pos)
+                                                        (length (text model)))))
         (warn "No cursor position found, possibly no text"))))
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
@@ -293,16 +306,16 @@
                               (warn "pre insert")
                               ;; (break "before subrope ~S ~S" (length (text model)) (text model))
 
-                              (subseq (text model) :start 0
-                                                   :end (+ 0  cur-pos))
+                              (subseq (text model) 0
+                                                   (+ 0  cur-pos))
                               ;; the insert
                               (warn "the insert")
                               (for-enter)
 
                               ;; post insert
                               (warn "post insert")
-                              (subseq (text model) :start (+ 0 cur-pos)
-                                                   :end (length (text model)))
+                              (subseq (text model) (+ 0 cur-pos)
+                                                   (length (text model)))
                               (warn "after post insert")
                               ))
                     ;; ---------------------------------------------------------------
@@ -310,16 +323,16 @@
                       (warn "doint NON Return")
                       (format nil "~A~A"
                               ;;  pre insert
-                              (subseq (text model) :start 0
-                                                   :end cur-pos)
+                              (subseq (text model) 0
+                                                   cur-pos)
                               ;; the insert
                               (cond
                                 ((equal key-name "Return")
                                  (for-enter))
                                 (T entered))
                               ;; post insert
-                              (subseq (text model) :start (+ 0 cur-pos)
-                                                   :end (sycamore:rope-length (text model)))))))
+                              (subseq (text model) (+ 0 cur-pos)
+                                                   (sycamore:rope-length (text model)))))))
 
           ;; ------------------------------------------------------
           (cond
@@ -638,6 +651,8 @@
          (warn "examine model ------------------------------")
          (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
          (warn "type of text ~S" (type-of (text model)))
+         (warn "file position ~S" (find-cursor-position model))
+         (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)

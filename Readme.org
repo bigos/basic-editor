@@ -143,3 +143,13 @@ handling Return
 
 insert character at cursor
 [[file:src/basic-editor.lisp::defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name]]
+
+*** hmm
+[[file:src/basic-editor.lisp::(defmethod delete-character-at-cursor]]
+[[file:src/basic-editor.lisp::(defmethod insert-character-at-cursor]]
+
+[[file:src/basic-editor.lisp::format t "unhandled key ~S~%" (list entered key-name key-code mods)]]
+
+[[file:src/basic-editor.lisp::(equal key-name "Left"]]
+
+[[file:src/basic-editor.lisp::defmethod move-cursor-left ((model basic-editor-model)]]
