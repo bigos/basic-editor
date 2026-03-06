@@ -300,28 +300,28 @@
                 (if (equal key-name "Return")
                     (progn              ;then
                       (warn "doint Return")
-                      (format nil "~A~A"
+                      (format nil "~A~A~A"
                               ;;  pre insert
                               ;; TODO it fails here, we need to test extensively this part in different cases
-                              (warn "pre insert")
+                              ;; (warn "pre insert")
                               ;; (break "before subrope ~S ~S" (length (text model)) (text model))
 
                               (subseq (text model) 0
                                                    (+ 0  cur-pos))
                               ;; the insert
-                              (warn "the insert")
+                              ;; (warn "the insert")
                               (for-enter)
 
                               ;; post insert
-                              (warn "post insert")
+                              ;; (warn "post insert")
                               (subseq (text model) (+ 0 cur-pos)
                                                    (length (text model)))
-                              (warn "after post insert")
+                              ;; (warn "after post insert")
                               ))
                     ;; ---------------------------------------------------------------
                     (progn
                       (warn "doint NON Return")
-                      (format nil "~A~A"
+                      (format nil "~A~A~A"
                               ;;  pre insert
                               (subseq (text model) 0
                                                    cur-pos)
@@ -363,9 +363,7 @@
     (warn "---------- done insert --------------")
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
     (warn "cursor text  ~S" (~> model text))
-    (warn "---------- finished insert --------------")
-    (looping-seen-chars model "after finished insert")
-    ))
+    (warn "---------- finished insert --------------")))
 ;;; ----------------------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
