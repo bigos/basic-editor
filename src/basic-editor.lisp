@@ -126,9 +126,13 @@
     for row = 0 then (if (eq c #\Newline) (1+ row) row)
     for ri = 0  then (if (eq c #\Newline) (1+ i) ri)
     collect
-    (list :char c :pos i :row-col (cons row col) :ri ri :line
+    (list :char c
+          :pos i
+          :row-col (cons row col)
+          :ri (if  (eq c #\Newline) oldri ri)
+          :line
           (if (eq c #\Newline)
-              (subseq text oldri (+ 1 i))
+              (subseq text oldri (+ 0 i))
               (subseq text ri (1+ i))))
       into collected-characters
     when (eq  c #\Newline)
@@ -143,6 +147,7 @@
                      :last-character (list :char c
                                            :pos i
                                            :row-col (cons row col))
+                     :last-line (last collected-characters)
                      :collected-characters collected-characters))))
 
 (defun is-first-line (model)
