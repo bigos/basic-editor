@@ -141,6 +141,9 @@
                     :row-col (cons row col)
                     (subseq text (- i col) (1+ i)))
         into collected-newlines
+    when (eq c #\Newline)
+      collect collected-line
+        into full-lines
     finally (return (list
                      :text-length (or i 0)
                      :collected-newlines collected-newlines
@@ -150,7 +153,8 @@
                      :last-line (list
                                  :pos  (getf collected-line :ri)
                                  :line (getf collected-line :line))
-                     :collected-characters collected-characters))))
+                     :collected-characters collected-characters
+                     :full-lines full-lines))))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
