@@ -119,42 +119,29 @@
 
 (defun text-stats (text)
   (loop
-    for oldri = 0 then ri
+    for oldhome = 0 then home
     for c across (format nil text )
     for i = 0 then (1+ i)
-    for col = 0 then (if (eq c #\Newline) 0 (1+ col))
+    for home = 0  then (if (eq c #\Newline) (1+ i) home) ; home - i at the beginning of line
     for row = 0 then (if (eq c #\Newline) (1+ row) row)
-    for ri = 0  then (if (eq c #\Newline) (1+ i) ri)
-    for collected-line = (list :char c
-                               :pos i
-                               :row-col (cons row col)
-                               :ri (if  (eq c #\Newline) oldri ri)
-                               :line
-                               (if (eq c #\Newline)
-                                   (subseq text oldri (1+ i))
-                                   (subseq text ri    (1+ i))))
-    collect collected-line
-      into collected-characters
+    for col = 0 then (if (eq c #\Newline) 0 (1+ col))
+    for collected-line = (when (eq c #\Newline)
+                           (list :char c
+                                 :pos i
+                                 :row-col (cons row col)
+                                 :home oldhome
+                                 :line (subseq text oldhome (1+ i))))
     when (eq c #\Newline)
-      collect (list :char c
-                    :pos i
-                    :row-col (cons row col)
-                    (subseq text (- i col) (1+ i)))
-        into collected-newlines
-    when (eq c #\Newline)
-      collect collected-line
-        into full-lines
+      collect collected-line into all-lines
     finally (return (list
                      :text-length (or i 0)
-                     :collected-newlines collected-newlines
                      :last-character (list :char c
                                            :pos i
-                                           :row-col (cons row col))
+                                           :row row )
                      :last-line (list
-                                 :pos  (getf collected-line :ri)
+                                 :pos  (getf collected-line :home)
                                  :line (getf collected-line :line))
-                     :collected-characters collected-characters
-                     :full-lines full-lines))))
+                     :all-lines all-lines))))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
