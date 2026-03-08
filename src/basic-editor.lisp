@@ -125,14 +125,21 @@
     for home = 0  then (if (eq c #\Newline) (1+ i) home) ; home - i at the beginning of line
     for row = 0 then (if (eq c #\Newline) (1+ row) row)
     for col = 0 then (if (eq c #\Newline) 0 (1+ col))
-    for collected-line = (when (eq c #\Newline)
-                           (list :char c
-                                 :pos i
-                                 :row-col (cons row col)
-                                 :home oldhome
-                                 :line (subseq text oldhome (1+ i))))
+    for collected-line = (list :char c
+                               :pos i
+                               :row-col (cons row col)
+                               :home (if  (eq c #\Newline) oldhome home)
+                               :end (1+ i)
+                               ;; :line (if (eq c #\Newline)
+                               ;;           (subseq text oldhome (1+ i))
+                               ;;           (subseq text home    (1+ i)))
+                               )
     when (eq c #\Newline)
-      collect collected-line into all-lines
+      collect (list :row (car (getf collected-line :row-col))
+                    :line (subseq text
+                                  (getf collected-line :home)
+                                  (getf collected-line :end)))
+        into all-lines
     finally (return (list
                      :text-length (or i 0)
                      :last-character (list :char c
@@ -140,7 +147,10 @@
                                            :row row )
                      :last-line (list
                                  :pos  (getf collected-line :home)
-                                 :line (getf collected-line :line))
+                                 :row (car (getf collected-line :row-col))
+                                 :line (subseq text
+                                               (getf collected-line :home)
+                                               (getf collected-line :end)))
                      :all-lines all-lines))))
 
 (defun is-first-line (model)
