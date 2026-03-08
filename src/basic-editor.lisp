@@ -18,6 +18,7 @@
 
 (defclass/std basic-editor-model (boxes:model)
   ((text :std "" :type string)
+   (text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
@@ -165,7 +166,8 @@
 (defmethod reload-text-structure ((model basic-editor-model))
   (warn "=========== going to load string ================ ~S" (text model))
   (let ((stats (text-stats (text model))))
-    (warn "got stats ~S" stats)))
+    (warn "got stats ~S" stats)
+    (setf (text-structure model) stats)))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
