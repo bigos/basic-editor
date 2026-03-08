@@ -159,7 +159,7 @@
                                  (concatenate 'list
                                               all-lines
                                               (list
-                                               (my-last-line collected-line nil)))))))))
+                                               (my-last-line collected-line (eq c #\Newline))))))))))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
