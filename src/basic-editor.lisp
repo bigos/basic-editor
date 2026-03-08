@@ -148,7 +148,6 @@
                                     (getf collected-line :end)))
           into all-lines
       finally
-
          (return (list
                   :text-length (or i 0)
                   :last-character (list :char c
