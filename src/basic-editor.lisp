@@ -139,13 +139,14 @@
                                  :pos i
                                  :row row
                                  :home (if  (eq c #\Newline) oldhome home)
-                                 :end (1+ i))
+                                 :end i)
       when (eq c #\Newline)
         collect (list :row (1- (getf collected-line :row))
                       :home (getf collected-line :home)
+                      :end  (getf collected-line :end)
                       :line (subseq text
                                     (getf collected-line :home)
-                                    (getf collected-line :end)))
+                                    (1+ (getf collected-line :end))))
           into all-lines
       finally
          (return (list
@@ -160,6 +161,11 @@
                                               all-lines
                                               (list
                                                (my-last-line collected-line (eq c #\Newline))))))))))
+
+(defmethod reload-text-structure ((model basic-editor-model))
+  (warn "=========== going to load string ================ ~S" (text model))
+  (let ((stats (text-stats (text model))))
+    (warn "got stats ~S" stats)))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
@@ -411,13 +417,13 @@
      (:cancelled
       nil)
      (:selected
-      (let ((model *basic-editor-model*)
-            (clean-filepath (subseq (cdr  filepath) 7)))
+      (let* ((model *basic-editor-model*)
+            (clean-filepath (subseq (cdr  filepath) 7))
+            (text-content (alexandria:read-file-into-string clean-filepath)))
         (warn "going to load ~S" clean-filepath)
-        (setf
-         (text model)
-         (alexandria:read-file-into-string clean-filepath)
-         (current-file model) clean-filepath)))))
+        (setf (text model) text-content)
+        (setf (current-file model) clean-filepath)
+        (reload-text-structure model)))))
 
 ;; (funcall *client-fn-save-file* (cancelled-value))
 (defun save-file (filepath)
