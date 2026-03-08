@@ -117,41 +117,48 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
 
+;;; ghex is my hex editor
 (defun text-stats (text)
-  (loop
-    for oldhome = 0 then home
-    for c across (format nil text )
-    for i = 0 then (1+ i)
-    for home = 0  then (if (eq c #\Newline) (1+ i) home) ; home - i at the beginning of line
-    for row = 0 then (if (eq c #\Newline) (1+ row) row)
-    for col = 0 then (if (eq c #\Newline) 0 (1+ col))
-    for collected-line = (list :char c
-                               :pos i
-                               :row-col (cons row col)
-                               :home (if  (eq c #\Newline) oldhome home)
-                               :end (1+ i)
-                               ;; :line (if (eq c #\Newline)
-                               ;;           (subseq text oldhome (1+ i))
-                               ;;           (subseq text home    (1+ i)))
-                               )
-    when (eq c #\Newline)
-      collect (list :row (car (getf collected-line :row-col))
-                    :line (subseq text
-                                  (getf collected-line :home)
-                                  (getf collected-line :end)))
-        into all-lines
-    finally (return (list
-                     :text-length (or i 0)
-                     :last-character (list :char c
-                                           :pos i
-                                           :row row )
-                     :last-line (list
-                                 :pos  (getf collected-line :home)
-                                 :row (car (getf collected-line :row-col))
-                                 :line (subseq text
-                                               (getf collected-line :home)
-                                               (getf collected-line :end)))
-                     :all-lines all-lines))))
+  (labels ((my-last-line (collected-line)
+             (list
+              :row  (getf collected-line :row)
+              :home (getf collected-line :home)
+              :line (subseq text
+                            (getf collected-line :home)
+                            (getf collected-line :end)))
+             ))
+    (loop
+      for oldhome = 0 then home
+      for c across (format nil text )
+      for i = 0 then (1+ i)
+      for home = 0 then (if (eq c #\Newline) (1+ i)   home) ; home - i at the beginning of line
+      for row =  0 then (if (eq c #\Newline) (1+ row) row)
+      for collected-line = (list :char c
+                                 :pos i
+                                 :row row
+                                 :home (if  (eq c #\Newline) oldhome home)
+                                 :end (1+ i))
+      when (eq c #\Newline)
+        collect (list :row (1- (getf collected-line :row))
+                      :home (getf collected-line :home)
+                      :line (subseq text
+                                    (getf collected-line :home)
+                                    (getf collected-line :end)))
+          into all-lines
+      finally
+
+         (return (list
+                  :text-length (or i 0)
+                  :last-character (list :char c
+                                        :pos i
+                                        :row row )
+                  :last-line (my-last-line collected-line)
+                  :all-lines (if (eq c #\Newline)
+                                 all-lines
+                                 (concatenate 'list
+                                              all-lines
+                                              (list
+                                               (my-last-line collected-line)))))))))
 
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
