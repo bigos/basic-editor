@@ -127,9 +127,12 @@
                          (1- row-value)
                          row-value))
               :home (getf collected-line :home)
-              :line (subseq text
-                            (getf collected-line :home)
-                            (getf collected-line :end)))))
+              :line (if (or (null text)
+                            (equal text ""))
+                        nil
+                        (subseq text
+                                (getf collected-line :home)
+                                (getf collected-line :end))))))
     (loop
       for oldhome = 0 then home
       for c across (format nil text )
@@ -694,6 +697,7 @@
          (warn "file position ~S" (find-cursor-position model))
          (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
+         (warn "model text structure %s" (text-structure model))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
