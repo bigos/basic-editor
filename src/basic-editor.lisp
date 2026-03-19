@@ -157,7 +157,7 @@
                   :text-length (or i 0)
                   :last-character (list :char c
                                         :pos i
-                                        :row row )
+                                        :row (when row (1- row)) )
                   :last-line (my-last-line collected-line (eq c #\Newline) )
                   :all-lines (if (eq c #\Newline)
                                  all-lines
