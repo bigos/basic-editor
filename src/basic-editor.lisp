@@ -120,19 +120,19 @@
 
 ;;; ghex is my hex editor
 (defun text-stats (text)
-  (labels ((my-last-line (collected-line last-new-line)
+  (labels ((my-last-line (collected-line-stats last-new-line)
              (list
-              :row (let ((row-value (getf collected-line :row)))
+              :row (let ((row-value (getf collected-line-stats :row)))
                      (if last-new-line
                          (1- row-value)
                          row-value))
-              :home (getf collected-line :home)
+              :home (getf collected-line-stats :home)
               :line (if (or (null text)
                             (equal text ""))
                         nil
                         (subseq text
-                                (getf collected-line :home)
-                                (getf collected-line :end))))))
+                                (getf collected-line-stats :home)
+                                (1+ (getf collected-line-stats :end)))))))
     (loop
       for oldhome = 0 then home
       for c across (format nil text )
