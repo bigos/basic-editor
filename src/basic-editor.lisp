@@ -138,37 +138,37 @@
 
 ;;; ghex is my hex editor
 (defun text-stats (text)
-  (labels ((my-last-line (collected-line last-new-line)
+  (labels ((my-last-line (collected-line-stats last-new-line)
              (list
-              :row (let ((row-value (getf collected-line :row)))
+              :row (let ((row-value (getf collected-line-stats :row)))
                      (if last-new-line
                          (1- row-value)
                          row-value))
-              :home (getf collected-line :home)
+              :home (getf collected-line-stats :home)
               :line (if (or (null text)
                             (equal text ""))
                         nil
                         (subseq text
-                                (getf collected-line :home)
-                                (getf collected-line :end))))))
+                                (getf collected-line-stats :home)
+                                (1+ (getf collected-line-stats :end)))))))
     (loop
       for oldhome = 0 then home
       for c across (format nil text )
       for i = 0 then (1+ i)
       for home = 0 then (if (eq c #\Newline) (1+ i)   home) ; home - i at the beginning of line
       for row =  0 then (if (eq c #\Newline) (1+ row) row)
-      for collected-line = (list :char c
+      for collected-line-stats = (list :char c
                                  :pos i
                                  :row row
                                  :home (if  (eq c #\Newline) oldhome home)
                                  :end i)
       when (eq c #\Newline)
-        collect (list :row (1- (getf collected-line :row))
-                      :home (getf collected-line :home)
-                      :end  (getf collected-line :end)
+        collect (list :row (1- (getf collected-line-stats :row))
+                      :home (getf collected-line-stats :home)
+                      :end  (getf collected-line-stats :end)
                       :line (subseq text
-                                    (getf collected-line :home)
-                                    (1+ (getf collected-line :end))))
+                                    (getf collected-line-stats :home)
+                                    (1+ (getf collected-line-stats :end))))
           into all-lines
       finally
          (return (list
@@ -176,13 +176,13 @@
                   :last-character (list :char c
                                         :pos i
                                         :row (when row (1- row)) )
-                  :last-line (my-last-line collected-line (eq c #\Newline) )
+                  :last-line (my-last-line collected-line-stats (eq c #\Newline) )
                   :all-lines (if (eq c #\Newline)
                                  all-lines
                                  (concatenate 'list
                                               all-lines
                                               (list
-                                               (my-last-line collected-line (eq c #\Newline))))))))))
+                                               (my-last-line collected-line-stats (eq c #\Newline))))))))))
 
 (defmethod reload-text-structure ((model basic-editor-model))
   (warn "=========== going to load string ================ ~S" (text model))
