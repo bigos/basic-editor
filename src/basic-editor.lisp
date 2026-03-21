@@ -131,53 +131,56 @@
              "Ola ma psa"
              "A, ja mam Lisp."))
     (:first-nl-yes
-     (format nil "~%~A~%~A~%~A~%"
+     (format nil "~%~A~%~%~%~A"
              "Ala ma kota"
-             "Ola ma psa"
-             "A, ja mam Lisp."))
+             "A ja Lisp."))
     (T
      (format nil "one line no NL"))))
 
-(defun the-subseq (txt hl)
-  (let ((last-index (getf hl :end)))
-    (handler-case
-        (if (>=  last-index 35)
-            (subseq txt (getf hl :home))
-            (subseq txt (getf hl :home) (getf hl :end)))
-
-      (division-by-zero (c)
-        (format t "Got division by zero: ~a~%" c))
-      (SB-INT:INVALID-ARRAY-INDEX-ERROR (c)
-        (format t "got array index error ~S~%" c)))))
-
+;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
   (let ((lf (sample-text-stats txt)))
     (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for lf-val being the hash-value of lf
           do
-             (format T "~S - ~S~A  ~S ~S~%"
-                     (getf (gethash (getf lf-val :row)  lf)
-                           :row)
-                     ;; (gethash (getf lf-val :line) lf)
-                     (the-subseq txt lf-val)
-                     (let ((endchar
-                             (let ((last-index (1- (length txt)))
-                                   (last-c (getf lf-val :end)))
-                               (char txt
-                                     (if (> last-c last-index)
-                                         last-index
-                                         last-c)))))
+
+             (let
+                 ((endchar
+                    (let ((last-index (1- (length txt)))
+                          (last-c (getf lf-val :end)))
+                      (char txt
+                            (if (> last-c last-index)
+                                last-index
+
+                                last-c))))
+                  (homechar (char txt (getf lf-val :home))))
+
+               (format T "~S - ~S~A  ~S ~S~%"
+                       (getf (gethash (getf lf-val :row)  lf)
+                             :row)
+
+                       (if (eq homechar #\Newline)
+                           ""
+                           (subseq txt
+                                   (getf lf-val :home)
+                                   (if (eq endchar #\Newline)
+                                       (1- (getf lf-val :end))
+                                       (getf lf-val :end))))
+
                        (if (eq endchar #\Newline)
                            "NL"
-                           "--"))
-                     (getf lf-val :home)
-                     (getf lf-val :end)))))
+                           (if (eq homechar #\Newline)
+                               "HH"
+                               "--"))
+                       (getf lf-val :home)
+                       (getf lf-val :end))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table))
-        (old-home 0))
+        (old-home nil)
+        (home 0))
     (labels
         ((set-new-line (row old-home i)
            (setf (gethash row lines-hash-table)
@@ -191,25 +194,20 @@
         for c across text
         for i = 0 then (1+ i)
         for row =  0 then (if (eq c #\Newline) (1+ row) row)
-        for home = 0 then (if (eq c #\Newline) (1+ i)   home)
-        when (eq c #\Newline)
-          do (progn
-               (setf old-home (1+ i))
-               (format t "~&PREVC IS ~S but c is ~S at ~S~%" prevc c i)
-               (set-new-line row
-                                  (if (eq prevc #\Newline)
-                                      (progn
-                                        (format t "~&last Newline detected~%")
-                                        (1+  old-home))
-                                      old-home)
-                                  (1+ i)))
         do (progn
-             (format t "~&prevc is ~S but c is ~S at ~S -- ~S ~S~%" prevc c i home old-home)
-             )
+             (if (eq prevc #\Newline)
+                 (progn
+                   (setf home i)
+                   (format t "~&prevc is NL but c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i))))
+                 (format t "~&                c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i))))
+             (when (eq c #\Newline)
+               (format t "setting oldhome ~S to ~S~%" old-home home)
+               (setf old-home home)
+               (set-new-line row home (1+ i))))
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
-               (set-new-line nrow home (1- i))))))
+               (set-new-line nrow home i)))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
