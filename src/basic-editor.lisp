@@ -130,6 +130,23 @@
           "Ola ma psa"
           "A, ja mam Lisp."))
 
+(defun print-text-stats ()
+  (let ((txt (sample-text-nonl)))
+    (let ((lf (sample-text-stats txt)))
+      (loop for hl being the hash-value of lf
+            do
+               (format T "~S - ~S~A~%"
+                       (getf
+                        (gethash (getf hl :row)  lf)
+                        :row)
+                       ;; (gethash (getf hl :line) lf)
+                       (subseq txt (getf hl :home) (getf hl :end))
+                       (let ((endchar
+                               (char txt (getf hl :end) )))
+                         (if (eq endchar #\Newline)
+                             "NL"
+                             "")))))))
+
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
@@ -139,7 +156,7 @@
                  (list :row row
                        :home oldhome
                        :end i
-                       :ine (subseq text oldhome (1+ i))))))
+                       :line (subseq text oldhome (1+ i))))))
       (loop
         for oldhome = 0 then home
         for c across text
