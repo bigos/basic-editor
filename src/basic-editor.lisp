@@ -118,43 +118,65 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
 
-(defun sample-text-firstnl ()
-  (format nil "~%~A~%~A~%~A~%"
-          "Ala ma kota"
-          "Ola ma psa"
-          "A, ja mam Lisp."))
+(defun sample-text (n)
+  (case n
+    (:last-nl-yes
+     (format nil "~A~%~A~%~A~%"
+             "Ala ma kota"
+             "Ola ma psa"
+             "A, ja mam Lisp."))
+    (:last-nl-no
+     (format nil "~A~%~A~%~A"
+             "Ala ma kota"
+             "Ola ma psa"
+             "A, ja mam Lisp."))
+    (:first-nl-yes
+     (format nil "~%~A~%~A~%~A~%"
+             "Ala ma kota"
+             "Ola ma psa"
+             "A, ja mam Lisp."))
+    (T
+     (format nil "one line no NL"))))
 
-(defun sample-text-nonl ()
-  (format nil "~A~%~A~%~A"
-          "Ala ma kota"
-          "Ola ma psa"
-          "A, ja mam Lisp."))
+(defun the-subseq (txt hl)
+  (let ((last-index (getf hl :end)))
+    (handler-case
+        (if (>=  last-index 35)
+            (subseq txt (getf hl :home))
+            (subseq txt (getf hl :home) (getf hl :end)))
 
-(defun sample-text ()
-  (format nil "~A~%~A~%~A~%"
-          "Ala ma kota"
-          "Ola ma psa"
-          "A, ja mam Lisp."))
+      (division-by-zero (c)
+        (format t "Got division by zero: ~a~%" c))
+      (SB-INT:INVALID-ARRAY-INDEX-ERROR (c)
+        (format t "got array index error ~S~%" c)))))
 
 (defun print-text-stats (txt)
   (let ((lf (sample-text-stats txt)))
     (format t "we have ~s lines =================~%" (hash-table-count lf))
 
-    (loop for hl being the hash-value of lf
+    (loop for lf-val being the hash-value of lf
           do
              (format T "~S - ~S~A  ~S ~S~%"
-                     (getf
-                      (gethash (getf hl :row)  lf)
-                      :row)
-                     ;; (gethash (getf hl :line) lf)
-                     (subseq txt (getf hl :home) (getf hl :end))
+                     (getf (gethash (getf lf-val :row)  lf)
+                           :row)
+                     ;; (gethash (getf lf-val :line) lf)
+                     (the-subseq txt lf-val)
                      (let ((endchar
-                             (char txt (getf hl :end) )))
+                             (progn
+                               (let ((last-index (1- (length txt)))
+                                     (last-c (getf lf-val :end)))
+                                 (char txt
+                                       (if (> last-c last-index)
+                                           last-index
+                                           last-c
+                                           )
+                                       ;; (getf lf-val :end)
+                                       )))))
                        (if (eq endchar #\Newline)
                            "NL"
                            ""))
-                     (getf hl :home)
-                     (getf hl :end)))))
+                     (getf lf-val :home)
+                     (getf lf-val :end)))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
@@ -165,7 +187,7 @@
                  (list :row row
                        :home oldhome
                        :end i
-                       :lins (subseq text oldhome i)
+                       ;; :line (subseq text oldhome i)
                        ))))
       (loop
         for prevc = nil then c
@@ -181,7 +203,7 @@
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
-               (set-new-line nrow oldhome i)))))
+               (set-new-line nrow home (1- i))))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
