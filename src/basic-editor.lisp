@@ -118,6 +118,12 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
 
+(defun sample-text-nonl ()
+  (format nil "~A~%~A~%~A"
+          "Ala ma kota"
+          "Ola ma psa"
+          "A, ja mam Lisp."))
+
 (defun sample-text ()
   (format nil "~A~%~A~%~A~%"
           "Ala ma kota"
@@ -127,14 +133,26 @@
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
-    (loop
-      for oldhome = 0 then home
-      for c across text
-      for i = 0 then (1+ i)
-      for home = 0 then (if (eq c #\Newline) (1+ i)   home)
-      for row =  0 then (if (eq c #\Newline) (1+ row) row)
-
-          )))
+    (labels
+        ( (new-line (row oldhome i)
+           (setf (gethash row lines-hash-table)
+                 (list :row row
+                       :home oldhome
+                       :end i
+                       :ine (subseq text oldhome (1+ i))))))
+      (loop
+        for oldhome = 0 then home
+        for c across text
+        for i = 0 then (1+ i)
+        for home = 0 then (if (eq c #\Newline) (1+ i)   home)
+        for row =  0 then (if (eq c #\Newline) (1+ row) row)
+        when (eq c #\Newline)
+          do (new-line row oldhome i)
+        finally
+           (let ((nrow (1+ row)))
+             (unless (eq c #\Newline)
+               (new-line nrow oldhome i)))))
+    lines-hash-table))
 
 ;;; ghex is my hex editor
 (defun text-stats (text)
