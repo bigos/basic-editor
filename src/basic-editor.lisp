@@ -152,7 +152,7 @@
 
 (defun print-text-stats (txt)
   (let ((lf (sample-text-stats txt)))
-    (format t "we have ~s lines =================~%" (hash-table-count lf))
+    (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for lf-val being the hash-value of lf
           do
@@ -162,44 +162,50 @@
                      ;; (gethash (getf lf-val :line) lf)
                      (the-subseq txt lf-val)
                      (let ((endchar
-                             (progn
-                               (let ((last-index (1- (length txt)))
-                                     (last-c (getf lf-val :end)))
-                                 (char txt
-                                       (if (> last-c last-index)
-                                           last-index
-                                           last-c
-                                           )
-                                       ;; (getf lf-val :end)
-                                       )))))
+                             (let ((last-index (1- (length txt)))
+                                   (last-c (getf lf-val :end)))
+                               (char txt
+                                     (if (> last-c last-index)
+                                         last-index
+                                         last-c)))))
                        (if (eq endchar #\Newline)
                            "NL"
-                           ""))
+                           "--"))
                      (getf lf-val :home)
                      (getf lf-val :end)))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
-  (let ((lines-hash-table (make-hash-table)))
+  (let ((lines-hash-table (make-hash-table))
+        (old-home 0))
     (labels
-        ((set-new-line (row oldhome i)
+        ((set-new-line (row old-home i)
            (setf (gethash row lines-hash-table)
                  (list :row row
-                       :home oldhome
+                       :home old-home
                        :end i
-                       ;; :line (subseq text oldhome i)
+                       ;; :line (subseq text old-home i)
                        ))))
       (loop
         for prevc = nil then c
-        for oldhome = 0 then home
         for c across text
         for i = 0 then (1+ i)
-        for home = 0 then (if (eq c #\Newline) (1+ i)   home)
         for row =  0 then (if (eq c #\Newline) (1+ row) row)
+        for home = 0 then (if (eq c #\Newline) (1+ i)   home)
         when (eq c #\Newline)
-          do (set-new-line row
-                           oldhome
-                           (1+ i))
+          do (progn
+               (setf old-home (1+ i))
+               (format t "~&PREVC IS ~S but c is ~S at ~S~%" prevc c i)
+               (set-new-line row
+                                  (if (eq prevc #\Newline)
+                                      (progn
+                                        (format t "~&last Newline detected~%")
+                                        (1+  old-home))
+                                      old-home)
+                                  (1+ i)))
+        do (progn
+             (format t "~&prevc is ~S but c is ~S at ~S -- ~S ~S~%" prevc c i home old-home)
+             )
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
