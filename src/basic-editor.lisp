@@ -118,6 +118,12 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
 
+(defun sample-text-firstnl ()
+  (format nil "~%~A~%~A~%~A~%"
+          "Ala ma kota"
+          "Ola ma psa"
+          "A, ja mam Lisp."))
+
 (defun sample-text-nonl ()
   (format nil "~A~%~A~%~A"
           "Ala ma kota"
@@ -130,47 +136,52 @@
           "Ola ma psa"
           "A, ja mam Lisp."))
 
-(defun print-text-stats ()
-  (let ((txt (sample-text-nonl)))
-    (let ((lf (sample-text-stats txt)))
-      (format t "we have ~s lines~%" (hash-table-count lf))
+(defun print-text-stats (txt)
+  (let ((lf (sample-text-stats txt)))
+    (format t "we have ~s lines =================~%" (hash-table-count lf))
 
-      (loop for hl being the hash-value of lf
-            do
-               (format T "~S - ~S~A~%"
-                       (getf
-                        (gethash (getf hl :row)  lf)
-                        :row)
-                       ;; (gethash (getf hl :line) lf)
-                       (subseq txt (getf hl :home) (getf hl :end))
-                       (let ((endchar
-                               (char txt (getf hl :end) )))
-                         (if (eq endchar #\Newline)
-                             "NL"
-                             "")))))))
+    (loop for hl being the hash-value of lf
+          do
+             (format T "~S - ~S~A  ~S ~S~%"
+                     (getf
+                      (gethash (getf hl :row)  lf)
+                      :row)
+                     ;; (gethash (getf hl :line) lf)
+                     (subseq txt (getf hl :home) (getf hl :end))
+                     (let ((endchar
+                             (char txt (getf hl :end) )))
+                       (if (eq endchar #\Newline)
+                           "NL"
+                           ""))
+                     (getf hl :home)
+                     (getf hl :end)))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
     (labels
-        ( (new-line (row oldhome i)
-            (setf (gethash row lines-hash-table)
-                  (list :row row
-                        :home oldhome
-                        :end i
-                        :line (subseq text oldhome (1+ i))))))
+        ((set-new-line (row oldhome i)
+           (setf (gethash row lines-hash-table)
+                 (list :row row
+                       :home oldhome
+                       :end i
+                       :lins (subseq text oldhome i)
+                       ))))
       (loop
+        for prevc = nil then c
         for oldhome = 0 then home
         for c across text
         for i = 0 then (1+ i)
         for home = 0 then (if (eq c #\Newline) (1+ i)   home)
         for row =  0 then (if (eq c #\Newline) (1+ row) row)
         when (eq c #\Newline)
-          do (new-line row oldhome i)
+          do (set-new-line row
+                           oldhome
+                           (1+ i))
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
-               (new-line nrow oldhome i)))))
+               (set-new-line nrow oldhome i)))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
@@ -288,36 +299,11 @@
 ;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
-  ;; (warn "looping seen-chars ~S" (loop for c in (seen-chars model) collecting (bchar c)))
-
-  (let* ((row-chars (loop
-                      for c in (seen-chars model)
-                      for found = (and (equal
-                                        (~> c row)
-                                        (~> model cursor row)))
-                      when found
-                        collect c))
-         (row-chars-length (length row-chars)))
-    ;; (warn "model cursor ~S and row chars ~S and row length ~S"
-    ;;       (~> model cursor)
-    ;;       (mapcar (lambda (c) (bchar c)) row-chars)
-    ;;       row-chars-length)
-
-    (cond ((equal row-chars-length 0)
-           ;; (warn "doing length 0")
-           0)
-          ((equal row-chars-length 1)
-           ;; (warn "doing length 0")
-           0)
-          (T
-           ;; (warn "doing length ~S and last ~S" row-chars-length (last row-chars))
-           (let* ((last-row-chars (car (last row-chars)))
-                  (dv
-                    (if (equal (bchar last-row-chars) #\Newline)
-                        (- row-chars-length 2)
-                        (- row-chars-length 1))))
-             ;; (warn "calculated ~S" dv)
-             dv)))))
+  (let ((text-stats (sample-text-stats (text model))))
+    (let ((current-row (~> model cursor row)))
+      (assert (<= 0 current-row (hash-table-count text-stats)))
+      (let ((current-line (gethash (~> model cursor row) text-stats)))
+        (length current-line)))))
 
 (defmethod looping-seen-chars ((model basic-editor-model) msg)
   (warn "looping seen-chars ~S ~S"
@@ -753,6 +739,7 @@
          (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
          (warn "model text structure %s" (text-structure model))
+         (warn "model text structure %s" (print-text-stats (text model)))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
