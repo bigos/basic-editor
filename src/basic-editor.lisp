@@ -133,6 +133,8 @@
 (defun print-text-stats ()
   (let ((txt (sample-text-nonl)))
     (let ((lf (sample-text-stats txt)))
+      (format t "we have ~s lines~%" (hash-table-count lf))
+
       (loop for hl being the hash-value of lf
             do
                (format T "~S - ~S~A~%"
@@ -152,11 +154,11 @@
   (let ((lines-hash-table (make-hash-table)))
     (labels
         ( (new-line (row oldhome i)
-           (setf (gethash row lines-hash-table)
-                 (list :row row
-                       :home oldhome
-                       :end i
-                       :line (subseq text oldhome (1+ i))))))
+            (setf (gethash row lines-hash-table)
+                  (list :row row
+                        :home oldhome
+                        :end i
+                        :line (subseq text oldhome (1+ i))))))
       (loop
         for oldhome = 0 then home
         for c across text
