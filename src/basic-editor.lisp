@@ -140,7 +140,7 @@
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
   (let ((lf (sample-text-stats txt)))
-    (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
+    ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for lf-val being the hash-value of lf
           do
@@ -156,7 +156,7 @@
                                 last-c))))
                   (homechar (char txt (getf lf-val :home))))
 
-               (format T "~S - ~S~A  ~S ~S~%"
+               (format T "~S - ~S~A  ~S ~S +++ ~S~%"
                        (getf (gethash (getf lf-val :row)  lf)
                              :row)
 
@@ -174,7 +174,11 @@
                                "HH"
                                "--"))
                        (getf lf-val :home)
-                       (getf lf-val :end))))))
+                       (getf lf-val :end)
+                       (format nil "cols 0 to ~S~%"
+                               (1-
+                                (- (getf lf-val :end)
+                                   (getf lf-val :home)))))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
@@ -198,10 +202,12 @@
              (if (eq prevc #\Newline)
                  (progn
                    (setf home i)
-                   (format t "~&prevc is NL but c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i))))
-                 (format t "~&                c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i))))
+                   ;; (format t "~&prevc is NL but c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i)))
+                   )
+                 ;; (format t "~&                c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i)))
+                 )
              (when (eq c #\Newline)
-               (format t "setting oldhome ~S to ~S~%" old-home home)
+               ;; (format t "setting oldhome ~S to ~S~%" old-home home)
                (setf old-home home)
                (set-new-line row home (1+ i))))
         finally
