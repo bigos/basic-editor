@@ -156,7 +156,7 @@
                                 last-c))))
                   (homechar (char txt (getf lf-val :home))))
 
-               (format T "~S - ~S~A  ~S ~S +++ ~S~%"
+               (format T "~S - ~S~A  ~S ~S +++ ~S __ ~S~%"
                        (getf (gethash (getf lf-val :row)  lf)
                              :row)
 
@@ -171,14 +171,16 @@
                        (if (eq endchar #\Newline)
                            "NL"
                            (if (eq homechar #\Newline)
-                               "HH"
+                               "Nl"
                                "--"))
                        (getf lf-val :home)
                        (getf lf-val :end)
-                       (format nil "cols 0 to ~S~%"
+                       (format nil "cols 0 to ~S"
                                (1-
                                 (- (getf lf-val :end)
-                                   (getf lf-val :home)))))))))
+                                   (getf lf-val :home))))
+                       (format nil "f ~s  l ~S"
+                               homechar endchar))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
