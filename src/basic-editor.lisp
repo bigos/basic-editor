@@ -199,21 +199,15 @@
         for i = 0 then (1+ i)
         for row =  0 then (if (eq c #\Newline) (1+ row) row)
         do (progn
-             (if (eq prevc #\Newline)
-                 (progn
-                   (setf home i)
-                   ;; (format t "~&prevc is NL but c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i)))
-                   )
-                 ;; (format t "~&                c is ~S at ~S -- ~S ~S ~S~%" c i home old-home (subseq text home (1+ i)))
-                 )
+             (when (eq prevc #\Newline)
+               (setf home i))
              (when (eq c #\Newline)
-               ;; (format t "setting oldhome ~S to ~S~%" old-home home)
                (setf old-home home)
                (set-new-line row home (1+ i))))
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
-               (set-new-line nrow home i)))))
+               (set-new-line nrow home (1+ i))))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
