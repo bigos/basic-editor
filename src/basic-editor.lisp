@@ -140,7 +140,48 @@
      (format nil "one line no NL"))))
 
 ;; (print-text-stats (sample-text :first-nl-yes))
-(defun print-text-stats (txt))
+(defun print-text-stats (txt)
+  (let ((lf (sample-text-stats txt)))
+    ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
+
+    (loop for lf-val being the hash-value of lf
+          do (let ((homechar (char txt (getf lf-val :home)))
+                   (endchar  (let ((last-index (1- (length txt)))
+                                   (last-c (getf lf-val :end)))
+                               (char txt (min last-index
+                                              last-c)))))
+
+               (format T "~S - ~S~A  ~S ~S +++ ~S __ ~S~%"
+                       (getf (gethash (getf lf-val :row)  lf)
+                             :row)
+                       (if (eq homechar #\Newline)
+                           ""
+                           (subseq txt
+                                   (getf lf-val :home)
+                                   (if (eq endchar #\Newline)
+                                       (1- (getf lf-val :end))
+                                       (getf lf-val :end))))
+                       (if (eq endchar #\Newline)
+                           "NL"
+                           (if (eq homechar #\Newline)
+                               "Nl"
+                               "NOnl"))
+                       (getf lf-val :home)
+                       (getf lf-val :end)
+                       (format nil "cols ~S - ~S"
+                               0
+                               (- (- (getf lf-val :end)
+                                     (getf lf-val :home))
+                                  (if (or (eq endchar #\Newline)
+                                          (eq homechar #\Newline))
+                                      1
+                                      0)))
+                       (format nil "1st ~s  last ~S"
+                               homechar
+                               (if (and (eq homechar #\Newline))
+                                   homechar
+                                   endchar)
+                               ))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
