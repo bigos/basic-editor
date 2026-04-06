@@ -150,33 +150,28 @@
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for lf-val being the hash-value of lf
-          do (let ((homechar (char txt (getf lf-val :home)))
+          do (let ((homechar (char txt (home lf-val)))
                    (endchar  (let ((last-index (1- (length txt)))
-                                   (last-c (getf lf-val :end)))
+                                   (last-c (end lf-val)))
                                (char txt (min last-index
                                               last-c)))))
 
                (format T "~S - ~S~A  ~S ~S +++ ~S __ ~S~%"
-                       (getf (gethash (getf lf-val :row)  lf)
-                             :row)
+                       (row lf-val)
                        (if (eq homechar #\Newline)
                            ""
-                           (subseq txt
-                                   (getf lf-val :home)
-                                   (if (eq endchar #\Newline)
-                                       (1- (getf lf-val :end))
-                                       (getf lf-val :end))))
+                           (row-text lf-val txt))
                        (if (eq endchar #\Newline)
                            "NL"
                            (if (eq homechar #\Newline)
                                "Nl"
                                "NOnl"))
-                       (getf lf-val :home)
-                       (getf lf-val :end)
+                       (home lf-val)
+                       (end lf-val)
                        (format nil "cols ~S - ~S"
                                0
-                               (- (- (getf lf-val :end)
-                                     (getf lf-val :home))
+                               (- (- (end lf-val)
+                                     (home lf-val))
                                   (if (or (eq endchar #\Newline)
                                           (eq homechar #\Newline))
                                       1
