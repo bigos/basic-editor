@@ -163,27 +163,26 @@
                            "NL"
                            (if (eq homechar #\Newline)
                                "Nl"
-                               "--"))
+                               "NOnl"))
                        (getf lf-val :home)
                        (getf lf-val :end)
-                       (format nil "cols 0 to ~S"
+                       (format nil "maxcol ~S"
                                (1- (- (getf lf-val :end)
                                       (getf lf-val :home))))
-                       (format nil "f ~s  l ~S"
+                       (format nil "1st ~s  last ~S"
                                homechar endchar))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table))
-        (old-home nil)
         (home 0))
     (labels
-        ((set-new-line (row old-home i)
+        ((set-new-line (row home i)
            (setf (gethash row lines-hash-table)
                  (list :row row
-                       :home old-home
+                       :home home
                        :end i
-                       ;; :line (subseq text old-home i)
+                       :line (subseq text home i)
                        ))))
       (loop
         for prevc = nil then c
@@ -194,8 +193,12 @@
              (when (eq prevc #\Newline)
                (setf home i))
              (when (eq c #\Newline)
-               (setf old-home home)
-               (set-new-line row home (1+ i))))
+               (let ((nextc (char text (1+ i))))
+                 (set-new-line row
+                               home
+                               (if (eq nextc #\Newline)
+                                   (1+ i)
+                                   (1+ i))))))
         finally
            (let ((nrow (1+ row)))
              (unless (eq c #\Newline)
