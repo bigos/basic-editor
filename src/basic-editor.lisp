@@ -168,14 +168,12 @@
                        (getf lf-val :end)
                        (format nil "cols ~S - ~S"
                                0
-                               (-
-                                (- (getf lf-val :end)
-                                   (getf lf-val :home))
-                                (if (or
-                                     (eq endchar #\Newline)
-                                     (eq homechar #\Newline))
-                                    1
-                                    0)))
+                               (- (- (getf lf-val :end)
+                                     (getf lf-val :home))
+                                  (if (or (eq endchar #\Newline)
+                                          (eq homechar #\Newline))
+                                      1
+                                      0)))
                        (format nil "1st ~s  last ~S"
                                homechar
                                (if (and (eq homechar #\Newline))
