@@ -183,6 +183,36 @@
                                    endchar)
                                ))))))
 
+;; (examine-text-stats)
+(defun examine-text-stats ()
+  (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
+        for txt = (sample-text tc)
+        for st = (sample-text-stats txt)
+        do (ecase tc
+             (:last-nl-yes
+              ;; (break "checking ~S" st)
+              (assert (eq (hash-table-count st) 3))
+              (assert (eq (getf (gethash 1 st) :row) 1))
+              (assert (eq (getf (gethash 1 st) :home) 0))
+              (assert (eq (getf (gethash 1 st) :end) 12))
+
+              (assert (eq (getf (gethash 2 st) :row) 2))
+              (assert (eq (getf (gethash 2 st) :home) 12))
+              (assert (eq (getf (gethash 2 st) :end) 23))
+
+              (assert (eq (getf (gethash 3 st) :row) 3))
+              (assert (eq (getf (gethash 3 st) :home) 23))
+              (assert (eq (getf (gethash 3 st) :end) 39))
+
+              )
+             (:last-nl-no
+              (assert (eq (hash-table-count st) 3))
+              (warn "ignored"))
+             (:first-nl-yes
+              (assert (eq (hash-table-count st) 5))
+              (warn "ignored"))
+             )))
+
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
@@ -192,7 +222,7 @@
                  (list :row row
                        :home home
                        :end i
-                       ;; :line (subseq text home i)
+                       :line (subseq text home i)
                        ))))
       (loop
         for prevc = nil then c
@@ -210,7 +240,7 @@
              (let ((nrow (1+ row)))
                (set-new-line nrow
                              home
-                             (1+ i))))))
+                             i)))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
