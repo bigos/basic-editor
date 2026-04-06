@@ -6,6 +6,8 @@
 ;; (warn "hello")
 
 (in-package #:basic-editor)
+;; (setf *break-on-signals* T)
+;; (setf *print-circle* T)
 
 (defparameter *environment* nil)
 
@@ -138,80 +140,36 @@
      (format nil "one line no NL"))))
 
 ;; (print-text-stats (sample-text :first-nl-yes))
-(defun print-text-stats (txt)
-  (let ((lf (sample-text-stats txt)))
-    ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
-
-    (loop for lf-val being the hash-value of lf
-          do (let ((homechar (char txt (getf lf-val :home)))
-                   (endchar  (let ((last-index (1- (length txt)))
-                                   (last-c (getf lf-val :end)))
-                               (char txt (min last-index
-                                              last-c)))))
-
-               (format T "~S - ~S~A  ~S ~S +++ ~S __ ~S~%"
-                       (getf (gethash (getf lf-val :row)  lf)
-                             :row)
-                       (if (eq homechar #\Newline)
-                           ""
-                           (subseq txt
-                                   (getf lf-val :home)
-                                   (if (eq endchar #\Newline)
-                                       (1- (getf lf-val :end))
-                                       (getf lf-val :end))))
-                       (if (eq endchar #\Newline)
-                           "NL"
-                           (if (eq homechar #\Newline)
-                               "Nl"
-                               "NOnl"))
-                       (getf lf-val :home)
-                       (getf lf-val :end)
-                       (format nil "cols ~S - ~S"
-                               0
-                               (- (- (getf lf-val :end)
-                                     (getf lf-val :home))
-                                  (if (or (eq endchar #\Newline)
-                                          (eq homechar #\Newline))
-                                      1
-                                      0)))
-                       (format nil "1st ~s  last ~S"
-                               homechar
-                               (if (and (eq homechar #\Newline))
-                                   homechar
-                                   endchar)
-                               ))))))
+(defun print-text-stats (txt))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
-  (let ((lines-hash-table (make-hash-table))
-        (home 0))
+  (let ((lines-hash-table (make-hash-table)))
     (labels
         ((set-new-line (row home i)
            (setf (gethash row lines-hash-table)
                  (list :row row
                        :home home
                        :end i
-                       :line (subseq text home i)
+                       ;; :line (subseq text home i)
                        ))))
       (loop
         for prevc = nil then c
         for c across text
         for i = 0 then (1+ i)
         for row =  0 then (if (eq c #\Newline) (1+ row) row)
-        do (progn
-             (when (eq prevc #\Newline)
-               (setf home i))
-             (when (eq c #\Newline)
-               (let ((nextc (char text (1+ i))))
-                 (set-new-line row
-                               home
-                               (if (eq nextc #\Newline)
-                                   (1+ i)
-                                   (1+ i))))))
+        for home = 0 then (if (eq prevc #\Newline) i home)
+        do
+           (when (eq c #\Newline)
+             (set-new-line row
+                           home
+                           (1+ i)))
         finally
-           (let ((nrow (1+ row)))
-             (unless (eq c #\Newline)
-               (set-new-line nrow home (1+ i))))))
+           (unless (eq c #\Newline)
+             (let ((nrow (1+ row)))
+               (set-new-line nrow
+                             home
+                             (1+ i))))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
