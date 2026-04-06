@@ -188,10 +188,14 @@
   (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
         for txt = (sample-text tc)
         for st = (sample-text-stats txt)
-        do (ecase tc
+        do
+           (warn "working on ~S" tc)
+           (ecase tc
              (:last-nl-yes
               ;; (break "checking ~S" st)
               (assert (eq (hash-table-count st) 3))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 1 2 3)))
               (assert (eq (getf (gethash 1 st) :row) 1))
               (assert (eq (getf (gethash 1 st) :home) 0))
               (assert (eq (getf (gethash 1 st) :end) 12))
@@ -202,15 +206,45 @@
 
               (assert (eq (getf (gethash 3 st) :row) 3))
               (assert (eq (getf (gethash 3 st) :home) 23))
-              (assert (eq (getf (gethash 3 st) :end) 39))
-
-              )
+              (assert (eq (getf (gethash 3 st) :end) 39)))
              (:last-nl-no
               (assert (eq (hash-table-count st) 3))
-              (warn "ignored"))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 1 2 3 )))
+              (assert (eq (getf (gethash 1 st) :row) 1))
+              (assert (eq (getf (gethash 1 st) :home) 0))
+              (assert (eq (getf (gethash 1 st) :end) 12))
+
+              (assert (eq (getf (gethash 2 st) :row) 2))
+              (assert (eq (getf (gethash 2 st) :home) 12))
+              (assert (eq (getf (gethash 2 st) :end) 23))
+
+              (assert (eq (getf (gethash 3 st) :row) 3))
+              (assert (eq (getf (gethash 3 st) :home) 23))
+              (assert (eq (getf (gethash 3 st) :end) 37)))
              (:first-nl-yes
               (assert (eq (hash-table-count st) 5))
-              (warn "ignored"))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 0 1 2 3 4)))
+              (assert (eq (getf (gethash 1 st) :row) 1))
+              (assert (eq (getf (gethash 1 st) :home) 1))
+              (assert (eq (getf (gethash 1 st) :end) 13))
+
+              (assert (eq (getf (gethash 2 st) :row) 2))
+              (assert (eq (getf (gethash 2 st) :home) 13))
+              (assert (eq (getf (gethash 2 st) :end) 14))
+
+              (assert (eq (getf (gethash 3 st) :row) 3))
+              (assert (eq (getf (gethash 3 st) :home) 14))
+              (assert (eq (getf (gethash 3 st) :end) 15))
+
+              (assert (eq (getf (gethash 4 st) :row) 4))
+              (assert (eq (getf (gethash 4 st) :home) 15))
+              (assert (eq (getf (gethash 4 st) :end) 24))
+
+              (assert (eq (getf (gethash 5 st) :row) nil))
+              (assert (eq (getf (gethash 5 st) :home) nil))
+              (assert (eq (getf (gethash 5 st) :end) nil)))
              )))
 
 (defun sample-text-stats (text)
