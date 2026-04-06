@@ -281,16 +281,10 @@
           ((set-new-line (row home i)
              (warn "adding row ~S ~S ~S" row home i)
              (setf (gethash row lines-hash-table)
-                   ;; (list :row row
-                   ;;       :home home
-                   ;;       :end i
-                   ;;       :line (subseq text home i)
-                   ;;       )
                    (make-instance 'text-row
                                   :row row
                                   :home home
-                                  :end i)
-                   )))
+                                  :end i))))
         (loop
           for prevc = nil then c
           for c across text
