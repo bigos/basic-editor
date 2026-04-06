@@ -272,32 +272,32 @@
                 (assert (eq (home rowt) 15))
                 (assert (eq (end rowt) 25))))
              (assert (equal (format nil "A ja Lisp.")
-                            (row-text (gethash 5 st) txt)))))
+                            (row-text (gethash 5 st) txt))))))
 
-  (defun sample-text-stats (text)
-    (assert (typep text 'simple-array))
-    (let ((lines-hash-table (make-hash-table)))
-      (labels
-          ((set-new-line (row home i)
-             (warn "adding row ~S ~S ~S" row home i)
-             (setf (gethash row lines-hash-table)
-                   (make-instance 'text-row
-                                  :row row
-                                  :home home
-                                  :end i))))
-        (loop
-          for prevc = nil then c
-          for c across text
-          for i = 0 then (1+ i)
-          for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
-          for home = 0 then (if (eq prevc #\Newline) i home)
-          do
-             (when (eq c #\Newline)
-               (set-new-line row home (1+ i)))
-          finally
-             (unless (eq c #\Newline)
-               (set-new-line (1+ row) home (1+ i)))))
-      lines-hash-table)))
+(defun sample-text-stats (text)
+  (assert (typep text 'simple-array))
+  (let ((lines-hash-table (make-hash-table)))
+    (labels
+        ((set-new-line (row home i)
+           (warn "adding row ~S ~S ~S" row home i)
+           (setf (gethash row lines-hash-table)
+                 (make-instance 'text-row
+                                :row row
+                                :home home
+                                :end i))))
+      (loop
+        for prevc = nil then c
+        for c across text
+        for i = 0 then (1+ i)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
+        for home = 0 then (if (eq prevc #\Newline) i home)
+        do
+           (when (eq c #\Newline)
+             (set-new-line row home (1+ i)))
+        finally
+           (unless (eq c #\Newline)
+             (set-new-line (1+ row) home (1+ i)))))
+    lines-hash-table))
 
 ;;; ghex is my hex editor
 (defun text-stats (text)
