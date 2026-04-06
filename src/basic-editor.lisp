@@ -170,7 +170,11 @@
                                (1- (- (getf lf-val :end)
                                       (getf lf-val :home))))
                        (format nil "1st ~s  last ~S"
-                               homechar endchar))))))
+                               homechar
+                               (if (and (eq homechar #\Newline))
+                                   homechar
+                                   endchar)
+                               ))))))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
