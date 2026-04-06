@@ -225,26 +225,26 @@
              (:first-nl-yes
               (assert (eq (hash-table-count st) 5))
               (assert (equal (loop for k being the hash-key in st collect k)
-                             (list 0 1 2 3 4)))
+                             (list 1 2 3 4 5)))
               (assert (eq (getf (gethash 1 st) :row) 1))
-              (assert (eq (getf (gethash 1 st) :home) 1))
-              (assert (eq (getf (gethash 1 st) :end) 13))
+              (assert (eq (getf (gethash 1 st) :home) 0))
+              (assert (eq (getf (gethash 1 st) :end) 1))
 
               (assert (eq (getf (gethash 2 st) :row) 2))
-              (assert (eq (getf (gethash 2 st) :home) 13))
-              (assert (eq (getf (gethash 2 st) :end) 14))
+              (assert (eq (getf (gethash 2 st) :home) 1))
+              (assert (eq (getf (gethash 2 st) :end) 13))
 
               (assert (eq (getf (gethash 3 st) :row) 3))
-              (assert (eq (getf (gethash 3 st) :home) 14))
-              (assert (eq (getf (gethash 3 st) :end) 15))
+              (assert (eq (getf (gethash 3 st) :home) 13))
+              (assert (eq (getf (gethash 3 st) :end) 14))
 
               (assert (eq (getf (gethash 4 st) :row) 4))
-              (assert (eq (getf (gethash 4 st) :home) 15))
-              (assert (eq (getf (gethash 4 st) :end) 24))
+              (assert (eq (getf (gethash 4 st) :home) 14))
+              (assert (eq (getf (gethash 4 st) :end) 15))
 
-              (assert (eq (getf (gethash 5 st) :row) nil))
-              (assert (eq (getf (gethash 5 st) :home) nil))
-              (assert (eq (getf (gethash 5 st) :end) nil)))
+              (assert (eq (getf (gethash 5 st) :row) 5))
+              (assert (eq (getf (gethash 5 st) :home) 15))
+              (assert (eq (getf (gethash 5 st) :end) 24)))
              )))
 
 (defun sample-text-stats (text)
@@ -252,6 +252,7 @@
   (let ((lines-hash-table (make-hash-table)))
     (labels
         ((set-new-line (row home i)
+           (warn "adding row ~S ~S ~S" row home i)
            (setf (gethash row lines-hash-table)
                  (list :row row
                        :home home
@@ -262,19 +263,15 @@
         for prevc = nil then c
         for c across text
         for i = 0 then (1+ i)
-        for row =  0 then (if (eq c #\Newline) (1+ row) row)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
         for home = 0 then (if (eq prevc #\Newline) i home)
         do
            (when (eq c #\Newline)
-             (set-new-line row
-                           home
-                           (1+ i)))
+             (set-new-line row home (1+ i)))
         finally
            (unless (eq c #\Newline)
              (let ((nrow (1+ row)))
-               (set-new-line nrow
-                             home
-                             i)))))
+               (set-new-line nrow home i)))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
