@@ -171,11 +171,11 @@
                                (-
                                 (- (getf lf-val :end)
                                    (getf lf-val :home))
-                                (if (eq endchar #\Newline)
+                                (if (or
+                                     (eq endchar #\Newline)
+                                     (eq homechar #\Newline))
                                     1
-                                    (if (eq homechar #\Newline)
-                                        1
-                                        0))))
+                                    0)))
                        (format nil "1st ~s  last ~S"
                                homechar
                                (if (and (eq homechar #\Newline))
