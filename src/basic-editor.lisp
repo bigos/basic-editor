@@ -166,9 +166,16 @@
                                "NOnl"))
                        (getf lf-val :home)
                        (getf lf-val :end)
-                       (format nil "maxcol ~S"
-                               (1- (- (getf lf-val :end)
-                                      (getf lf-val :home))))
+                       (format nil "cols ~S - ~S"
+                               0
+                               (-
+                                (- (getf lf-val :end)
+                                   (getf lf-val :home))
+                                (if (eq endchar #\Newline)
+                                    1
+                                    (if (eq homechar #\Newline)
+                                        1
+                                        0))))
                        (format nil "1st ~s  last ~S"
                                homechar
                                (if (and (eq homechar #\Newline))
