@@ -205,94 +205,105 @@
               (assert (eq (hash-table-count st) 3))
               (assert (equal (loop for k being the hash-key in st collect k)
                              (list 1 2 3)))
-              (assert (eq (row (gethash 1 st)) 1))
-              (assert (eq (home (gethash 1 st)) 0))
-              (assert (eq (end (gethash 1 st)) 12))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 12)))
 
-              (assert (eq (row (gethash 2 st)) 2))
-              (assert (eq (home (gethash 2 st)) 12))
-              (assert (eq (end (gethash 2 st)) 23))
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 12))
+                (assert (eq (end rowt) 23)))
 
-              (assert (eq (row (gethash 3 st)) 3))
-              (assert (eq (home (gethash 3 st)) 23))
-              (assert (eq (end (gethash 3 st)) 39)))
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 23))
+                (assert (eq (end rowt) 39))))
              (:last-nl-no
               (assert (eq (hash-table-count st) 3))
               (assert (equal (loop for k being the hash-key in st collect k)
                              (list 1 2 3 )))
-              (assert (eq (row (gethash 1 st)) 1))
-              (assert (eq (home (gethash 1 st)) 0))
-              (assert (eq (end (gethash 1 st)) 12))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 12)))
 
-              (assert (eq (row (gethash 2 st)) 2))
-              (assert (eq (home (gethash 2 st)) 12))
-              (assert (eq (end (gethash 2 st)) 23))
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 12))
+                (assert (eq (end rowt) 23)))
 
-              (assert (eq (row (gethash 3 st)) 3))
-              (assert (eq (home (gethash 3 st)) 23))
-              (assert (eq (end (gethash 3 st)) 38))
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 23))
+                (assert (eq (end rowt) 38)))
               (assert (equal (format nil "A, ja mam Lisp.")
                              (row-text (gethash 3 st) txt))))
              (:first-nl-yes
               (assert (eq (hash-table-count st) 5))
               (assert (equal (loop for k being the hash-key in st collect k)
                              (list 1 2 3 4 5)))
-              (assert (eq (row (gethash 1 st)) 1))
-              (assert (eq (home (gethash 1 st)) 0))
-              (assert (eq (end (gethash 1 st)) 1))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 1)))
               (assert (equal (format nil "~%")
                              (row-text (gethash 1 st) txt)))
 
-              (assert (eq (row (gethash 2 st)) 2))
-              (assert (eq (home (gethash 2 st)) 1))
-              (assert (eq (end (gethash 2 st)) 13))
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 1))
+                (assert (eq (end rowt) 13)))
               (assert (equal (format nil "Ala ma kota~%")
                              (row-text (gethash 2 st) txt)))
 
-              (assert (eq (row (gethash 3 st)) 3))
-              (assert (eq (home (gethash 3 st)) 13))
-              (assert (eq (end (gethash 3 st)) 14))
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 13))
+                (assert (eq (end rowt) 14)))
 
-              (assert (eq (row (gethash 4 st)) 4))
-              (assert (eq (home (gethash 4 st)) 14))
-              (assert (eq (end (gethash 4 st)) 15))
+              (let ((rowt (gethash 4 st)))
+                (assert (eq (row rowt) 4))
+                (assert (eq (home rowt) 14))
+                (assert (eq (end rowt) 15)))
 
-              (assert (eq (row (gethash 5 st)) 5))
-              (assert (eq (home (gethash 5 st)) 15))
-              (assert (eq (end (gethash 5 st)) 25))
-              (assert (equal (format nil "A ja Lisp.")
-                             (row-text (gethash 5 st) txt)))))))
+              (let ((rowt (gethash 5 st)))
+                (assert (eq (row rowt) 5))
+                (assert (eq (home rowt) 15))
+                (assert (eq (end rowt) 25))))
+             (assert (equal (format nil "A ja Lisp.")
+                            (row-text (gethash 5 st) txt)))))
 
-(defun sample-text-stats (text)
-  (assert (typep text 'simple-array))
-  (let ((lines-hash-table (make-hash-table)))
-    (labels
-        ((set-new-line (row home i)
-           (warn "adding row ~S ~S ~S" row home i)
-           (setf (gethash row lines-hash-table)
-                 ;; (list :row row
-                 ;;       :home home
-                 ;;       :end i
-                 ;;       :line (subseq text home i)
-                 ;;       )
-                 (make-instance 'text-row
-                                :row row
-                                :home home
-                                :end i)
-                 )))
-      (loop
-        for prevc = nil then c
-        for c across text
-        for i = 0 then (1+ i)
-        for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
-        for home = 0 then (if (eq prevc #\Newline) i home)
-        do
-           (when (eq c #\Newline)
-             (set-new-line row home (1+ i)))
-        finally
-           (unless (eq c #\Newline)
-             (set-new-line (1+ row) home (1+ i)))))
-    lines-hash-table))
+  (defun sample-text-stats (text)
+    (assert (typep text 'simple-array))
+    (let ((lines-hash-table (make-hash-table)))
+      (labels
+          ((set-new-line (row home i)
+             (warn "adding row ~S ~S ~S" row home i)
+             (setf (gethash row lines-hash-table)
+                   ;; (list :row row
+                   ;;       :home home
+                   ;;       :end i
+                   ;;       :line (subseq text home i)
+                   ;;       )
+                   (make-instance 'text-row
+                                  :row row
+                                  :home home
+                                  :end i)
+                   )))
+        (loop
+          for prevc = nil then c
+          for c across text
+          for i = 0 then (1+ i)
+          for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
+          for home = 0 then (if (eq prevc #\Newline) i home)
+          do
+             (when (eq c #\Newline)
+               (set-new-line row home (1+ i)))
+          finally
+             (unless (eq c #\Newline)
+               (set-new-line (1+ row) home (1+ i)))))
+      lines-hash-table)))
 
 ;;; ghex is my hex editor
 (defun text-stats (text)
