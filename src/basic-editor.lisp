@@ -409,7 +409,9 @@
                                                         cur-pos)
                                    (subseq (text model) (+ 1 cur-pos)
                                                         (length (text model)))))
-        (warn "No cursor position found, possibly no text"))))
+        (warn "No cursor position found, possibly no text")))
+  (reload-text-structure model))
+
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
   (warn "before insert")
@@ -489,7 +491,9 @@
     (warn "---------- done insert --------------")
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
     (warn "cursor text  ~S" (~> model text))
-    (warn "---------- finished insert --------------")))
+    (warn "---------- finished insert --------------"))
+  (reload-text-structure model))
+
 ;;; ----------------------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
