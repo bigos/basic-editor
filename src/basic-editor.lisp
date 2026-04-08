@@ -258,7 +258,7 @@
         for prevc = nil then c
         for c across text
         for i = 0 then (1+ i)
-        for row =  (if (and (zerop i) (eq c #\Newline)) 1 0) then (if (eq c #\Newline) (1+ row) row)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (eq c #\Newline) (1+ row) row)
         for home = 0 then (if (eq prevc #\Newline) i home)
         do
            (when (eq c #\Newline)
