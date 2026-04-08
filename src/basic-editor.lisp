@@ -146,42 +146,16 @@
 
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
-  (let ((lf (sample-text-stats txt)))
+  (let ((rx (sample-text-stats txt)))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
-    (loop for lf-val being the hash-value of lf
-          do (let ((homechar (char txt (home lf-val)))
-                   (endchar  (let ((last-index (1- (length txt)))
-                                   (last-c (end lf-val)))
-                               (char txt (min last-index
-                                              last-c)))))
+    (loop for r being the hash-value of rx
+          do (let ((rtext (row-text r txt) ))
+               (format t "row ~S - ~S  ~%"
+                       (row r)
+                       rtext
+                       )))))
 
-               (format T "~S - ~S~A  ~S ~S +++ ~S __ ~S~%"
-                       (row lf-val)
-                       (if (eq homechar #\Newline)
-                           ""
-                           (row-text lf-val txt))
-                       (if (eq endchar #\Newline)
-                           "NL"
-                           (if (eq homechar #\Newline)
-                               "Nl"
-                               "NOnl"))
-                       (home lf-val)
-                       (end lf-val)
-                       (format nil "cols ~S - ~S"
-                               0
-                               (- (- (end lf-val)
-                                     (home lf-val))
-                                  (if (or (eq endchar #\Newline)
-                                          (eq homechar #\Newline))
-                                      1
-                                      0)))
-                       (format nil "1st ~s  last ~S"
-                               homechar
-                               (if (and (eq homechar #\Newline))
-                                   homechar
-                                   endchar)
-                               ))))))
 (defmethod row-text ((row text-row) text)
   (subseq text
           (home row)
