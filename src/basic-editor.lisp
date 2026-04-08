@@ -387,7 +387,7 @@
     (let ((current-row (~> model cursor row)))
       (assert (<= 0 current-row (hash-table-count text-stats)))
       (let ((current-line (gethash (~> model cursor row) text-stats)))
-        (length current-line)))))
+        (1- (length (row-text current-line (text model))))))))
 
 (defmethod looping-seen-chars ((model basic-editor-model) msg)
   (warn "looping seen-chars ~S ~S"
