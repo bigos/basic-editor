@@ -288,7 +288,6 @@
        (~> model cursor row)
        found-last-row))))
 
-
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 
@@ -311,10 +310,12 @@
            (~> model cursor col)
            (find-cursor-end model))
           (progn
-            (insert-character-at-cursor model "" "Return")
-            ;; why inserting return moves cursor down?
-           ;; (move-cursor-down model (all-lines-count model))
-            (move-cursor-home model))
+            (if (>= (~> model cursor row) last-row)
+                (progn
+                  (insert-character-at-cursor model "" "Return"))
+                (progn
+                  (move-cursor-down model (all-lines-count model))
+                  (move-cursor-home model))))
 
           (move-cursor-right (cursor model)))))
   )
