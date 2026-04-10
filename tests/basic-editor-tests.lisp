@@ -2,7 +2,7 @@
 
 (in-package #:basic-editor-test)
 
-;;(setf 5am:*on-error* :debug)
+(setf 5am:*on-error* :debug)
 
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
