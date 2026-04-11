@@ -284,6 +284,12 @@
   ;; after removing the last line cursor need to move to last position of the
   ;; previous line
   ;; after removing
+  ;; validate cursor
+  ;; if cursor is
+  ;; beyond the last row, move it to the last character of the last row
+  ;; beyond the last character on the line, move it to last character
+  ;; before the first column, move it to the first column
+  ;;
   ;; zzzzzzzzzzzzz
   )
 
