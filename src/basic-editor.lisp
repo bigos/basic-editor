@@ -580,21 +580,29 @@
                    for c across
                          (sycamore:rope-string
                           (text model))
-                   for row = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        (1+ row) row)
-                   for col = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        0 (1+ col))
+                   for wrap-row = 0 then (if (or (equal last-char #\Newline)
+                                                 (>= wrap-col wrap-column))
+                                             (1+ wrap-row)
+                                             wrap-row)
+                   for wrap-col = 0 then (if (or (equal last-char #\Newline)
+                                                 (>= wrap-col wrap-column))
+                                             0
+                                             (1+ wrap-col))
+                   for real-row = 0 then (if (equal last-char #\Newline)
+                                             (1+ real-row)
+                                             real-row)
+                   for real-col = 0 then (if (equal last-char #\Newline)
+                                             0
+                                             (1+ real-col))
                    for pos = 0  then (1+ pos)
                    for maxcol = 0 then (max maxcol col)
                    for relx = (+ margin-horizontal
                                  (ceiling
-                                  (* (- col (view-port-first-column model))
+                                  (* (- wrap-col (view-port-first-column model))
                                      (1+ bwidth) )))
                    for rely = (+ margin-vertical
                                  (ceiling
-                                  (* (- row (view-port-first-line model))
+                                  (* (- wrap-row (view-port-first-line model))
                                      (1+ bheight))))
                    for min-rely = 0 then (min rely min-rely)
                    for outside = (let ((max-x-coord (+ relx bwidth))
@@ -620,19 +628,19 @@
                                              rely)
                                             :width bwidth
                                             :height bheight
-                                            :color (if (and (= (~> model cursor row)
-                                                               row)
-                                                            (= (~> model cursor col)
-                                                               col))
+                                            :color (if (and (= (~> model cursor real-row)
+                                                               real-row)
+                                                            (= (~> model cursor real-col)
+                                                               real-col))
                                                        "red"
                                                        "pink")
-                                            :row row
-                                            :col col
+                                            :row wrap-row
+                                            :col wrap-col
                                             :pos pos
                                             :outside outside
                                             )
                    finally
-                      (setf (all-lines-count model) row)
+                      (setf (all-lines-count model) real-row)
                       (setf (view-port-lines model) max-seen-row)
                       (setf (view-port-columns model) max-seen-col)))))
     (setf (seen-chars model) the-chars)
