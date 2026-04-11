@@ -597,7 +597,7 @@
                                              0
                                              (1+ real-col))
                    for pos = 0  then (1+ pos)
-                   for maxcol = 0 then (max maxcol col)
+                   for maxcol = 0 then (max maxcol wrap-col)
                    for relx = (+ margin-horizontal
                                  (ceiling
                                   (* (- wrap-col (view-port-first-column model))
@@ -616,10 +616,10 @@
                                     (< rely 0)))
                    for max-seen-row = 0 then (if outside
                                                  max-seen-row
-                                                 (max row max-seen-row))
+                                                 (max wrap-row max-seen-row))
                    for max-seen-col = 0 then (if outside
                                                  max-seen-col
-                                                 (max col max-seen-col))
+                                                 (max wrap-col max-seen-col))
                    unless outside
                      collect (make-instance 'basic-editor-character
                                             :bchar c
