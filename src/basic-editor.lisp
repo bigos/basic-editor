@@ -43,8 +43,10 @@
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
 (defclass/std basic-editor-character (boxes:node-character)
-  ((row)
-   (col)
+  ((row)                                ;wrap-row
+   (col)                                ;wrap-col
+   (real-row)
+   (real-col)
    (pos)
    (outside)))
 
@@ -628,14 +630,16 @@
                                              rely)
                                             :width bwidth
                                             :height bheight
-                                            :color (if (and (= (~> model cursor real-row)
+                                            :color (if (and (= (~> model cursor row)
                                                                real-row)
-                                                            (= (~> model cursor real-col)
+                                                            (= (~> model cursor col)
                                                                real-col))
                                                        "red"
                                                        "pink")
                                             :row wrap-row
                                             :col wrap-col
+                                            :real-row real-row
+                                            :real-col real-col
                                             :pos pos
                                             :outside outside
                                             )
