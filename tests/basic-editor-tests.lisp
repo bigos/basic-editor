@@ -89,8 +89,7 @@
          (d (load-file-and-model fpath))
          (model (getf d :model))
          (experimental-window (getf d :experimental-window))
-         (loaded-text (sycamore:rope-string (be::text model)))
-         )
+         (loaded-text (sycamore:rope-string (be::text model))))
     ;; body
     (&body)
     ;; teardown code
