@@ -279,6 +279,14 @@
     (warn "got stats ~S" stats)
     (setf (text-structure model) stats)))
 
+(defmethod reload-text-structure :after ((model basic-editor-model))
+  (warn "after reloading text structure")
+  ;; after removing the last line cursor need to move to last position of the
+  ;; previous line
+  ;; after removing
+  ;; zzzzzzzzzzzzz
+  )
+
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
