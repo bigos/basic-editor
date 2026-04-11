@@ -264,8 +264,9 @@
            (when (eq c #\Newline)
              (set-new-line row home (1+ i)))
         finally
-           (unless (eq c #\Newline)
-             (set-new-line (1+ row) home (1+ i)))))
+           (when i
+             (unless (eq c #\Newline)
+               (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
 
 ;;; ghex is my hex editor
@@ -344,7 +345,9 @@
     (let ((current-row (~> model cursor row)))
       (assert (<= 0 current-row (hash-table-count text-stats)))
       (let ((current-line (gethash (~> model cursor row) text-stats)))
-        (1- (length (row-text current-line (text model))))))))
+        (if current-line
+            (1- (length (row-text current-line (text model))))
+            0)))))
 
 (defmethod looping-seen-chars ((model basic-editor-model) msg)
   (warn "looping seen-chars ~S ~S"
