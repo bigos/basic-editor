@@ -907,9 +907,11 @@
        (move-cursor-end model :ignored))
       ((and (equal key-name "Delete")
             (equal mods nil))
+       (warn "doing delete")
        (delete-character-at-cursor model))
       ((and (equal key-name "BackSpace")
             (equal mods nil))
+       (warn "doing backspace")
        (move-cursor-left model)
        (delete-character-at-cursor model))
       (T
