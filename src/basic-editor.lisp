@@ -909,8 +909,8 @@
             (equal mods nil))
        (delete-character-at-cursor model))
       ((and (equal key-name "BackSpace")
-            (equal mods nil)
-            (move-cursor-left model))
+            (equal mods nil))
+       (move-cursor-left model)
        (delete-character-at-cursor model))
       (T
        (if (equal entered "")
