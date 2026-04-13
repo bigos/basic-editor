@@ -43,8 +43,10 @@
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
 (defclass/std basic-editor-character (boxes:node-character)
-  ((row)
-   (col)
+  ((row)                                ;wrap-row
+   (col)                                ;wrap-col
+   (real-row)
+   (real-col)
    (pos)
    (outside)))
 
@@ -549,21 +551,29 @@
                    for c across
                          (sycamore:rope-string
                           (text model))
-                   for row = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        (1+ row) row)
-                   for col = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        0 (1+ col))
+                   for wrap-row = 0 then (if (or (equal last-char #\Newline)
+                                                 (>= wrap-col wrap-column))
+                                             (1+ wrap-row)
+                                             wrap-row)
+                   for wrap-col = 0 then (if (or (equal last-char #\Newline)
+                                                 (>= wrap-col wrap-column))
+                                             0
+                                             (1+ wrap-col))
+                   for real-row = 0 then (if (equal last-char #\Newline)
+                                             (1+ real-row)
+                                             real-row)
+                   for real-col = 0 then (if (equal last-char #\Newline)
+                                             0
+                                             (1+ real-col))
                    for pos = 0  then (1+ pos)
-                   for maxcol = 0 then (max maxcol col)
+                   for maxcol = 0 then (max maxcol wrap-col)
                    for relx = (+ margin-horizontal
                                  (ceiling
-                                  (* (- col (view-port-first-column model))
+                                  (* (- wrap-col (view-port-first-column model))
                                      (1+ bwidth) )))
                    for rely = (+ margin-vertical
                                  (ceiling
-                                  (* (- row (view-port-first-line model))
+                                  (* (- wrap-row (view-port-first-line model))
                                      (1+ bheight))))
                    for min-rely = 0 then (min rely min-rely)
                    for outside = (let ((max-x-coord (+ relx bwidth))
@@ -575,10 +585,10 @@
                                     (< rely 0)))
                    for max-seen-row = 0 then (if outside
                                                  max-seen-row
-                                                 (max row max-seen-row))
+                                                 (max wrap-row max-seen-row))
                    for max-seen-col = 0 then (if outside
                                                  max-seen-col
-                                                 (max col max-seen-col))
+                                                 (max wrap-col max-seen-col))
                    unless outside
                      collect (make-instance 'basic-editor-character
                                             :bchar c
@@ -590,18 +600,20 @@
                                             :width bwidth
                                             :height bheight
                                             :color (if (and (= (~> model cursor row)
-                                                               row)
+                                                               real-row)
                                                             (= (~> model cursor col)
-                                                               col))
+                                                               real-col))
                                                        "red"
                                                        "pink")
-                                            :row row
-                                            :col col
+                                            :row wrap-row
+                                            :col wrap-col
+                                            :real-row real-row
+                                            :real-col real-col
                                             :pos pos
                                             :outside outside
                                             )
                    finally
-                      (setf (all-lines-count model) row)
+                      (setf (all-lines-count model) real-row)
                       (setf (view-port-lines model) max-seen-row)
                       (setf (view-port-columns model) max-seen-col)))))
     (setf (seen-chars model) the-chars)
@@ -864,10 +876,12 @@
        (move-cursor-end model :ignored))
       ((and (equal key-name "Delete")
             (equal mods nil))
+       (warn "doing delete")
        (delete-character-at-cursor model))
       ((and (equal key-name "BackSpace")
-            (equal mods nil)
-            (move-cursor-left model))
+            (equal mods nil))
+       (warn "doing backspace")
+       (move-cursor-left model)
        (delete-character-at-cursor model))
       (T
        (if (equal entered "")
