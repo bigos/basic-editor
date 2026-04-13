@@ -43,10 +43,8 @@
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
 (defclass/std basic-editor-character (boxes:node-character)
-  ((row)                                ;wrap-row
-   (col)                                ;wrap-col
-   (real-row)
-   (real-col)
+  ((row)
+   (col)
    (pos)
    (outside)))
 
@@ -126,6 +124,25 @@
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
+
+(defun sample-text (n)
+  (case n
+    (:last-nl-yes
+     (format nil "~A~%~A~%~A~%"
+             "Ala ma kota"
+             "Ola ma psa"
+             "A, ja mam Lisp."))
+    (:last-nl-no
+     (format nil "~A~%~A~%~A"
+             "Ala ma kota"
+             "Ola ma psa"
+             "A, ja mam Lisp."))
+    (:first-nl-yes
+     (format nil "~%~A~%~%~%~A"
+             "Ala ma kota"
+             "A ja Lisp."))
+    (T
+     (format nil "one line no NL"))))
 
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
@@ -262,6 +279,20 @@
     (warn "got stats ~S" stats)
     (setf (text-structure model) stats)))
 
+(defmethod reload-text-structure :after ((model basic-editor-model))
+  (warn "after reloading text structure")
+  ;; after removing the last line cursor need to move to last position of the
+  ;; previous line
+  ;; after removing
+  ;; validate cursor
+  ;; if cursor is
+  ;; beyond the last row, move it to the last character of the last row
+  ;; beyond the last character on the line, move it to last character
+  ;; before the first column, move it to the first column
+  ;;
+  ;; zzzzzzzzzzzzz
+  )
+
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
@@ -272,46 +303,18 @@
        (~> model cursor row)
        found-last-row))))
 
-;;; ============================================================================
-
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 
 (defmethod move-cursor-left ((model basic-editor-model))
-  (if (> (~> model cursor col) 0)
-      (move-cursor-left (cursor model))
-      (unless (is-first-line model)
-        (move-cursor-up model)
-        (move-cursor-end model :ignored))))
+  (error "finish me"))
 (defmethod move-cursor-right ((model basic-editor-model))
-  (let ((last-row (car (find-last-row model)))
-        (last-col (cdr (find-last-row model))))
-    (warn "last row ~S - ~S" last-row last-col)
-    (warn "current position ~S = ~S"
-          (~> model cursor row)
-          (~> model cursor col))
-    (progn
-      (warn "test passed ~S" (is-last-line model))
-      (if (>=
-           (~> model cursor col)
-           (find-cursor-end model))
-          (progn
-            (if (>= (~> model cursor row) last-row)
-                (progn
-                  (insert-character-at-cursor model "" "Return"))
-                (progn
-                  (move-cursor-down model (all-lines-count model))
-                  (move-cursor-home model))))
-
-          (move-cursor-right (cursor model)))))
-  )
+  (error "finish me"))
 
 (defmethod move-cursor-up ((model basic-editor-model))
-  (move-cursor-up (cursor model)))
+  (error "finish me"))
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
-  (let ((last-row (car (find-last-row model))))
-
-    (move-cursor-down (cursor model) last-row)))
+  (error "finish me"))
 
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
@@ -551,29 +554,21 @@
                    for c across
                          (sycamore:rope-string
                           (text model))
-                   for wrap-row = 0 then (if (or (equal last-char #\Newline)
-                                                 (>= wrap-col wrap-column))
-                                             (1+ wrap-row)
-                                             wrap-row)
-                   for wrap-col = 0 then (if (or (equal last-char #\Newline)
-                                                 (>= wrap-col wrap-column))
-                                             0
-                                             (1+ wrap-col))
-                   for real-row = 0 then (if (equal last-char #\Newline)
-                                             (1+ real-row)
-                                             real-row)
-                   for real-col = 0 then (if (equal last-char #\Newline)
-                                             0
-                                             (1+ real-col))
+                   for row = 0 then (if (or (equal last-char #\Newline)
+                                            (>= col wrap-column))
+                                        (1+ row) row)
+                   for col = 0 then (if (or (equal last-char #\Newline)
+                                            (>= col wrap-column))
+                                        0 (1+ col))
                    for pos = 0  then (1+ pos)
-                   for maxcol = 0 then (max maxcol wrap-col)
+                   for maxcol = 0 then (max maxcol col)
                    for relx = (+ margin-horizontal
                                  (ceiling
-                                  (* (- wrap-col (view-port-first-column model))
+                                  (* (- col (view-port-first-column model))
                                      (1+ bwidth) )))
                    for rely = (+ margin-vertical
                                  (ceiling
-                                  (* (- wrap-row (view-port-first-line model))
+                                  (* (- row (view-port-first-line model))
                                      (1+ bheight))))
                    for min-rely = 0 then (min rely min-rely)
                    for outside = (let ((max-x-coord (+ relx bwidth))
@@ -585,10 +580,10 @@
                                     (< rely 0)))
                    for max-seen-row = 0 then (if outside
                                                  max-seen-row
-                                                 (max wrap-row max-seen-row))
+                                                 (max row max-seen-row))
                    for max-seen-col = 0 then (if outside
                                                  max-seen-col
-                                                 (max wrap-col max-seen-col))
+                                                 (max col max-seen-col))
                    unless outside
                      collect (make-instance 'basic-editor-character
                                             :bchar c
@@ -600,20 +595,18 @@
                                             :width bwidth
                                             :height bheight
                                             :color (if (and (= (~> model cursor row)
-                                                               real-row)
+                                                               row)
                                                             (= (~> model cursor col)
-                                                               real-col))
+                                                               col))
                                                        "red"
                                                        "pink")
-                                            :row wrap-row
-                                            :col wrap-col
-                                            :real-row real-row
-                                            :real-col real-col
+                                            :row row
+                                            :col col
                                             :pos pos
                                             :outside outside
                                             )
                    finally
-                      (setf (all-lines-count model) real-row)
+                      (setf (all-lines-count model) row)
                       (setf (view-port-lines model) max-seen-row)
                       (setf (view-port-columns model) max-seen-col)))))
     (setf (seen-chars model) the-chars)
@@ -876,12 +869,10 @@
        (move-cursor-end model :ignored))
       ((and (equal key-name "Delete")
             (equal mods nil))
-       (warn "doing delete")
        (delete-character-at-cursor model))
       ((and (equal key-name "BackSpace")
-            (equal mods nil))
-       (warn "doing backspace")
-       (move-cursor-left model)
+            (equal mods nil)
+            (move-cursor-left model))
        (delete-character-at-cursor model))
       (T
        (if (equal entered "")
