@@ -125,31 +125,4 @@ file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 
 **** last line right and bottom
 
-*** revisit lines
-we have
-[[file:src/basic-editor.lisp::for row = 0 then (if (or (equal last-char #\Newline)]]
-
-but we also need for cursor
-[[file:src/basic-editor.lisp::(defmethod find-last-row]]
-
-is-first-line
-[[file:src/basic-editor.lisp::defun is-first-line (model]]
-
-*** testing enter on last line
-file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::464
-
-handling Return
-[[file:src/basic-editor.lisp::if (equal key-name "Return"]]
-
-insert character at cursor
-[[file:src/basic-editor.lisp::defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name]]
-
-*** hmm
-[[file:src/basic-editor.lisp::(defmethod delete-character-at-cursor]]
-[[file:src/basic-editor.lisp::(defmethod insert-character-at-cursor]]
-
-[[file:src/basic-editor.lisp::format t "unhandled key ~S~%" (list entered key-name key-code mods)]]
-
-[[file:src/basic-editor.lisp::(equal key-name "Left"]]
-
-[[file:src/basic-editor.lisp::defmethod move-cursor-left ((model basic-editor-model)]]
+*** trying to change
