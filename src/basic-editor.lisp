@@ -125,25 +125,6 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (text-stats (text model)))
 
-(defun sample-text (n)
-  (case n
-    (:last-nl-yes
-     (format nil "~A~%~A~%~A~%"
-             "Ala ma kota"
-             "Ola ma psa"
-             "A, ja mam Lisp."))
-    (:last-nl-no
-     (format nil "~A~%~A~%~A"
-             "Ala ma kota"
-             "Ola ma psa"
-             "A, ja mam Lisp."))
-    (:first-nl-yes
-     (format nil "~%~A~%~%~%~A"
-             "Ala ma kota"
-             "A ja Lisp."))
-    (T
-     (format nil "one line no NL"))))
-
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
   (let ((rx (sample-text-stats txt)))
@@ -279,20 +260,6 @@
     (warn "got stats ~S" stats)
     (setf (text-structure model) stats)))
 
-(defmethod reload-text-structure :after ((model basic-editor-model))
-  (warn "after reloading text structure")
-  ;; after removing the last line cursor need to move to last position of the
-  ;; previous line
-  ;; after removing
-  ;; validate cursor
-  ;; if cursor is
-  ;; beyond the last row, move it to the last character of the last row
-  ;; beyond the last character on the line, move it to last character
-  ;; before the first column, move it to the first column
-  ;;
-  ;; zzzzzzzzzzzzz
-  )
-
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
@@ -302,6 +269,8 @@
       (>=
        (~> model cursor row)
        found-last-row))))
+
+;;; ============================================================================
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
