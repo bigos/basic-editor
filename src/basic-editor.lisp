@@ -503,8 +503,8 @@
             (clean-filepath (subseq (cdr  filepath) 7))
             (text-content (alexandria:read-file-into-string clean-filepath)))
         (warn "going to load ~S" clean-filepath)
-        (setf (text model) text-content)
         (setf (current-file model) clean-filepath)
+        (setf (text model) text-content)
         (reload-text-structure model)))))
 
 ;; (funcall *client-fn-save-file* (cancelled-value))
