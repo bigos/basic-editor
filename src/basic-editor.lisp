@@ -20,7 +20,7 @@
 
 (defclass/std basic-editor-model (boxes:model)
   ((text :std "" :type string)
-   (text-structure)
+   (text-structure :type text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
