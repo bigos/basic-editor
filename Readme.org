@@ -126,6 +126,8 @@ file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 **** last line right and bottom
 
 *** trying to change
+
+**** what we had so far
 model
 [[file:src/basic-editor.lisp::(defclass/std basic-editor-model]]
 key handling
@@ -149,3 +151,9 @@ so after loading the test we have
 The text-structure comes from [[file:src/basic-editor.lisp::defun sample-text-stats (text]]
 and contains a hash of line stats which are instances of
 [[file:src/basic-editor.lisp::(defclass/std text-row]]
+
+**** needed changes
+In the [[file:src/basic-editor.lisp::(defclass/std basic-editor-model][model]] we have text-structure. We nee methods and a class for structured
+handling of text
+
+Use [[file:src/basic-editor.lisp::(defmethod reload-text-structure][reload-text-structure]] to create a new instance of [[file:src/basic-editor.lisp::(defclass/std text-structure][text-structure]].

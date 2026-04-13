@@ -40,6 +40,9 @@
    (home :type integer)
    (end  :type integer)))
 
+(defclass/std text-structure ()
+  ((data)))
+
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
 (defclass/std basic-editor-character (boxes:node-character)
@@ -277,7 +280,7 @@
   (warn "=========== going to load string ================ ~S" (text model))
   (let ((stats (text-stats (text model))))
     (warn "got stats ~S" stats)
-    (setf (text-structure model) stats)))
+    (setf (text-structure model) (make-instance 'text-structure :data stats))))
 
 (defmethod reload-text-structure :after ((model basic-editor-model))
   (warn "after reloading text structure")
