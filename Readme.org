@@ -126,3 +126,26 @@ file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::1
 **** last line right and bottom
 
 *** trying to change
+model
+[[file:src/basic-editor.lisp::(defclass/std basic-editor-model]]
+key handling
+[[file:src/basic-editor.lisp::(defun handle-key-pressed]]
+drawing
+[[file:src/basic-editor.lisp::(defmethod draw-window]]
+file opening
+[[file:src/basic-editor.lisp::(defun open-file]]
+[[file:src/basic-editor.lisp::gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file][setting function for open file]]
+[[file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::(defun present-file-open-dialog][library function for file dialog]] and [[file:~/Programming/Lisp/clops-gui/src/gui-window-gtk.lisp::(funcall *client-fn-open-file*][callback]]
+reload file structure
+[[file:src/basic-editor.lisp::setf (text model) text-content]]
+[[file:src/basic-editor.lisp::reload-text-structure model))))]]
+[[file:src/basic-editor.lisp::(defmethod reload-text-structure]]
+text stats
+[[file:src/basic-editor.lisp::let ((stats (text-stats (text model)))]]
+[[file:src/basic-editor.lisp::defun text-stats (text]]
+[[file:src/basic-editor.lisp::defun sample-text-stats (text]]
+so after loading the test we have
+[[file:src/basic-editor.lisp::(defclass/std basic-editor-model][model]] text and text-structure
+The text-structure comes from [[file:src/basic-editor.lisp::defun sample-text-stats (text]]
+and contains a hash of line stats which are instances of
+[[file:src/basic-editor.lisp::(defclass/std text-row]]
