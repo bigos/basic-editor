@@ -472,28 +472,11 @@
 (defmethod find-cursor-position ((model basic-editor-model))
   (warn "model cursor ~S" (cursor model))
   (looping-seen-chars model "")
-  (let ((newval
-          (let ((cur-row (current-row model)))
-            (if cur-row
-                (+ (~> model cursor col)
-                   (home (current-row model)))
-                nil)))
-        (oldval
-          (loop for c in (seen-chars model)
-                for found = (and (equal
-                                  (~> c row)
-                                  (~> model cursor row))
-                                 (equal
-                                  (~> c col)
-                                  (~> model cursor col)))
-                until found
-                finally (return (if found
-                                    (~> c pos)
-                                    nil)))))
-    (unless (eq newval oldval)
-      (error "find cursor position mismatch ~S ~S"  newval oldval))
 
-    oldval))
+  (let ((cur-row (current-row model)))
+    (when cur-row
+      (+ (~> model cursor col)
+         (home cur-row)))))
 
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
