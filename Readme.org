@@ -159,4 +159,4 @@ handling of text
 Use [[file:src/basic-editor.lisp::(defmethod reload-text-structure][reload-text-structure]] to create a new instance of [[file:src/basic-editor.lisp::(defclass/std text-structure][text-structure]].
 
 fill in the function
-[[file:src/basic-editor.lisp::defun experiment-text-strucure (]]
+[[file:src/basic-editor.lisp::defun experiment-text-structure (]]

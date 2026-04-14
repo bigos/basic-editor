@@ -249,12 +249,19 @@
 ;; (experiment-text-structure)
 (defun experiment-text-structure ()
   (let ((model (make-instance 'basic-editor-model))
-        (text-content (format nil "ala ma kota~%")))
+        (text-content (format nil "Ala ma kota~%Ola ma psa~%")))
     (setf (text model) text-content)
     (reload-text-structure model)
     (break "examine the model ~S" model)
-    ;; end
-    ))
+    (let ((tsd (data (text-structure model))))
+      (loop for k being the hash-key of tsd
+            do
+               (warn "row ~S"
+                     (row-text
+                      (gethash k tsd)
+                      (text model))))
+      ;; end
+      )))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
