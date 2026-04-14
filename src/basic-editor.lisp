@@ -168,6 +168,26 @@
   (1- (- (end row)
          (home row))))
 
+(defmethod previous-row ((model basic-editor-model))
+  (let ((the-data (data (text-structure model)))
+        (row (~> model cursor row)))
+    (gethash (1- row) the-data)))
+
+(defmethod current-row ((model basic-editor-model))
+  (let ((the-data (data (text-structure model)))
+        (row (~> model cursor row)))
+    (gethash row the-data)))
+
+(defmethod next-row ((model basic-editor-model))
+  (let ((the-data (data (text-structure model)))
+        (row (~> model cursor row)))
+    (gethash (1+ row) the-data)))
+
+
+(defmethod last-row ((model basic-editor-model))
+  (let ((the-data (data (text-structure model))))
+    (1- (hash-table-count the-data))))
+
 ;; (examine-text-stats)
 (defun examine-text-stats ()
   (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
@@ -333,7 +353,7 @@
        (~> model cursor row)
        found-last-row))))
 
-(defmethod validate-cursor-position ((model basic-editor-model) row col)
+(defmethod valid-cursor-position ((model basic-editor-model) row col)
   (let ((the-data (data (text-structure model))))
     (let ((last-row (1- (hash-table-count the-data))) ; last row number
           (current-row (gethash row the-data)))
@@ -354,20 +374,73 @@
                 nil)))))))
 
 (defmethod move-cursor-to :before ((model basic-editor-model) row col)
-  (assert (validate-cursor-position model row col)))
+  (assert (valid-cursor-position model row col)))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 
 (defmethod move-cursor-left ((model basic-editor-model))
-  (error "finish me"))
+  (cond ((valid-cursor-position model
+                                (~> model cursor row)
+                                (1- (~> model cursor col)))
+         (move-cursor-to model
+                         (~> model cursor row)
+                         (1- (~> model cursor col))))
+        ((and (previous-row model)
+              (valid-cursor-position model
+                                     (1- (~> model cursor row))
+                                     (max-col (previous-row model))))
+         (move-cursor-to model
+                         (1- (~> model cursor row))
+                         (max-col (previous-row model))))
+        (T (warn "no more valid cursor positions"))))
+
 (defmethod move-cursor-right ((model basic-editor-model))
-  (error "finish me"))
+  (cond ((valid-cursor-position model
+                                (~> model cursor row)
+                                (1+ (~> model cursor col)))
+         (move-cursor-to model
+                         (~> model cursor row)
+                         (1+ (~> model cursor col))))
+        ((valid-cursor-position model
+                                (1+ (~> model cursor row))
+                                0)
+         (move-cursor-to model
+                         (1+ (~> model cursor row))
+                         0))
+        (T (warn "no more valid cursor positions"))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
-  (error "finish me"))
+  (cond ((valid-cursor-position model
+                                (1- (~> model cursor row))
+                                (~> model cursor col))
+         (move-cursor-to model
+                         (1- (~> model cursor row))
+                         (~> model cursor col)))
+        ((and (previous-row model)
+              (valid-cursor-position model
+                                        (1- (~> model cursor row))
+                                        (max-col (previous-row model))))
+         (move-cursor-to model
+                         (1- (~> model cursor row))
+                         (max-col (previous-row model))))
+        (T (warn "no more valid cursor positions"))))
+
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
-  (error "finish me"))
+  (cond ((valid-cursor-position model
+                                (1+ (~> model cursor row))
+                                (~> model cursor col))
+         (move-cursor-to model
+                         (1+ (~> model cursor row))
+                         (~> model cursor col)))
+        ((and (next-row model)
+              (valid-cursor-position model
+                                     (1+ (~> model cursor row))
+                                     (max-col (next-row model))))
+         (move-cursor-to model
+                         (1+ (~> model cursor row))
+                         (max-col (next-row model))))
+        (T (warn "no more valid cursor positions"))) )
 
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
@@ -382,13 +455,8 @@
 ;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-end ((model basic-editor-model))
-  (let ((text-stats (sample-text-stats (text model))))
-    (let ((current-row (~> model cursor row)))
-      (assert (<= 0 current-row (hash-table-count text-stats)))
-      (let ((current-line (gethash (~> model cursor row) text-stats)))
-        (if current-line
-            (1- (length (row-text current-line (text model))))
-            0)))))
+  (max-col
+   (current-row model)))
 
 (defmethod looping-seen-chars ((model basic-editor-model) msg)
   (warn "looping seen-chars ~S ~S"
@@ -399,19 +467,26 @@
 (defmethod find-cursor-position ((model basic-editor-model))
   (warn "model cursor ~S" (cursor model))
   (looping-seen-chars model "")
+  (let ((newval
+          (+ (~> model cursor col)
+             (home (current-row model))))
+        (oldval
+          (loop for c in (seen-chars model)
+                for found = (and (equal
+                                  (~> c row)
+                                  (~> model cursor row))
+                                 (equal
+                                  (~> c col)
+                                  (~> model cursor col)))
+                until found
+                finally (return (if found
+                                    (~> c pos)
+                                    nil)))))
+    (unless (eq newval oldval)
+      (error "find cursor position mismatch ~S ~S"  newval oldval))
 
+    oldval))
 
-  (loop for c in (seen-chars model)
-        for found = (and (equal
-                          (~> c row)
-                          (~> model cursor row))
-                         (equal
-                          (~> c col)
-                          (~> model cursor col)))
-        until found
-        finally (return (if found
-                            (~> c pos)
-                            nil))))
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
