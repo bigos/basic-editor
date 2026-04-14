@@ -301,11 +301,9 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 1 (~> model be::cursor be::col)))
 
-
     (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 2 (~> model be::cursor be::col)))
-
 
     (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
@@ -319,11 +317,9 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
 
-
     (process-event experimental-window :key-pressed '("" "Left" 113 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    ))
+    (is (eq 0 (~> model be::cursor be::col)))))
 
 (test single-line-moving-left-pressing-enter
   "single line moving left"
