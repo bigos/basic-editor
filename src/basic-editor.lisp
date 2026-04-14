@@ -164,6 +164,10 @@
           (home row)
           (end row)))
 
+(defmethod max-col ((row text-row))
+  (- (end row)
+     (home row)))
+
 ;; (examine-text-stats)
 (defun examine-text-stats ()
   (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
@@ -249,17 +253,25 @@
 ;; (experiment-text-structure)
 (defun experiment-text-structure ()
   (let ((model (make-instance 'basic-editor-model))
-        (text-content (format nil "Ala ma kota~%Ola ma psa~%")))
+        (text-content (format nil "~%~%Ala ma kota~%~%Ola ma psa")))
     (setf (text model) text-content)
     (reload-text-structure model)
     (break "examine the model ~S" model)
+    ;; find where the cursor is first used on loading
 
-    (loop for k being the hash-key of tsd
+    (loop for k being the hash-key of (data (text-structure model))
           do
-             (warn "row ~S"
-                   (row-text
-                    (gethash k (data (text-structure model)))
-                    (text model))))
+             (let ((zzz (gethash k (data (text-structure model)))))
+               (warn "row  ~s ~s ~s"
+                     k
+                     (list (row zzz)
+                           (home zzz)
+                           (end zzz)
+                           (max-col zzz))
+                     (row-text
+                      (gethash k (data (text-structure model))
+                               )
+                      (text model)))))
       ;; end
       ))
 
