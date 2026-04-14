@@ -174,3 +174,7 @@ Use [[file:src/basic-editor.lisp::(defmethod reload-text-structure][reload-text-
 
 fill in the function
 [[file:src/basic-editor.lisp::defun experiment-text-structure (]]
+
+[[file:src/basic-editor.lisp::defun experiment-valid-cursor (]]
+
+[[file:src/basic-editor.lisp::defmethod validate-cursor-position ((model basic-editor-model) row col]]

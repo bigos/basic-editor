@@ -271,9 +271,31 @@
                      (row-text
                       (gethash k (data (text-structure model))
                                )
-                      (text model)))))
-      ;; end
-      ))
+                      (text model)))))))
+
+(defun experiment-valid-cursor ()
+  (let ((model (make-instance 'basic-editor-model))
+        (text-content (format nil "~%~%Ala ma kota~%~%Ola ma psa")))
+    (setf (text model) text-content)
+    (reload-text-structure model)
+    ;; (break "examine the model ~S" model)
+    (progn
+      (list
+       :both
+       (validate-cursor-position model -1 -1 )
+       :neg-column
+       (validate-cursor-position model 0 -1 )
+       :neg-row
+       (validate-cursor-position model -1 0 )
+       :ok
+       (validate-cursor-position model 0 0 )
+
+       :excessive-row
+       (validate-cursor-position model 1000 0)
+       :excessive-column
+       (validate-cursor-position model 0 1000)
+       ))))
+
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
@@ -339,18 +361,24 @@
   (let ((the-data (data (text-structure model))))
     (let ((last-row (1- (hash-table-count the-data))) ; last row number
           (current-row (gethash row the-data)))
+
       (let ((valid-row (and (>= row 0)
                             (<= row last-row)))
-            (valid-col (and (>= col 0)
-                            (<= (max-col current-row)))))
+            (valid-col (and current-row
+                            (<= 0 col (max-col current-row)))))
+        (warn "early validation ~S ~S" valid-row valid-col)
         (let ((validated (and valid-row
                               valid-col)))
           (if validated
-              (warn "info: cursor position ~S ~S is valid" row col)
-              (error "invalid cursor position ~S ~S" row col)))))))
+              (progn
+                (warn "info: cursor position ~S ~S is valid" row col)
+                T)
+              (progn
+                (warn "invalid cursor position ~S ~S" row col)
+                nil)))))))
 
 (defmethod move-cursor-to :before ((model basic-editor-model) row col)
-  (validate-cursor-position (cursor model) row col))
+  (validate-cursor-position model row col))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
