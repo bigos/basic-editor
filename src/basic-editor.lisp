@@ -273,30 +273,6 @@
                                )
                       (text model)))))))
 
-(defun experiment-valid-cursor ()
-  (let ((model (make-instance 'basic-editor-model))
-        (text-content (format nil "~%~%Ala ma kota~%~%Ola ma psa")))
-    (setf (text model) text-content)
-    (reload-text-structure model)
-    ;; (break "examine the model ~S" model)
-    (progn
-      (list
-       :both
-       (validate-cursor-position model -1 -1 )
-       :neg-column
-       (validate-cursor-position model 0 -1 )
-       :neg-row
-       (validate-cursor-position model -1 0 )
-       :ok
-       (validate-cursor-position model 0 0 )
-
-       :excessive-row
-       (validate-cursor-position model 1000 0)
-       :excessive-column
-       (validate-cursor-position model 0 1000)
-       ))))
-
-
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
