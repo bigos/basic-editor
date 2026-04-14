@@ -165,8 +165,8 @@
           (end row)))
 
 (defmethod max-col ((row text-row))
-  (- (end row)
-     (home row)))
+  (1- (- (end row)
+         (home row))))
 
 ;; (examine-text-stats)
 (defun examine-text-stats ()

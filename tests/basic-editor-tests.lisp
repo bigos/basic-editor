@@ -2,7 +2,7 @@
 
 (in-package #:basic-editor-test)
 
-(setf 5am:*on-error* :debug)
+;; (setf 5am:*on-error* :debug)
 
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
@@ -95,6 +95,18 @@
     ;; teardown code
     ))
 
+(def-fixture prepare-text-no-window (text)
+  ;; setup code
+  (let* ((model (make-instance 'basic-editor-model))
+         (text-content text))
+    (setf (be::text model) text-content)
+    (be::reload-text-structure model)
+
+    ;; body
+    (&body)
+    ;; teardown code
+    ))
+
 ;;; ============= suites ================================================
 (progn                                  ; suites
   (def-suite equality
@@ -105,6 +117,10 @@
 
   (def-suite basic-editor-resizing
       :description "Suite for resizing"
+      :in basic-editor-suite)
+
+  (def-suite basic-editor-cursor-validation
+      :description "Suite for cursor validation"
       :in basic-editor-suite)
 
   (def-suite basic-editor-text
@@ -624,14 +640,32 @@ works as expected.
       )
 
 (test single-line-one-character-with-newline
-      "one character file with NEWLINE"
+  "one character file with NEWLINE"
   (with-fixture prepare-text ((file-single-line-one-character-with-newline-fname))
-        (is (equal loaded-text (format nil "b~%")))
+    (is (equal loaded-text (format nil "b~%")))
 
-        (process-event experimental-window :key-pressed '("" "End" 115 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 1 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "End" 115 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 1 (~> model be::cursor be::col)))
 
-        (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
-        (is (eq 0 (~> model be::cursor be::row)))
-        (is (eq 0 (~> model be::cursor be::col)))))
+    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))))
+
+(in-suite basic-editor-cursor-validation )        ; ==================================
+
+
+(test single-line-one-character-with-newline
+  "one character with NEWLINE"
+  (with-fixture prepare-text-no-window ((format nil "A~%"))
+    (is (equal (be::text model) (format nil "A~%")))
+
+    (is (eq t    (be::validate-cursor-position model 0 0)))
+    (is (eq nil  (be::validate-cursor-position model -1 -1)))
+    (is (eq nil  (be::validate-cursor-position model 0 -1)))
+    (is (eq nil  (be::validate-cursor-position model -1 0)))
+    (is (eq t    (be::validate-cursor-position model 0 1)))
+    (is (eq nil  (be::validate-cursor-position model 1000 0)))
+    (is (eq nil  (be::validate-cursor-position model 0 1000)))
+    (is (eq nil  (be::validate-cursor-position model 0 2)))
+    (is (eq nil  (be::validate-cursor-position model 1 0)))))
