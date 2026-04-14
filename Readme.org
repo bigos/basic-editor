@@ -152,6 +152,10 @@ The text-structure comes from [[file:src/basic-editor.lisp::defun sample-text-st
 and contains a hash of line stats which are instances of
 [[file:src/basic-editor.lisp::(defclass/std text-row]]
 
+**** cursor
+cursor is created by default
+[[file:src/basic-editor.lisp::cursor :std (make-instance 'cursor :row 0 :col 0)]]
+
 **** needed changes
 In the [[file:src/basic-editor.lisp::(defclass/std basic-editor-model][model]] we have text-structure. We nee methods and a class for structured
 handling of text
