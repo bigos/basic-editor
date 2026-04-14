@@ -335,6 +335,23 @@
        (~> model cursor row)
        found-last-row))))
 
+(defmethod validate-cursor-position ((model basic-editor-model) row col)
+  (let ((the-data (data (text-structure model))))
+    (let ((last-row (1- (hash-table-count the-data))) ; last row number
+          (current-row (gethash row the-data)))
+      (let ((valid-row (and (>= row 0)
+                            (<= row last-row)))
+            (valid-col (and (>= col 0)
+                            (<= (max-col current-row)))))
+        (let ((validated (and valid-row
+                              valid-col)))
+          (if validated
+              (warn "info: cursor position ~S ~S is valid" row col)
+              (error "invalid cursor position ~S ~S" row col)))))))
+
+(defmethod move-cursor-to :before ((model basic-editor-model) row col)
+  (validate-cursor-position (cursor model) row col))
+
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
 
