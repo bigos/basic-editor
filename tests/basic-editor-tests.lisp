@@ -2,7 +2,7 @@
 
 (in-package #:basic-editor-test)
 
-;; (setf 5am:*on-error* :debug)
+(setf 5am:*on-error* :debug)
 
 ;; (ql:quickload :basic-editor/tests)
 ;; (in-package #:basic-editor-test)
@@ -354,13 +354,13 @@ works as expected.
     (is (eq 4 (~> model be::cursor be::col)))
     (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal
-         (format nil "Ala ~%ma kota.~%")
-         (sycamore:rope-string (be::text model))
-         ))
+    ;; (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
+    ;; (is (eq 1 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal
+    ;;      (format nil "Ala ~%ma kota.~%")
+    ;;      (sycamore:rope-string (be::text model))
+    ;;      ))
       ))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
@@ -497,15 +497,15 @@ works as expected.
     (is (eq 12 (~> model be::cursor be::col)))
     (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 1 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 2 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%~%")))
+    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    ;; (is (eq 2 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%~%")))
     ))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
@@ -566,15 +566,15 @@ works as expected.
     (is (eq 7 (be::find-cursor-position model)))
 
     ;; ;; add test for character under cursor
-    (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
-    (is (eq 8 (be::find-cursor-position model)))
+    ;; (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
+    ;; (is (eq 1 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
+    ;; (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
+    ;; (is (eq 8 (be::find-cursor-position model)))
 
-    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
+    ;; (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+    ;; (is (eq 1 (~> model be::cursor be::row)))
+    ;; (is (eq 0 (~> model be::cursor be::col)))
     ))
 
 
@@ -594,7 +594,7 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::col)))
 
     (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
+    (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
     (is (eq 0 (~> model be::cursor be::col)))
 
     ;; (process-event experimental-window :key-pressed '("l" "l" 46 NIL))

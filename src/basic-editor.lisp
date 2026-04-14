@@ -164,7 +164,12 @@
           (home row)
           (end row)))
 
-(defmethod max-col ((row text-row))
+(defun max-col (row)
+  (if row
+      (max-col2 row)
+      0))
+
+(defmethod max-col2 ((row text-row))
   (1- (- (end row)
          (home row))))
 
@@ -468,8 +473,11 @@
   (warn "model cursor ~S" (cursor model))
   (looping-seen-chars model "")
   (let ((newval
-          (+ (~> model cursor col)
-             (home (current-row model))))
+          (let ((cur-row (current-row model)))
+            (if cur-row
+                (+ (~> model cursor col)
+                   (home (current-row model)))
+                nil)))
         (oldval
           (loop for c in (seen-chars model)
                 for found = (and (equal
