@@ -246,6 +246,16 @@
              (assert (equal (format nil "A ja Lisp.")
                             (row-text (gethash 5 st) txt))))))
 
+;; (experiment-text-structure)
+(defun experiment-text-structure ()
+  (let ((model (make-instance 'basic-editor-model))
+        (text-content (format nil "ala ma kota~%")))
+    (setf (text model) text-content)
+    (reload-text-structure model)
+    (break "examine the model ~S" model)
+    ;; end
+    ))
+
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
