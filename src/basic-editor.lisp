@@ -354,7 +354,7 @@
                 nil)))))))
 
 (defmethod move-cursor-to :before ((model basic-editor-model) row col)
-  (validate-cursor-position model row col))
+  (assert (validate-cursor-position model row col)))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
