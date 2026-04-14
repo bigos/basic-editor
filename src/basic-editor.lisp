@@ -253,15 +253,15 @@
     (setf (text model) text-content)
     (reload-text-structure model)
     (break "examine the model ~S" model)
-    (let ((tsd (data (text-structure model))))
-      (loop for k being the hash-key of tsd
-            do
-               (warn "row ~S"
-                     (row-text
-                      (gethash k tsd)
-                      (text model))))
+
+    (loop for k being the hash-key of tsd
+          do
+             (warn "row ~S"
+                   (row-text
+                    (gethash k (data (text-structure model)))
+                    (text model))))
       ;; end
-      )))
+      ))
 
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
