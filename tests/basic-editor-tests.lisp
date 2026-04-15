@@ -397,11 +397,11 @@ works as expected.
     (is (equal loaded-text  (format nil
                                     "I need to make sure~%three lines movements~%works as expected.~%")))
 
-    ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    ;; (is (eq 2 (~> model be::cursor be::row)))
-    ;; (is (eq 17 (~> model be::cursor be::col)))
-    ;; (is (equal loaded-text  (format nil
-    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 17 (~> model be::cursor be::col)))
+    (is (equal loaded-text  (format nil
+                                    "I need to make sure~%three lines movements~%works as expected.~%")))
 
     ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     ;; (is (eq 3 (~> model be::cursor be::row)))
