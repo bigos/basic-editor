@@ -564,15 +564,15 @@ works as expected.
     (is (eq 7 (be::find-cursor-position model)))
 
     ;; ;; add test for character under cursor
-    ;; (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
-    ;; (is (eq 1 (~> model be::cursor be::row)))
-    ;; (is (eq 0 (~> model be::cursor be::col)))
-    ;; (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
-    ;; (is (eq 8 (be::find-cursor-position model)))
+    (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma ~%kota.~%")))
+    (is (eq 8 (be::find-cursor-position model)))
 
-    ;; (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
-    ;; (is (eq 1 (~> model be::cursor be::row)))
-    ;; (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Home" 110 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
     ))
 
 
@@ -595,27 +595,27 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
     (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row)))
-    ;; (is (eq 1 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 1 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row)))
-    ;; (is (eq 3 (~> model be::cursor be::col)))
-                                        ;
-    ;; (loop for k in '((" " "space" 65 NIL)
-    ;;                  ("m" "m" 58 NIL)
-    ;;                  ("a" "a" 38 NIL)
-    ;;                  (" " "space" 65 NIL)
-    ;;                  ("k" "k" 45 NIL)
-    ;;                  ("o" "o" 32 NIL)
-    ;;                  ("t" "t" 28 NIL)
-    ;;                  ("a" "a" 38 NIL)
-    ;;                  ("." "period" 60 NIL))
-    ;;       do (process-event experimental-window :key-pressed  k))
+    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 2 (~> model be::cursor be::col)))
 
-    ;; (eq 0  (~> model be::cursor be::row))
-    ;; (is (eq 12 (~> model be::cursor be::col)))
+    (loop for k in '((" " "space" 65 NIL)
+                     ("m" "m" 58 NIL)
+                     ("a" "a" 38 NIL)
+                     (" " "space" 65 NIL)
+                     ("k" "k" 45 NIL)
+                     ("o" "o" 32 NIL)
+                     ("t" "t" 28 NIL)
+                     ("a" "a" 38 NIL)
+                     ("." "period" 60 NIL))
+          do (process-event experimental-window :key-pressed  k))
+
+    (eq 0  (~> model be::cursor be::row))
+    (is (eq 11 (~> model be::cursor be::col)))
     ))
 
 (test single-line-one-character-no-newline
