@@ -515,13 +515,14 @@
           (~> model cursor col)
           cur-pos)
     (if cur-pos
-        (setf (text model) (format nil "~A~A"
-                                   (subseq (text model) 0
-                                                        cur-pos)
-                                   (subseq (text model) (+ 1 cur-pos)
-                                                        (length (text model)))))
-        (warn "No cursor position found, possibly no text")))
-  (reload-text-structure model))
+        (progn
+          (setf (text model) (format nil "~A~A"
+                                     (subseq (text model) 0
+                                             cur-pos)
+                                     (subseq (text model) (+ 1 cur-pos)
+                                             (length (text model)))))
+          (reload-text-structure model))
+        (warn "No cursor position found, possibly no text"))))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
