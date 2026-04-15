@@ -571,8 +571,8 @@
                                 (T entered))
                               ;; post insert
                               (subseq (text model) (+ 0 cur-pos)
-                                                   (sycamore:rope-length (text model)))))))
-
+                                      (sycamore:rope-length (text model)))))))
+          (reload-text-structure model)
           ;; ------------------------------------------------------
           (cond
             ((equal key-name "Return")
@@ -590,6 +590,7 @@
                                ((equal key-name "Return")
                                 (for-enter))
                                (T entered)))
+          (reload-text-structure model)
           (cond
             ((equal key-name "Return")
              (warn "move cursor return 2")
@@ -603,7 +604,8 @@
     (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
     (warn "cursor text  ~S" (~> model text))
     (warn "---------- finished insert --------------"))
-  (reload-text-structure model))
+
+  )
 
 ;;; ----------------------------------------------------------------------------
 (defun new-file ()
