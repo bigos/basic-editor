@@ -538,7 +538,7 @@
 
                 (if (equal key-name "Return")
                     (progn              ;then
-                      (warn "doint Return")
+                      (warn "doing Return")
                       (format nil "~A~A~A"
                               ;;  pre insert
                               ;; TODO it fails here, we need to test extensively this part in different cases
