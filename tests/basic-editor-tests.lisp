@@ -354,14 +354,12 @@ works as expected.
     (is (eq 4 (~> model be::cursor be::col)))
     (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
-    ;; (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
-    ;; (is (eq 1 (~> model be::cursor be::row)))
-    ;; (is (eq 0 (~> model be::cursor be::col)))
-    ;; (is (equal
-    ;;      (format nil "Ala ~%ma kota.~%")
-    ;;      (sycamore:rope-string (be::text model))
-    ;;      ))
-      ))
+    (process-event experimental-window :key-pressed '("" "Return" 36 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
+    (is (equal
+         (format nil "Ala ~%ma kota.~%")
+         (sycamore:rope-string (be::text model))))))
 
 (in-suite basic-editor-text-last-line-right)           ; ==================================
 
@@ -383,21 +381,21 @@ works as expected.
 
     ;; move 2 rows down
 
-    ;; (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-    ;; (is (eq 1 (~> model be::cursor be::row)))
-    ;; (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    (is (eq 1 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
-    ;; (is (eq 2 (~> model be::cursor be::row)))
-    ;; (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("" "Down" 116 NIL))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 0 (~> model be::cursor be::col)))
 
     ;; ;; move to the right
-    ;; (loop for x from 1 to 16
-    ;;       do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
-    ;; (is (eq 2 (~> model be::cursor be::row)))
-    ;; (is (eq 16 (~> model be::cursor be::col)))
-    ;; (is (equal loaded-text  (format nil
-    ;;                                 "I need to make sure~%three lines movements~%works as expected.~%")))
+    (loop for x from 1 to 16
+          do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
+    (is (eq 2 (~> model be::cursor be::row)))
+    (is (eq 16 (~> model be::cursor be::col)))
+    (is (equal loaded-text  (format nil
+                                    "I need to make sure~%three lines movements~%works as expected.~%")))
 
     ;; (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
     ;; (is (eq 2 (~> model be::cursor be::row)))
