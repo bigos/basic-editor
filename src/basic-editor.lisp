@@ -149,7 +149,7 @@
 
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (txt)
-  (let ((rx (sample-text-stats txt)))
+  (let ((rx (text-stats txt)))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for r being the hash-value of rx
@@ -197,7 +197,7 @@
 (defun examine-text-stats ()
   (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
         for txt = (sample-text tc)
-        for st = (sample-text-stats txt)
+        for st = (text-stats txt)
         do
            (warn "working on ~S" tc)
            (ecase tc
