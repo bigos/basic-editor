@@ -298,7 +298,7 @@
                                )
                       (text model)))))))
 
-;;; TODO we need variant for wrapped text
+;;; TODO we MAY need variant for wrapped text
 (defun sample-text-stats (text)
   (assert (typep text 'simple-array))
   (let ((lines-hash-table (make-hash-table)))
