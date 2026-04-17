@@ -111,10 +111,11 @@
                     0)
    (col cursor) (col cursor)))
 (defmethod move-cursor-down ((cursor cursor) last-row)
+  (warn "setting row")
   (setf
-   (row cursor) (if (<= (row cursor) last-row)
-                    (1+ (row cursor))
-                    (row cursor))
+   (row cursor) (1+ (row cursor)))
+  (warn "setting col")
+  (setf
    (col cursor) (col cursor)))
 (defmethod move-cursor-home ((cursor cursor))
   (setf
@@ -414,6 +415,14 @@
          (move-cursor-to model
                          (1+ (~> model cursor row))
                          0))
+        ((last-row model)
+         (progn
+           (warn "trying to add newline")
+           (setf (text model) (format nil "~A~%" (text model)))
+           (reload-text-structure model)
+           (move-cursor-home model)
+           (move-cursor-down model :ignored)
+           ))
         (T (warn "no more valid cursor positions"))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
