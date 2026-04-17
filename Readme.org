@@ -167,8 +167,6 @@ methods
 [[file:src/basic-editor.lisp::defmethod row-text ((row text-row) text]]
 
 **** problem with cursor movement on wrapped text
-first failing test
-file:~/Programming/Lisp/basic-editor/tests/basic-editor-tests.lisp::406
 
 text-stats
 [[file:src/basic-editor.lisp::defun sample-text-stats (text]]
