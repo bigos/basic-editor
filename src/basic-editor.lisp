@@ -41,7 +41,7 @@
    (end  :type integer)))
 
 (defclass/std text-structure ()
-  ((data)))
+  ((data :type hash-table)))
 
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
@@ -354,7 +354,7 @@
   (zerop  (~> model cursor row)))
 
 (defun is-last-line (model)
-  (let ((found-last-row (all-lines-count model)))
+  (let ((found-last-row (hash-table-count (~> model text-structure data))))
     (when found-last-row
       (>=
        (~> model cursor row)
@@ -739,7 +739,7 @@
                                             )
                    finally
                       (setf (all-lines-count model) row)
-                      (setf (view-port-lines model) max-seen-row)
+                      (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
                       (setf (view-port-columns model) max-seen-col)))))
     (setf (seen-chars model) the-chars)
     the-chars))
@@ -908,6 +908,17 @@
          (warn "text ~S" (sycamore:rope-string (text model)))
          (warn "model text structure %s" (text-structure model))
          (warn "model text structure %s" (print-text-stats (text model)))
+         (warn "view port ~S" (list
+                               :view-port-size
+                               (view-port-size model)
+                               :view-port-lines
+                               (view-port-lines model)
+                               :view-port-columns
+                               (view-port-columns model)
+                               :view-port-first-line
+                               (view-port-first-line model)
+                               :view-port-first-column
+                               (view-port-first-column model)))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
