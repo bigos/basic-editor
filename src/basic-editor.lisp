@@ -332,7 +332,8 @@
 
 (defun sample-text-stats-2 ((model basic-editor-model) text)
   (assert (typep text 'simple-array))
-  (let ((lines-hash-table (make-hash-table)))
+  (let ((wrap-col ())
+        (lines-hash-table (make-hash-table)))
     (labels
         ((set-new-line (row home i)
            (warn "adding row ~S ~S ~S" row home i)
@@ -1100,6 +1101,7 @@
             (warn "mouse state released ~S" (gui-app:mouse-button gui-app:*lisp-app*))))
     (:scroll)
     (:resize
+     ;; also see defun calculate-chars
      (destructuring-bind ((w h)) args
        (gui-window:window-resize w h lisp-window)
        (setf (width lisp-window) w
