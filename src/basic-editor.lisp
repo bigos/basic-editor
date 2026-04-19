@@ -332,7 +332,7 @@
 
 (defun sample-text-stats-2 ((model basic-editor-model) text)
   (assert (typep text 'simple-array))
-  (let ((wrap-col ())
+  (let ((wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
     (labels
         ((set-new-line (row home i)
