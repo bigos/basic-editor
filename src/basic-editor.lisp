@@ -490,7 +490,7 @@
         :if-does-not-exist :create)))))
 
 ;;; drawing ====================================================================
-(defun calculate-chars (text-container model)
+(defun calculate-chars (width-text-container height-text-container  model)
   (let* ((the-chars
           (let*
               ((font-size 18)
@@ -509,7 +509,7 @@
                (wrap-column
                 (ecase wrap-mode
                   (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
-                  (:wrap  (- (floor (/ (width text-container)
+                  (:wrap  (- (floor (/ width-text-container
                                        (1+ bwidth)))
                              2)))))
             ;; (break "examine model in calculate chars ~S" model)
@@ -549,9 +549,9 @@
                     for outside = (let ((max-x-coord (+ relx bwidth))
                                         (max-y-coord (+ rely bheight)))
                                     (or
-                                     (>= max-x-coord (- (width text-container) 10))
+                                     (>= max-x-coord (- width-text-container 10))
                                      (< relx 0)
-                                     (>= max-y-coord (height text-container))
+                                     (>= max-y-coord height-text-container)
                                      (< rely 0)))
                     for max-seen-row = 0 then (if outside
                                                   max-seen-row
@@ -633,7 +633,7 @@
                                                   (- (height world) 60)
                                                   "yellow")))
                    (add-children text-container
-                                 (calculate-chars text-container *basic-editor-model*)))
+                                 (calculate-chars (width text-container) (height text-container) *basic-editor-model*)))
                  (make-instance 'node-text
                                 :coordinates-relative (make-coordinates-relative 10 50)
                                 :width (- (width world) 40)
