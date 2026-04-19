@@ -332,7 +332,7 @@
 
 (defun sample-text-stats-2 ((model basic-editor-model) text)
   (assert (typep text 'simple-array))
-  (let ((wrap-col (view-port-columns model))
+  (let ((wrap-col ())
         (lines-hash-table (make-hash-table)))
     (labels
         ((set-new-line (row home i)
@@ -688,30 +688,9 @@
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
-;;; we need text-container, wrap,
-(defmethod wrap-column ((model basic-editor-model))
-  (let* ((world (world model))
-         (text-container-width
-           (- (width world) 20 20 )
-           ;; (make-node 20
-           ;;            340
-           ;;            (- (width world) 20 20)
-           ;;            (- (height world) 60) "yellow")
-           ))
-    (ecase wrap-mode
-      (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
-      (:wrap  (- (floor (/ (width text-container-width)
-                           (1+ bwidth)))
-                 2)))))
-
 ;;; drawing ====================================================================
-(defun calculate-chars (model)
-  (let* ((world (world model))
-         (text-container (make-node 20
-                                    340
-                                    (- (width world) 20 20)
-                                    (- (height world) 60) "yellow"))
-         (the-chars
+(defun calculate-chars (text-container model)
+  (let* ((the-chars
            (let*
                ((font-size 18)
                 (margin-horizontal 0)
@@ -723,9 +702,13 @@
 
                 (bwidth  (+ twidth  0))
                 (bheight (+ theight 0))
-                (wrap-mode (text-wrap model))
+                (wrap-mode :wrap)
                 (wrap-column
-                  (wrap-column model)))
+                  (ecase wrap-mode
+                    (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
+                    (:wrap  (- (floor (/ (width text-container)
+                                         (1+ bwidth)))
+                               2)))))
              ;; (break "examine model in calculate chars ~S" model)
 
              (loop for last-char = nil then c
@@ -810,47 +793,46 @@
         (cairo:text-extents (format nil "~A" text)))
     (list :xb xb :yb yb :width width :height height)))
 
-(defun adding-children (model)
-  (let ((world (world model)))
-    (add-children world
-                  (list
-                   (make-instance 'node-text
-                                  :coordinates-relative (make-coordinates-relative 10 50)
-                                  :width (- (width world) 40)
-                                  :height  30
-                                  :color "white"
-                                  :wrap 'truncate
-                                  :text (format nil "Heading will go here. ~S - ~S"
-                                                (gui-app:mouse-button gui-app:*lisp-app*)
-                                                (cursor model)
-                                                ))
-                   (let ((text-container (make-node 20
-                                                    340
-                                                    (- (width world) 20 20)
-                                                    (- (height world) 60) "yellow")))
-                     (add-children model
-                                   (calculate-chars model)))
-                   (make-instance 'node-text
-                                  :coordinates-relative (make-coordinates-relative 10 50)
-                                  :width (- (width world) 40)
-                                  :height 30
-                                  :color "white"
-                                  :wrap 'truncate
-                                  :text (format nil
-                                                "rowcols ~S ~S, fl ~S, fc ~S ~S"
-                                                (let ((cursor-cons (cursor-position (cursor model))))
+(defun adding-children (world)
+  (add-children world
+                (list
+                 (make-instance 'node-text
+                                :coordinates-relative (make-coordinates-relative 10 50)
+                                :width (- (width world) 40)
+                                :height  30
+                                :color "white"
+                                :wrap 'truncate
+                                :text (format nil "Heading will go here. ~S - ~S"
+                                              (gui-app:mouse-button gui-app:*lisp-app*)
+                                              (cursor *basic-editor-model*)
+                                              ))
+                 (let ((text-container (make-node 20
+                                                  340
+                                                  (- (width world) 20 20)
+                                                  (- (height world) 60) "yellow")))
+                   (add-children text-container
+                                 (calculate-chars text-container *basic-editor-model*)))
+                 (make-instance 'node-text
+                                :coordinates-relative (make-coordinates-relative 10 50)
+                                :width (- (width world) 40)
+                                :height 30
+                                :color "white"
+                                :wrap 'truncate
+                                :text (format nil
+                                              "rowcols ~S ~S, fl ~S, fc ~S ~S"
+                                              (let ((cursor-cons (cursor-position (cursor *basic-editor-model*))))
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
                                                           (cdr cursor-cons)))
-                                                (cons
-                                                 (view-port-lines
-                                                  model)
-                                                 (view-port-columns
-                                                  model))
-                                                (view-port-first-line   model)
-                                                (view-port-first-column model)
-                                                (sycamore:rope-string (text model))
-                                                ))))))
+                                              (cons
+                                               (view-port-lines
+                                                *basic-editor-model*)
+                                               (view-port-columns
+                                                *basic-editor-model*))
+                                              (view-port-first-line   *basic-editor-model*)
+                                              (view-port-first-column *basic-editor-model*)
+                                              (sycamore:rope-string (text *basic-editor-model*))
+                                              )))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -876,14 +858,13 @@
 
   ;; ==================================================================
 
-  (let ((model *basic-editor-model*)
-        (world (boxes::make-node-down
+  (let ((world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
-    (setf (world model) world) ; zzzzzzzzzzzzzzzzzzz
+    (setf (world *basic-editor-model*) world) ; zzzzzzzzzzzzzzzzzzz
     (boxes:absolute-coordinates world)
 
     ;; =========================================================================
-    (adding-children model)
+    (adding-children world)
 
     ;; (warn "adding absolute coordinates -----------------------------------")
     (boxes:absolute-coordinates world)
