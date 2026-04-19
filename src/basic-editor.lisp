@@ -494,8 +494,8 @@
   (let* ((the-chars
           (let*
               ((font-size 18)
-               (margin-horizontal 0)
-               (margin-vertical 0)
+               (margin-horizontal 7)
+               (margin-vertical 5)
                (text-for-size  "pOly()/_")
                (text-data (text-size text-for-size font-size ))
                (twidth (floor (/ (getf text-data :width) (length text-for-size))))
@@ -535,12 +535,16 @@
                     for maxcol = 0 then (max maxcol col)
                     for relx = (+ margin-horizontal
                                   (ceiling
-                                   (* (- col (view-port-first-column model))
-                                      (1+ bwidth) )))
+                                   (* (- col
+                                         (view-port-first-column model))
+                                      (+ 2 bwidth) )))
                     for rely = (+ margin-vertical
                                   (ceiling
-                                   (* (- row (view-port-first-line model))
-                                      (1+ bheight))))
+                                   (* (- (if (eq c #\Newline) (1- row)  row)
+                                         (1-
+                                          (view-port-first-line model)))
+                                      (+ 3
+                                         bheight))))
                     for min-rely = 0 then (min rely min-rely)
                     for outside = (let ((max-x-coord (+ relx bwidth))
                                         (max-y-coord (+ rely bheight)))
@@ -555,6 +559,8 @@
                     for max-seen-col = 0 then (if outside
                                                   max-seen-col
                                                   (max col max-seen-col))
+                    do (when (eq c #\Newline)
+                         (set-new-line row home (1+ pos)))
                     unless outside
                     collect (make-instance 'basic-editor-character
                                            :bchar c
@@ -576,11 +582,10 @@
                                            :pos pos
                                            :outside outside
                                            )
-                    do (when (eq c #\Newline)
-                         (set-new-line row home (1+ pos)))
+
                     finally (when pos
                               (unless (eq c #\Newline)
-                                (set-new-line (1+ row) home (1+ pos))))
+                                (set-new-line row home (1+ pos))))
                     (setf (all-lines-count model) row)
                     (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
                     (setf (view-port-columns model) max-seen-col)
@@ -750,11 +755,10 @@
          (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
          (warn "type of text ~S" (type-of (text model)))
          (warn "file position ~S" (find-cursor-position model))
-         (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
          (warn "model text structure ~s" (loop for r being the hash-value in
                                                                           (data (text-structure model))
-                                               collect (format nil "zzzz ~s ~s ~s ~s~%"
+                                               collect (format nil "row ~s -- ~s ~s ~s~%"
                                                                (row r)
                                                                (home r)
                                                                (end r)
