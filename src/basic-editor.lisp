@@ -726,7 +726,7 @@
   (alexandria:write-string-into-file
    (format nil "~S~%" (list entered key-name key-code mods))
    "/tmp/basic-editor-log-key-presses.txt" :if-exists :append
-                                           :if-does-not-exist :create)
+   :if-does-not-exist :create)
 
   (let ((model *basic-editor-model*))
     (cond
@@ -752,8 +752,15 @@
          (warn "file position ~S" (find-cursor-position model))
          (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
-         (warn "model text structure %s" (text-structure model))
-         (warn "model text structure %s" (data (text-structure model)))
+         (warn "model text structure %s" (loop for r being the hash-value in
+                                                                          (data (text-structure model))
+                                               collect (format nil "~s ~s ~s ~s~%"
+                                                               (row r)
+                                                               (home r)
+                                                               (end r)
+                                                               (subseq (text model)
+                                                                       (home r)
+                                                                       (end r)))))
          (warn "view port ~S" (list
                                :view-port-size
                                (view-port-size model)
