@@ -705,11 +705,10 @@
                 (wrap-mode :wrap)
                 (wrap-column
                   (ecase wrap-mode
-                    (:trim 10000000) ;; trim wraps on ridiculously high column
-                    (:wrap  (-
-                             (floor (/ (width text-container)
-                                       (1+ bwidth)))
-                             2)))))
+                    (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
+                    (:wrap  (- (floor (/ (width text-container)
+                                         (1+ bwidth)))
+                               2)))))
              ;; (break "examine model in calculate chars ~S" model)
 
              (loop for last-char = nil then c
