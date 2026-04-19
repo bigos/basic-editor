@@ -11,6 +11,10 @@
 
 (defparameter *environment* nil)
 
+(defparameter *boundary-kilobyte* (expt 2 10))
+(defparameter *boundary-megabyte* (expt 2 20))
+(defparameter *boundary-gigabyte* (expt 2 30))
+
 (defun pseudo (default &rest rest-args )
   (warn "running pseudo ~S" (list default rest-args ))
   default)
@@ -326,6 +330,31 @@
                (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
 
+(defun sample-text-stats-2 ((model basic-editor-model) text)
+  (assert (typep text 'simple-array))
+  (let ((lines-hash-table (make-hash-table)))
+    (labels
+        ((set-new-line (row home i)
+           (warn "adding row ~S ~S ~S" row home i)
+           (setf (gethash row lines-hash-table)
+                 (make-instance 'text-row
+                                :row row
+                                :home home
+                                :end i))))
+      (loop
+        for prevc = nil then c
+        for c across text
+        for i = 0 then (1+ i)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (eq c #\Newline) (1+ row) row)
+        for home = 0 then (if (eq prevc #\Newline) i home)
+        do
+           (when (eq c #\Newline)
+             (set-new-line row home (1+ i)))
+        finally
+           (when i
+             (unless (eq c #\Newline)
+               (set-new-line (1+ row) home (1+ i))))))
+    lines-hash-table))
 ;;; ghex is my hex editor
 (defun text-stats (text)
   (sample-text-stats text))
