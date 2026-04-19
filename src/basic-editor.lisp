@@ -514,7 +514,7 @@
                              2)))))
             ;; (break "examine model in calculate chars ~S" model)
             (labels ((set-new-line (row home i)
-                       (warn "adding row ~S ~S ~S" row home i)
+
                        (setf (gethash row lines-hash-table)
                              (make-instance 'text-row
                                             :row row
@@ -572,7 +572,7 @@
                                            :width bwidth
                                            :height bheight
                                            :color (if (and (= (~> model cursor row)
-                                                              row)
+                                                              (+ (if (eq c #\Newline) 0 1) row))
                                                            (= (~> model cursor col)
                                                               col))
                                                       "red"
