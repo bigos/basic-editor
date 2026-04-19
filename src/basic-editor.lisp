@@ -625,8 +625,8 @@
                  (let ((text-container (make-node 20
                                                   340
                                                   (- (width world) 20 20)
-                                                  (- (height world) 60) "yellow")))
-                   (warn "before adding children to the text container")
+                                                  (- (height world) 60)
+                                                  "yellow")))
                    (add-children text-container
                                  (calculate-chars text-container *basic-editor-model*)))
                  (make-instance 'node-text
@@ -752,9 +752,9 @@
          (warn "file position ~S" (find-cursor-position model))
          (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
-         (warn "model text structure %s" (loop for r being the hash-value in
+         (warn "model text structure ~s" (loop for r being the hash-value in
                                                                           (data (text-structure model))
-                                               collect (format nil "~s ~s ~s ~s~%"
+                                               collect (format nil "zzzz ~s ~s ~s ~s~%"
                                                                (row r)
                                                                (home r)
                                                                (end r)
