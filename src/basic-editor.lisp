@@ -24,7 +24,7 @@
 
 (defclass/std basic-editor-model (boxes:model)
   ((text :std "" :type string)
-   (text-structure :type text-structure :std (make-instance 'text-structure))
+   (text-structure :type text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
@@ -45,7 +45,7 @@
    (end  :type integer)))
 
 (defclass/std text-structure ()
-  ((data :type hash-table :std (make-hash-table))))
+  ((data :type hash-table)))
 
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
@@ -131,7 +131,7 @@
    (col cursor) last-col))
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
-  (data (text-structure model)))
+  (text-stats (text model)))
 
 (defun sample-text (n)
   (case n
@@ -151,6 +151,18 @@
              "A ja Lisp."))
     (T
      (format nil "one line no NL"))))
+
+;; (print-text-stats (sample-text :first-nl-yes))
+(defun print-text-stats (txt)
+  (let ((rx (text-stats txt)))
+    ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
+
+    (loop for r being the hash-value of rx
+          do (let ((rtext (row-text r txt) ))
+               (format t "row ~S - ~S  ~%"
+                       (row r)
+                       rtext
+                       )))))
 
 (defmethod row-text ((row text-row) text)
   (subseq text
@@ -181,11 +193,194 @@
         (row (~> model cursor row)))
     (gethash (1+ row) the-data)))
 
+
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
     (1- (hash-table-count the-data))))
 
+;; (examine-text-stats)
+(defun examine-text-stats ()
+  (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
+        for txt = (sample-text tc)
+        for st = (text-stats txt)
+        do
+           (warn "working on ~S" tc)
+           (ecase tc
+             (:last-nl-yes
+              ;; (break "checking ~S" st)
+              (assert (eq (hash-table-count st) 3))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 1 2 3)))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 12)))
+
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 12))
+                (assert (eq (end rowt) 23)))
+
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 23))
+                (assert (eq (end rowt) 39))))
+             (:last-nl-no
+              (assert (eq (hash-table-count st) 3))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 1 2 3 )))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 12)))
+
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 12))
+                (assert (eq (end rowt) 23)))
+
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 23))
+                (assert (eq (end rowt) 38)))
+              (assert (equal (format nil "A, ja mam Lisp.")
+                             (row-text (gethash 3 st) txt))))
+             (:first-nl-yes
+              (assert (eq (hash-table-count st) 5))
+              (assert (equal (loop for k being the hash-key in st collect k)
+                             (list 1 2 3 4 5)))
+              (let ((rowt (gethash 1 st)))
+                (assert (eq (row rowt) 1))
+                (assert (eq (home rowt) 0))
+                (assert (eq (end rowt) 1)))
+              (assert (equal (format nil "~%")
+                             (row-text (gethash 1 st) txt)))
+
+              (let ((rowt (gethash 2 st)))
+                (assert (eq (row rowt) 2))
+                (assert (eq (home rowt) 1))
+                (assert (eq (end rowt) 13)))
+              (assert (equal (format nil "Ala ma kota~%")
+                             (row-text (gethash 2 st) txt)))
+
+              (let ((rowt (gethash 3 st)))
+                (assert (eq (row rowt) 3))
+                (assert (eq (home rowt) 13))
+                (assert (eq (end rowt) 14)))
+
+              (let ((rowt (gethash 4 st)))
+                (assert (eq (row rowt) 4))
+                (assert (eq (home rowt) 14))
+                (assert (eq (end rowt) 15)))
+
+              (let ((rowt (gethash 5 st)))
+                (assert (eq (row rowt) 5))
+                (assert (eq (home rowt) 15))
+                (assert (eq (end rowt) 25))))
+             (assert (equal (format nil "A ja Lisp.")
+                            (row-text (gethash 5 st) txt))))))
+
+;; (experiment-text-structure)
+(defun experiment-text-structure ()
+  (let ((model (make-instance 'basic-editor-model))
+        (text-content (format nil "~%~%Ala ma kota~%~%Ola ma psa")))
+    (setf (text model) text-content)
+    (reload-text-structure model)
+    (break "examine the model ~S" model)
+    ;; find where the cursor is first used on loading
+
+    (loop for k being the hash-key of (data (text-structure model))
+          do
+             (let ((zzz (gethash k (data (text-structure model)))))
+               (warn "row  ~s ~s ~s"
+                     k
+                     (list (row zzz)
+                           (home zzz)
+                           (end zzz)
+                           (max-col zzz))
+                     (row-text
+                      (gethash k (data (text-structure model))
+                               )
+                      (text model)))))))
+
+;;; TODO we MAY need variant for wrapped text
+(defun sample-text-stats (text)
+  (assert (typep text 'simple-array))
+  (let ((lines-hash-table (make-hash-table)))
+    (labels
+        ((set-new-line (row home i)
+           (warn "adding row ~S ~S ~S" row home i)
+           (setf (gethash row lines-hash-table)
+                 (make-instance 'text-row
+                                :row row
+                                :home home
+                                :end i))))
+      (loop
+        for prevc = nil then c
+        for c across text
+        for i = 0 then (1+ i)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (eq c #\Newline) (1+ row) row)
+        for home = 0 then (if (eq prevc #\Newline) i home)
+        do
+           (when (eq c #\Newline)
+             (set-new-line row home (1+ i)))
+        finally
+           (when i
+             (unless (eq c #\Newline)
+               (set-new-line (1+ row) home (1+ i))))))
+    lines-hash-table))
+
+(defun sample-text-stats-2 (text-container-width text-container-height model  text)
+  (assert (typep text 'simple-array))
+  (let ((wrap-col (view-port-columns model))
+        (lines-hash-table (make-hash-table)))
+    (labels
+        ((set-new-line (row home i)
+           (warn "adding row ~S ~S ~S" row home i)
+           (setf (gethash row lines-hash-table)
+                 (make-instance 'text-row
+                                :row row
+                                :home home
+                                :end i))))
+      (loop
+        for prevc = nil then c
+        for c across text
+        for i = 0 then (1+ i)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (eq c #\Newline) (1+ row) row)
+        for home = 0 then (if (eq prevc #\Newline) i home)
+        do
+           (when (eq c #\Newline)
+             (set-new-line row home (1+ i)))
+        finally
+           (when i
+             (unless (eq c #\Newline)
+               (set-new-line (1+ row) home (1+ i))))))
+    lines-hash-table))
+
 ;;; ghex is my hex editor
+(defun text-stats (text)
+  (sample-text-stats text))
+
+(defmethod reload-text-structure ((model basic-editor-model))
+  (warn "=========== going to load string ================ ~S" (text model))
+  (let ((stats (text-stats (text model))))
+    (warn "got stats ~S" stats)
+    (setf (text-structure model) (make-instance 'text-structure :data stats))))
+
+(defmethod reload-text-structure :after ((model basic-editor-model))
+  (warn "after reloading text structure")
+  ;; after removing the last line cursor need to move to last position of the
+  ;; previous line
+  ;; after removing
+  ;; validate cursor
+  ;; if cursor is
+  ;; beyond the last row, move it to the last character of the last row
+  ;; beyond the last character on the line, move it to last character
+  ;; before the first column, move it to the first column
+  ;;
+  ;; zzzzzzzzzzzzz
+  )
+
 (defun is-first-line (model)
   (zerop  (~> model cursor row)))
 
@@ -255,6 +450,7 @@
          (progn
            (warn "trying to add newline")
            (setf (text model) (format nil "~A~%" (text model)))
+           (reload-text-structure model)
            (move-cursor-home model)
            (move-cursor-down model :ignored)
            ))
@@ -365,7 +561,8 @@
                                      (subseq (text model) 0
                                              cur-pos)
                                      (subseq (text model) (+ 1 cur-pos)
-                                             (length (text model))))))
+                                             (length (text model)))))
+          (reload-text-structure model))
         (warn "No cursor position found, possibly no text"))))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
@@ -417,6 +614,7 @@
                               ;; post insert
                               (subseq (text model) (+ 0 cur-pos)
                                       (sycamore:rope-length (text model)))))))
+          (reload-text-structure model)
           ;; ------------------------------------------------------
           (cond
             ((equal key-name "Return")
@@ -434,6 +632,7 @@
                                ((equal key-name "Return")
                                 (for-enter))
                                (T entered)))
+          (reload-text-structure model)
           (cond
             ((equal key-name "Return")
              (warn "move cursor return 2")
@@ -468,7 +667,8 @@
             (text-content (alexandria:read-file-into-string clean-filepath)))
         (warn "going to load ~S" clean-filepath)
         (setf (current-file model) clean-filepath)
-        (setf (text model) text-content)))))
+        (setf (text model) text-content)
+        (reload-text-structure model)))))
 
 ;; (funcall *client-fn-save-file* (cancelled-value))
 (defun save-file (filepath)
@@ -489,110 +689,117 @@
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
+;;; we need text-container, wrap,
+(defmethod wrap-column ((model basic-editor-model) text-container-width bwidth)
+  (let* ((world (world model)))
+    (ecase (text-wrap model)
+      (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
+      (:wrap  (- (floor (/ text-container-width
+                           (1+ bwidth)))
+                 2)))))
+
 ;;; drawing ====================================================================
-(defun calculate-chars (width-text-container height-text-container  model)
-  (let* ((the-chars
-          (let*
-              ((font-size 18)
-               (margin-horizontal 7)
-               (margin-vertical 5)
-               (text-for-size  "pOly()/_")
-               (text-data (text-size text-for-size font-size ))
-               (twidth (floor (/ (getf text-data :width) (length text-for-size))))
-               (theight          (getf text-data :height))
+(defun calculate-bwidth (model)
+  (let* ((font-size 18)
+         (margin-horizontal 0)
+         (margin-vertical 0)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size ))
+         (twidth (floor (/ (getf text-data :width)
+                           (length text-for-size)))))
 
-               (bwidth  (+ twidth  0))
-               (bheight (+ theight 0))
-               (text (text model))
-               (lines-hash-table (make-hash-table))
-               (wrap-mode :wrap)
-               (wrap-column
-                (ecase wrap-mode
-                  (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
-                  (:wrap  (- (floor (/ width-text-container
-                                       (1+ bwidth)))
-                             2)))))
-            ;; (break "examine model in calculate chars ~S" model)
-            (labels ((set-new-line (row home i)
+    (+ twidth  0)))
 
-                       (setf (gethash row lines-hash-table)
-                             (make-instance 'text-row
-                                            :row row
-                                            :home home
-                                            :end i))))
+(defun calculate-bheight (model)
+  (let* ((font-size 18)
+         (margin-horizontal 0)
+         (margin-vertical 0)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size ))
+         (theight          (getf text-data :height)))
 
-              (loop for last-char = nil then c
-                    for c across (sycamore:rope-string text)
-                    for pos = 0  then (1+ pos)
+    (+ theight 0)))
 
-                    for row = (if (and (zerop pos) (eq c #\Newline)) 0 -1) then (if (or (eq c #\Newline) (>= col wrap-column)) (1+ row) row)
+(defun calculate-chars (model)
+  (let*
+      ((world (world model))
+       (text-container (make-node 20
+                                  340
+                                  (- (width world) 20 20)
+                                  (- (height world) 60) "yellow"))
+       (font-size 18)
+       (margin-horizontal 0)
+       (margin-vertical 0)
+       (bwidth  (calculate-bwidth model))
+       (bheight (calculate-bheight model ))
+       (wrap-column
+         (wrap-column model
+                      (width text-container)
+                      bwidth)))
+    ;; (break "examine model in calculate chars ~S" model)
 
-                    for home = 0 then (if (eq last-char #\Newline) pos home)
-
-                    for col = 0 then (if (or (equal last-char #\Newline)
-                                             (>= col wrap-column))
-                                         0 (1+ col))
-                    for maxcol = 0 then (max maxcol col)
-                    for relx = (+ margin-horizontal
-                                  (ceiling
-                                   (* (- col
-                                         (view-port-first-column model))
-                                      (+ 2 bwidth) )))
-                    for rely = (+ margin-vertical
-                                  (ceiling
-                                   (* (- (if (eq c #\Newline) (1- row)  row)
-                                         (1-
-                                          (view-port-first-line model)))
-                                      (+ 3
-                                         bheight))))
-                    for min-rely = 0 then (min rely min-rely)
-                    for outside = (let ((max-x-coord (+ relx bwidth))
-                                        (max-y-coord (+ rely bheight)))
-                                    (or
-                                     (>= max-x-coord (- width-text-container 10))
-                                     (< relx 0)
-                                     (>= max-y-coord height-text-container)
-                                     (< rely 0)))
-                    for max-seen-row = 0 then (if outside
-                                                  max-seen-row
-                                                  (max row max-seen-row))
-                    for max-seen-col = 0 then (if outside
-                                                  max-seen-col
-                                                  (max col max-seen-col))
-                    do (when (eq c #\Newline)
-                         (set-new-line row home (1+ pos)))
-                    unless outside
-                    collect (make-instance 'basic-editor-character
-                                           :bchar c
-                                           :font-size font-size
-                                           :coordinates-relative
-                                           (make-coordinates-relative
-                                            relx
-                                            rely)
-                                           :width bwidth
-                                           :height bheight
-                                           :color (if (and (= (~> model cursor row)
-                                                              (+ (if (eq c #\Newline) 0 1) row))
-                                                           (= (~> model cursor col)
-                                                              col))
-                                                      "red"
-                                                      "pink")
-                                           :row row
-                                           :col col
-                                           :pos pos
-                                           :outside outside
-                                           )
-
-                    finally (when pos
-                              (unless (eq c #\Newline)
-                                (set-new-line row home (1+ pos))))
-                    (setf (all-lines-count model) row)
-                    (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
-                    (setf (view-port-columns model) max-seen-col)
-                    (setf (data (text-structure model)) lines-hash-table)
-                    )))))
-    (setf (seen-chars model) the-chars)
-    the-chars))
+    (loop for last-char = nil then c
+          for c across
+                (sycamore:rope-string
+                 (text model))
+          for row = 0 then (if (or (equal last-char #\Newline)
+                                   (>= col wrap-column))
+                               (1+ row) row)
+          for col = 0 then (if (or (equal last-char #\Newline)
+                                   (>= col wrap-column))
+                               0 (1+ col))
+          for pos = 0  then (1+ pos)
+          for maxcol = 0 then (max maxcol col)
+          for relx = (+ margin-horizontal
+                        (ceiling
+                         (* (- col (view-port-first-column model))
+                            (1+ bwidth) )))
+          for rely = (+ margin-vertical
+                        (ceiling
+                         (* (- row (view-port-first-line model))
+                            (1+ bheight))))
+          for min-rely = 0 then (min rely min-rely)
+          for outside = (let ((max-x-coord (+ relx bwidth))
+                              (max-y-coord (+ rely bheight)))
+                          (or
+                           (>= max-x-coord (- (width text-container) 10))
+                           (< relx 0)
+                           (>= max-y-coord (height text-container))
+                           (< rely 0)))
+          for max-seen-row = 0 then (if outside
+                                        max-seen-row
+                                        (max row max-seen-row))
+          for max-seen-col = 0 then (if outside
+                                        max-seen-col
+                                        (max col max-seen-col))
+          unless outside
+            collect (make-instance 'basic-editor-character
+                                   :bchar c
+                                   :font-size font-size
+                                   :coordinates-relative
+                                   (make-coordinates-relative
+                                    relx
+                                    rely)
+                                   :width bwidth
+                                   :height bheight
+                                   :color (if (and (= (~> model cursor row)
+                                                      row)
+                                                   (= (~> model cursor col)
+                                                      col))
+                                              "red"
+                                              "pink")
+                                   :row row
+                                   :col col
+                                   :pos pos
+                                   :outside outside
+                                   )
+              into the-chars
+          finally
+             (setf (all-lines-count model) row)
+             (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
+             (setf (view-port-columns model) max-seen-col)
+             (setf (seen-chars model) the-chars)
+             (return the-chars))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
@@ -614,47 +821,47 @@
         (cairo:text-extents (format nil "~A" text)))
     (list :xb xb :yb yb :width width :height height)))
 
-(defun adding-children (world)
-  (add-children world
-                (list
-                 (make-instance 'node-text
-                                :coordinates-relative (make-coordinates-relative 10 50)
-                                :width (- (width world) 40)
-                                :height  30
-                                :color "white"
-                                :wrap 'truncate
-                                :text (format nil "Heading will go here. ~S - ~S"
-                                              (gui-app:mouse-button gui-app:*lisp-app*)
-                                              (cursor *basic-editor-model*)
-                                              ))
-                 (let ((text-container (make-node 20
-                                                  340
-                                                  (- (width world) 20 20)
-                                                  (- (height world) 60)
-                                                  "yellow")))
-                   (add-children text-container
-                                 (calculate-chars (width text-container) (height text-container) *basic-editor-model*)))
-                 (make-instance 'node-text
-                                :coordinates-relative (make-coordinates-relative 10 50)
-                                :width (- (width world) 40)
-                                :height 30
-                                :color "white"
-                                :wrap 'truncate
-                                :text (format nil
-                                              "rowcols ~S ~S, fl ~S, fc ~S ~S"
-                                              (let ((cursor-cons (cursor-position (cursor *basic-editor-model*))))
+(defun adding-children (model)
+  (let ((world (world model)))
+    (add-children world
+                  (list
+                   (make-instance 'node-text
+                                  :coordinates-relative (make-coordinates-relative 10 50)
+                                  :width (- (width world) 40)
+                                  :height  30
+                                  :color "white"
+                                  :wrap 'truncate
+                                  :text (format nil "Heading will go here. ~S - ~S"
+                                                (gui-app:mouse-button gui-app:*lisp-app*)
+                                                (cursor model)
+                                                ))
+                   (let ((text-container (make-node 20
+                                                    340
+                                                    (- (width world) 20 20)
+                                                    (- (height world) 60) "yellow")))
+                     (add-children text-container
+                                   (calculate-chars model)))
+                   (make-instance 'node-text
+                                  :coordinates-relative (make-coordinates-relative 10 50)
+                                  :width (- (width world) 40)
+                                  :height 30
+                                  :color "white"
+                                  :wrap 'truncate
+                                  :text (format nil
+                                                "rowcols ~S ~S, fl ~S, fc ~S ~S"
+                                                (let ((cursor-cons (cursor-position (cursor model))))
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
                                                           (cdr cursor-cons)))
-                                              (cons
-                                               (view-port-lines
-                                                *basic-editor-model*)
-                                               (view-port-columns
-                                                *basic-editor-model*))
-                                              (view-port-first-line   *basic-editor-model*)
-                                              (view-port-first-column *basic-editor-model*)
-                                              (sycamore:rope-string (text *basic-editor-model*))
-                                              )))))
+                                                (cons
+                                                 (view-port-lines
+                                                  model)
+                                                 (view-port-columns
+                                                  model))
+                                                (view-port-first-line   model)
+                                                (view-port-first-column model)
+                                                (sycamore:rope-string (text model))
+                                                ))))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -680,13 +887,14 @@
 
   ;; ==================================================================
 
-  (let ((world (boxes::make-node-down
+  (let ((model *basic-editor-model*)
+        (world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
-    (setf (world *basic-editor-model*) world) ; zzzzzzzzzzzzzzzzzzz
+    (setf (world model) world) ; zzzzzzzzzzzzzzzzzzz
     (boxes:absolute-coordinates world)
 
     ;; =========================================================================
-    (adding-children world)
+    (adding-children model)
 
     ;; (warn "adding absolute coordinates -----------------------------------")
     (boxes:absolute-coordinates world)
@@ -731,7 +939,7 @@
   (alexandria:write-string-into-file
    (format nil "~S~%" (list entered key-name key-code mods))
    "/tmp/basic-editor-log-key-presses.txt" :if-exists :append
-   :if-does-not-exist :create)
+                                           :if-does-not-exist :create)
 
   (let ((model *basic-editor-model*))
     (cond
@@ -755,16 +963,10 @@
          (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
          (warn "type of text ~S" (type-of (text model)))
          (warn "file position ~S" (find-cursor-position model))
+         (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
-         (warn "model text structure ~s" (loop for r being the hash-value in
-                                                                          (data (text-structure model))
-                                               collect (format nil "row ~s -- ~s ~s ~s~%"
-                                                               (row r)
-                                                               (home r)
-                                                               (end r)
-                                                               (subseq (text model)
-                                                                       (home r)
-                                                                       (end r)))))
+         (warn "model text structure %s" (text-structure model))
+         (warn "model text structure %s" (print-text-stats (text model)))
          (warn "view port ~S" (list
                                :view-port-size
                                (view-port-size model)
