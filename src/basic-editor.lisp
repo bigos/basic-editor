@@ -772,7 +772,6 @@
           for max-seen-col = 0 then (if outside
                                         max-seen-col
                                         (max col max-seen-col))
-          do (warn "zzz ~S" c)
           unless outside
             collect (make-instance 'basic-editor-character
                                    :bchar c
