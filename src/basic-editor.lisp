@@ -843,7 +843,7 @@
                                                     (- (height world) 60) "yellow")))
                      (add-children model
                                    (calculate-chars model)))
-                   (make-instance 'node-text
+                   (make-instance 'node-textll
                                   :coordinates-relative (make-coordinates-relative 10 50)
                                   :width (- (width world) 40)
                                   :height 30
