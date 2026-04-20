@@ -795,7 +795,6 @@
                                    )
               into the-chars
           finally
-             (warn "the chars ~S" the-chars)
              (setf (all-lines-count model) row)
              (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
              (setf (view-port-columns model) max-seen-col)
