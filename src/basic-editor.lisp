@@ -330,7 +330,7 @@
                (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
 
-(defun sample-text-stats-2 ((model basic-editor-model) text)
+(defun sample-text-stats-2 (text-container-width text-container-height model  text)
   (assert (typep text 'simple-array))
   (let ((wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
@@ -356,6 +356,7 @@
              (unless (eq c #\Newline)
                (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
+
 ;;; ghex is my hex editor
 (defun text-stats (text)
   (sample-text-stats text))
@@ -689,22 +690,36 @@
         :if-does-not-exist :create)))))
 
 ;;; we need text-container, wrap,
-(defmethod wrap-column ((model basic-editor-model))
-  (let* ((world (world model))
-         (text-container-width
-           (- (width world) 20 20 )
-           ;; (make-node 20
-           ;;            340
-           ;;            (- (width world) 20 20)
-           ;;            (- (height world) 60) "yellow")
-           ))
-    (ecase wrap-mode
+(defmethod wrap-column ((model basic-editor-model) text-container-width bwidth)
+  (let* ((world (world model)))
+    (ecase (text-wrap model)
       (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
-      (:wrap  (- (floor (/ (width text-container-width)
+      (:wrap  (- (floor (/ text-container-width
                            (1+ bwidth)))
                  2)))))
 
 ;;; drawing ====================================================================
+(defun calculate-bwidth (model)
+  (let* ((font-size 18)
+         (margin-horizontal 0)
+         (margin-vertical 0)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size ))
+         (twidth (floor (/ (getf text-data :width)
+                           (length text-for-size)))))
+
+    (+ twidth  0)))
+
+(defun calculate-bheight (model)
+  (let* ((font-size 18)
+         (margin-horizontal 0)
+         (margin-vertical 0)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size ))
+         (theight          (getf text-data :height)))
+
+    (+ theight 0)))
+
 (defun calculate-chars (model)
   (let* ((world (world model))
          (text-container (make-node 20
@@ -716,16 +731,13 @@
                ((font-size 18)
                 (margin-horizontal 0)
                 (margin-vertical 0)
-                (text-for-size  "pOly()/_")
-                (text-data (text-size text-for-size font-size ))
-                (twidth (floor (/ (getf text-data :width) (length text-for-size))))
-                (theight          (getf text-data :height))
+                (bwidth  (calculate-bwidth model))
+                (bheight (calculate-bheight model ))
 
-                (bwidth  (+ twidth  0))
-                (bheight (+ theight 0))
-                (wrap-mode (text-wrap model))
                 (wrap-column
-                  (wrap-column model)))
+                  (wrap-column model
+                               (width text-container)
+                               bwidth)))
              ;; (break "examine model in calculate chars ~S" model)
 
              (loop for last-char = nil then c
@@ -787,7 +799,7 @@
                       (setf (all-lines-count model) row)
                       (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
                       (setf (view-port-columns model) max-seen-col)))))
-    (setf (seen-chars model) the-chars)
+                      (setf (seen-chars model) the-chars)
     the-chars))
 
 (defun text-size (text text-size)
