@@ -721,86 +721,87 @@
     (+ theight 0)))
 
 (defun calculate-chars (model)
-  (let* ((world (world model))
-         (text-container (make-node 20
-                                    340
-                                    (- (width world) 20 20)
-                                    (- (height world) 60) "yellow"))
-         (the-chars
-           (let*
-               ((font-size 18)
-                (margin-horizontal 0)
-                (margin-vertical 0)
-                (bwidth  (calculate-bwidth model))
-                (bheight (calculate-bheight model ))
+  (let*
+      ((world (world model))
+       (text-container (make-node 20
+                                  340
+                                  (- (width world) 20 20)
+                                  (- (height world) 60) "yellow"))
+       (font-size 18)
+       (margin-horizontal 0)
+       (margin-vertical 0)
+       (bwidth  (calculate-bwidth model))
+       (bheight (calculate-bheight model ))
+       (wrap-column
+         (wrap-column model
+                      (width text-container)
+                      bwidth)))
+    ;; (break "examine model in calculate chars ~S" model)
 
-                (wrap-column
-                  (wrap-column model
-                               (width text-container)
-                               bwidth)))
-             ;; (break "examine model in calculate chars ~S" model)
-
-             (loop for last-char = nil then c
-                   for c across
-                         (sycamore:rope-string
-                          (text model))
-                   for row = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        (1+ row) row)
-                   for col = 0 then (if (or (equal last-char #\Newline)
-                                            (>= col wrap-column))
-                                        0 (1+ col))
-                   for pos = 0  then (1+ pos)
-                   for maxcol = 0 then (max maxcol col)
-                   for relx = (+ margin-horizontal
-                                 (ceiling
-                                  (* (- col (view-port-first-column model))
-                                     (1+ bwidth) )))
-                   for rely = (+ margin-vertical
-                                 (ceiling
-                                  (* (- row (view-port-first-line model))
-                                     (1+ bheight))))
-                   for min-rely = 0 then (min rely min-rely)
-                   for outside = (let ((max-x-coord (+ relx bwidth))
-                                       (max-y-coord (+ rely bheight)))
-                                   (or
-                                    (>= max-x-coord (- (width text-container) 10))
-                                    (< relx 0)
-                                    (>= max-y-coord (height text-container))
-                                    (< rely 0)))
-                   for max-seen-row = 0 then (if outside
-                                                 max-seen-row
-                                                 (max row max-seen-row))
-                   for max-seen-col = 0 then (if outside
-                                                 max-seen-col
-                                                 (max col max-seen-col))
-                   unless outside
-                     collect (make-instance 'basic-editor-character
-                                            :bchar c
-                                            :font-size font-size
-                                            :coordinates-relative
-                                            (make-coordinates-relative
-                                             relx
-                                             rely)
-                                            :width bwidth
-                                            :height bheight
-                                            :color (if (and (= (~> model cursor row)
-                                                               row)
-                                                            (= (~> model cursor col)
-                                                               col))
-                                                       "red"
-                                                       "pink")
-                                            :row row
-                                            :col col
-                                            :pos pos
-                                            :outside outside
-                                            )
-                   finally
-                      (setf (all-lines-count model) row)
-                      (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
-                      (setf (view-port-columns model) max-seen-col)))))
-                      (setf (seen-chars model) the-chars)
-    the-chars))
+    (loop for last-char = nil then c
+          for c across
+                (sycamore:rope-string
+                 (text model))
+          for row = 0 then (if (or (equal last-char #\Newline)
+                                   (>= col wrap-column))
+                               (1+ row) row)
+          for col = 0 then (if (or (equal last-char #\Newline)
+                                   (>= col wrap-column))
+                               0 (1+ col))
+          for pos = 0  then (1+ pos)
+          for maxcol = 0 then (max maxcol col)
+          for relx = (+ margin-horizontal
+                        (ceiling
+                         (* (- col (view-port-first-column model))
+                            (1+ bwidth) )))
+          for rely = (+ margin-vertical
+                        (ceiling
+                         (* (- row (view-port-first-line model))
+                            (1+ bheight))))
+          for min-rely = 0 then (min rely min-rely)
+          for outside = (let ((max-x-coord (+ relx bwidth))
+                              (max-y-coord (+ rely bheight)))
+                          (or
+                           (>= max-x-coord (- (width text-container) 10))
+                           (< relx 0)
+                           (>= max-y-coord (height text-container))
+                           (< rely 0)))
+          for max-seen-row = 0 then (if outside
+                                        max-seen-row
+                                        (max row max-seen-row))
+          for max-seen-col = 0 then (if outside
+                                        max-seen-col
+                                        (max col max-seen-col))
+          do (warn "zzz ~S" c)
+          unless outside
+            collect (make-instance 'basic-editor-character
+                                   :bchar c
+                                   :font-size font-size
+                                   :coordinates-relative
+                                   (make-coordinates-relative
+                                    relx
+                                    rely)
+                                   :width bwidth
+                                   :height bheight
+                                   :color (if (and (= (~> model cursor row)
+                                                      row)
+                                                   (= (~> model cursor col)
+                                                      col))
+                                              "red"
+                                              "pink")
+                                   :row row
+                                   :col col
+                                   :pos pos
+                                   :outside outside
+                                   )
+              into the-chars
+          finally
+             (warn "the chars ~S" the-chars)
+             (setf (all-lines-count model) row)
+             (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
+             (setf (view-port-columns model) max-seen-col)
+             (setf (seen-chars model) the-chars)
+             (return the-chars))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
