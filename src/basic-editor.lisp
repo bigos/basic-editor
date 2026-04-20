@@ -330,10 +330,25 @@
                (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
 
-(defun sample-text-stats-2 (text-container-width text-container-height model  text)
-  (assert (typep text 'simple-array))
-  (let ((wrap-col (view-port-columns model))
+(defun sample-text-stats-2 (model)
+  (assert (typep (text model) 'simple-array))
+  (let* ((text-container-width (~> model world width (- _ 20 20)))
+        (text (text model))
+        (font-size 18)
+        ;; (margin-horizontal 0)
+        ;; (margin-vertical 0)
+        (bwidth  (calculate-bwidth model))
+        ;; (bheight (calculate-bheight model ))
+        (wrap-column
+          (wrap-column model
+                       text-container-width
+                       bwidth))
+        (wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
+    (warn "zzzzz cols zzzzzzz ~S ~S"
+          wrap-column
+          wrap-col)
+
     (labels
         ((set-new-line (row home i)
            (warn "adding row ~S ~S ~S" row home i)
@@ -978,6 +993,7 @@
                                (view-port-first-line model)
                                :view-port-first-column
                                (view-port-first-column model)))
+         (warn "sample text stats ~S" (sample-text-stats-2 model))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
