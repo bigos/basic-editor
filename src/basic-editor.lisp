@@ -36,6 +36,8 @@
    (world)
    (seen-chars)
    (current-file)
+   ;; TODO
+   (wrap-at-column :std 15) ; when in wrap mode column we wrap at
    ;; debug
    ))
 
@@ -351,10 +353,7 @@
         ;; (margin-vertical 0)
         (bwidth  (calculate-bwidth model))
         ;; (bheight (calculate-bheight model ))
-        (wrap-column
-          (wrap-column model
-                       text-container-width
-                       bwidth))
+        (wrap-column (wrap-at-column model))
         (wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
     (warn "zzzzz cols zzzzzzz ~S ~S"
@@ -373,10 +372,21 @@
         for prevc = nil then c
         for c across text
         for i = 0 then (1+ i)
-        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (eq c #\Newline) (1+ row) row)
-        for home = 0 then (if (eq prevc #\Newline) i home)
+        for home = 0 then (if (or (eq prevc #\Newline)
+                                  (and cur-col
+                                       (>= cur-col (wrap-at-column model))))
+                              i
+                              home)
+        for cur-col = (- i home)
+        for row =  (if (and (zerop i) (eq c #\Newline)) 0 -1) then (if (or
+                                                                        (eq c #\Newline)
+                                                                        (>= cur-col (wrap-at-column model)))
+                                                                       (1+ row)
+                                                                       row)
         do
-           (when (eq c #\Newline)
+           (when (or
+                  (eq c #\Newline)
+                  (>= cur-col (wrap-at-column model)))
              (set-new-line row home (1+ i)))
         finally
            (when i
