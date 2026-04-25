@@ -164,6 +164,18 @@
                        rtext
                        )))))
 
+(defun print-hash-text-stats (model hash)
+  (warn "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+  (let ((rx hash))
+    ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
+
+    (loop for r being the hash-value of rx
+          do (let ((rtext (row-text r (text model)) ))
+               (format t "row ~S - ~S  ~%"
+                       (row r)
+                       rtext
+                       )))))
+
 (defmethod row-text ((row text-row) text)
   (subseq text
           (home row)
@@ -980,8 +992,8 @@
          (warn "file position ~S" (find-cursor-position model))
          (warn "cursor stats ~S" (cursor-stats model))
          (warn "text ~S" (sycamore:rope-string (text model)))
-         (warn "model text structure %s" (text-structure model))
-         (warn "model text structure %s" (print-text-stats (text model)))
+         (warn "model text structure ~s" (text-structure model))
+         (warn "model text structure ~s" (print-text-stats (text model)))
          (warn "view port ~S" (list
                                :view-port-size
                                (view-port-size model)
@@ -993,7 +1005,8 @@
                                (view-port-first-line model)
                                :view-port-first-column
                                (view-port-first-column model)))
-         (warn "sample text stats ~S" (sample-text-stats-2 model))
+         (warn "sample text stats 2")
+         (print-hash-text-stats model (sample-text-stats-2 model))
          (warn "--------------------------------------------")))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
