@@ -770,9 +770,11 @@
        (bwidth  (calculate-bwidth model))
        (bheight (calculate-bheight model ))
        (wrap-column
-         (wrap-column model
-                      (width text-container)
-                      bwidth)))
+         (wrap-at-column model)
+         ;; (wrap-column model
+         ;;              (width text-container)
+         ;;              bwidth)
+         ))
     ;; (break "examine model in calculate chars ~S" model)
 
     (loop for last-char = nil then c
