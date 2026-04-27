@@ -757,6 +757,41 @@
 
     (+ theight 0)))
 
+(defun calculate-cursor (model)
+  (let* ((world (world model))
+         (text-container (make-node 20
+                                    340
+                                    (- (width world) 20 20)
+                                    (- (height world) 60) "yellow"))
+         (font-size 18)
+         (margin-horizontal 0)
+         (margin-vertical 0)
+         (bwidth  (calculate-bwidth model))
+         (bheight (calculate-bheight model )))
+    (let ((row (~> model cursor row))
+          (col (~> model cursor col)))
+      (make-instance 'basic-editor-character
+                     :bchar #\_
+                     :font-size font-size
+                     :coordinates-relative (make-coordinates-relative
+                                            (+ margin-horizontal
+                                               (ceiling
+                                                (* (- col (view-port-first-column model))
+                                                   (1+ bwidth) )))
+                                            (+ margin-vertical
+                                               (ceiling
+                                                (* (- row (view-port-first-line model))
+                                                   (1+ bheight))))
+                                            )
+                     :width bwidth
+                     :height bheight
+                     :color "white"
+                     :row (~> model cursor row)
+                     :col (~> model cursor col)
+                     :pos nil
+                     :outside nil
+                     ))))
+
 (defun calculate-chars (model)
   (let*
       ((world (world model))
@@ -938,6 +973,7 @@
     ;; (warn "rendering -----------------------------------------------")
     (render world)
 
+    (render (calculate-cursor model))
 
     ;; blue square follows the mouse ------------------------------------------
     (let ((app gui-app:*lisp-app*))
