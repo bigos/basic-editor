@@ -939,7 +939,7 @@
     (render world)
 
 
-    ;; pink square follows the mouse ------------------------------------------
+    ;; blue square follows the mouse ------------------------------------------
     (let ((app gui-app:*lisp-app*))
       (when (and (eq (gui-app:current-motion app)
                      window)
