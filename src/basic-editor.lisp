@@ -133,7 +133,7 @@
    (col cursor) last-col))
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
-  (text-stats (text model)))
+  (sample-text-stats-2 model))
 
 (defun sample-text (n)
   (case n
@@ -211,88 +211,6 @@
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
     (1- (hash-table-count the-data))))
-
-;; (examine-text-stats)
-(defun examine-text-stats ()
-  (loop for tc in (list :last-nl-yes :last-nl-no :first-nl-yes)
-        for txt = (sample-text tc)
-        for st = (text-stats txt)
-        do
-           (warn "working on ~S" tc)
-           (ecase tc
-             (:last-nl-yes
-              ;; (break "checking ~S" st)
-              (assert (eq (hash-table-count st) 3))
-              (assert (equal (loop for k being the hash-key in st collect k)
-                             (list 1 2 3)))
-              (let ((rowt (gethash 1 st)))
-                (assert (eq (row rowt) 1))
-                (assert (eq (home rowt) 0))
-                (assert (eq (end rowt) 12)))
-
-              (let ((rowt (gethash 2 st)))
-                (assert (eq (row rowt) 2))
-                (assert (eq (home rowt) 12))
-                (assert (eq (end rowt) 23)))
-
-              (let ((rowt (gethash 3 st)))
-                (assert (eq (row rowt) 3))
-                (assert (eq (home rowt) 23))
-                (assert (eq (end rowt) 39))))
-             (:last-nl-no
-              (assert (eq (hash-table-count st) 3))
-              (assert (equal (loop for k being the hash-key in st collect k)
-                             (list 1 2 3 )))
-              (let ((rowt (gethash 1 st)))
-                (assert (eq (row rowt) 1))
-                (assert (eq (home rowt) 0))
-                (assert (eq (end rowt) 12)))
-
-              (let ((rowt (gethash 2 st)))
-                (assert (eq (row rowt) 2))
-                (assert (eq (home rowt) 12))
-                (assert (eq (end rowt) 23)))
-
-              (let ((rowt (gethash 3 st)))
-                (assert (eq (row rowt) 3))
-                (assert (eq (home rowt) 23))
-                (assert (eq (end rowt) 38)))
-              (assert (equal (format nil "A, ja mam Lisp.")
-                             (row-text (gethash 3 st) txt))))
-             (:first-nl-yes
-              (assert (eq (hash-table-count st) 5))
-              (assert (equal (loop for k being the hash-key in st collect k)
-                             (list 1 2 3 4 5)))
-              (let ((rowt (gethash 1 st)))
-                (assert (eq (row rowt) 1))
-                (assert (eq (home rowt) 0))
-                (assert (eq (end rowt) 1)))
-              (assert (equal (format nil "~%")
-                             (row-text (gethash 1 st) txt)))
-
-              (let ((rowt (gethash 2 st)))
-                (assert (eq (row rowt) 2))
-                (assert (eq (home rowt) 1))
-                (assert (eq (end rowt) 13)))
-              (assert (equal (format nil "Ala ma kota~%")
-                             (row-text (gethash 2 st) txt)))
-
-              (let ((rowt (gethash 3 st)))
-                (assert (eq (row rowt) 3))
-                (assert (eq (home rowt) 13))
-                (assert (eq (end rowt) 14)))
-
-              (let ((rowt (gethash 4 st)))
-                (assert (eq (row rowt) 4))
-                (assert (eq (home rowt) 14))
-                (assert (eq (end rowt) 15)))
-
-              (let ((rowt (gethash 5 st)))
-                (assert (eq (row rowt) 5))
-                (assert (eq (home rowt) 15))
-                (assert (eq (end rowt) 25))))
-             (assert (equal (format nil "A ja Lisp.")
-                            (row-text (gethash 5 st) txt))))))
 
 ;; (experiment-text-structure)
 (defun experiment-text-structure ()
@@ -400,7 +318,7 @@
 
 (defmethod reload-text-structure ((model basic-editor-model))
   (warn "=========== going to load string ================ ~S" (text model))
-  (let ((stats (text-stats (text model))))
+  (let ((stats (sample-text-stats-2 model)))
     (warn "got stats ~S" stats)
     (setf (text-structure model) (make-instance 'text-structure :data stats))))
 
