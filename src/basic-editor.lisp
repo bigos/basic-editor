@@ -911,7 +911,11 @@
                                                     (- (width world) 20 20)
                                                     (- (height world) 60) "yellow")))
                      (add-children text-container
-                                   (calculate-chars model)))
+                                   (calculate-chars model))
+                     (add-children text-container
+                                   (list
+                                    (calculate-cursor model))))
+
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
                                   :width (- (width world) 40)
@@ -972,8 +976,6 @@
 
     ;; (warn "rendering -----------------------------------------------")
     (render world)
-
-    (render (calculate-cursor model))
 
     ;; blue square follows the mouse ------------------------------------------
     (let ((app gui-app:*lisp-app*))
