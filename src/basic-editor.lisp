@@ -785,7 +785,7 @@
                                             )
                      :width bwidth
                      :height bheight
-                     :color "white"
+                     :color "#FFFFFF66"
                      :row (~> model cursor row)
                      :col (~> model cursor col)
                      :pos nil
