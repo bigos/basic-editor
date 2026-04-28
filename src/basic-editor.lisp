@@ -37,7 +37,7 @@
    (seen-chars)
    (current-file)
    ;; TODO
-   (wrap-at-column :std 12) ; when in wrap mode column we wrap at
+   (wrap-at-column :std 80) ; when in wrap mode column we wrap at
    ;; debug
    ))
 

@@ -37,11 +37,12 @@
     (list :model model :experimental-window experimental-window)))
 
 (defun char-kids (model)
-  (serapeum:~>  model
-                basic-editor::world
-                boxes::children
-                (nth 1 _)
-                boxes::children))
+  (loop for ch in (serapeum:~>  model
+                                basic-editor::world
+                                boxes::children
+                                (nth 1 _)
+                                boxes::children)
+        unless (typep ch 'be::cl)))
 
 (defun file-single-line-fname ()
   (merge-pathnames
