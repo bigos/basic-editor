@@ -42,7 +42,8 @@
                                 boxes::children
                                 (nth 1 _)
                                 boxes::children)
-        unless (typep ch 'be::cl)))
+        unless (typep ch 'be::basic-editor-cursor)
+          collect ch))
 
 (defun file-single-line-fname ()
   (merge-pathnames

@@ -57,6 +57,12 @@
    (pos)
    (outside)))
 
+(defclass/std basic-editor-cursor (boxes:node-character)
+  ((row)
+   (col)
+   (pos)
+   (outside)))
+
 (defclass/std cursor ()
   ((row)
    (col)))
@@ -688,7 +694,7 @@
          (bheight (calculate-bheight model )))
     (let ((row (~> model cursor row))
           (col (~> model cursor col)))
-      (make-instance 'basic-editor-character
+      (make-instance 'basic-editor-cursor
                      :bchar #\_
                      :font-size font-size
                      :coordinates-relative (make-coordinates-relative
