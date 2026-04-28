@@ -25,13 +25,14 @@
         (world (boxes::make-node-down
                 0 0 600 400 "#cccccc88"))
         (model *basic-editor-model*))
+
     (process-event experimental-window :resize '(710 250))
 
     (be::new-file)
     (be::open-file (cons :selected
                          (format nil "file://~A" fname)))
     (setf (be::world model) world)
-    (be::adding-children world)
+    (be::adding-children model)
 
     (list :model model :experimental-window experimental-window)))
 
