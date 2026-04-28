@@ -101,6 +101,8 @@
   (let* ((model (make-instance 'basic-editor-model))
          (text-content text))
     (setf (be::text model) text-content)
+    (setf (be::world model) (boxes::make-node-down
+                                0 0 600 400 "#cccccc88"))
     (be::reload-text-structure model)
 
     ;; body
@@ -180,11 +182,11 @@
   (let ((experimental-window (main :testing T))
         (model *basic-editor-model*)
         (world (boxes::make-node-down 0 0 600 400 "#cccccc88")))
+    (setf (be::world model) world)
     (be::new-file)
     (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
 
-    (setf (be::world model) world)
-    (basic-editor::adding-children world)
+    (basic-editor::adding-children model)
 
 
     (process-event experimental-window :resize '(710 420))
