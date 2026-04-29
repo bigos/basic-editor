@@ -302,7 +302,7 @@
     (setf (text-structure model) (make-instance 'text-structure :data stats))))
 
 (defmethod reload-text-structure :after ((model basic-editor-model))
-  (warn "after reloading text structure")
+  ;; (warn "after reloading text structure")
   ;; after removing the last line cursor need to move to last position of the
   ;; previous line
   ;; after removing
@@ -334,15 +334,15 @@
                             (<= row last-row)))
             (valid-col (and current-row
                             (<= 0 col (max-col current-row)))))
-        (warn "early validation ~S ~S" valid-row valid-col)
+        ;; (warn "early validation ~S ~S" valid-row valid-col)
         (let ((validated (and valid-row
                               valid-col)))
           (if validated
               (progn
-                (warn "info: cursor position ~S ~S is valid" row col)
+                ;; (warn "info: cursor position ~S ~S is valid" row col)
                 T)
               (progn
-                (warn "invalid cursor position ~S ~S" row col)
+                ;; (warn "invalid cursor position ~S ~S" row col)
                 nil)))))))
 
 (defmethod move-cursor-to :before ((model basic-editor-model) row col)
@@ -365,7 +365,8 @@
          (move-cursor-to model
                          (1- (~> model cursor row))
                          (max-col (previous-row model))))
-        (T (warn "no more valid cursor positions"))))
+        (T ;; (warn "no more valid cursor positions")
+           )))
 
 (defmethod move-cursor-right ((model basic-editor-model))
   (cond ((valid-cursor-position model
@@ -382,13 +383,14 @@
                          0))
         ((last-row model)
          (progn
-           (warn "trying to add newline")
+           ;; (warn "trying to add newline")
            (setf (text model) (format nil "~A~%" (text model)))
            (reload-text-structure model)
            (move-cursor-home model)
            (move-cursor-down model :ignored)
            ))
-        (T (warn "no more valid cursor positions"))))
+        (T ;; (warn "no more valid cursor positions")
+           )))
 
 (defmethod move-cursor-up ((model basic-editor-model))
   (cond ((valid-cursor-position model
@@ -404,7 +406,8 @@
          (move-cursor-to model
                          (1- (~> model cursor row))
                          (max-col (previous-row model))))
-        (T (warn "no more valid cursor positions"))))
+        (T ;; (warn "no more valid cursor positions")
+           )))
 
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (cond ((valid-cursor-position model
@@ -420,7 +423,8 @@
          (move-cursor-to model
                          (1+ (~> model cursor row))
                          (max-col (next-row model))))
-        (T (warn "no more valid cursor positions"))) )
+        (T ;; (warn "no more valid cursor positions")
+           )) )
 
 (defmethod move-cursor-home ((model basic-editor-model))
   (move-cursor-home (cursor model)))
@@ -439,13 +443,14 @@
    (current-row model)))
 
 (defmethod looping-seen-chars ((model basic-editor-model) msg)
-  (warn "looping seen-chars ~S ~S"
-        msg
-        (loop for c in (seen-chars model)
-              collecting (list (bchar c) :R (row c) :C (col c)))))
+  ;; (warn "looping seen-chars ~S ~S"
+  ;;       msg
+  ;;       (loop for c in (seen-chars model)
+  ;;             collecting (list (bchar c) :R (row c) :C (col c))))
+  )
 
 (defmethod find-cursor-position ((model basic-editor-model))
-  (warn "model cursor ~S" (cursor model))
+  ;; (warn "model cursor ~S" (cursor model))
   (looping-seen-chars model "")
 
   (let ((cur-row (current-row model)))
@@ -485,10 +490,11 @@
 
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (find-cursor-position model)))
-    (warn "will delete at row ~S col ~S pos ~S"
-          (~> model cursor row)
-          (~> model cursor col)
-          cur-pos)
+
+    ;; (warn "will delete at row ~S col ~S pos ~S"
+    ;;       (~> model cursor row)
+    ;;       (~> model cursor col)
+    ;;       cur-pos)
     (if cur-pos
         (progn
           (setf (text model) (format nil "~A~A"
@@ -497,24 +503,25 @@
                                      (subseq (text model) (+ 1 cur-pos)
                                              (length (text model)))))
           (reload-text-structure model))
-        (warn "No cursor position found, possibly no text"))))
+        ;; (warn "No cursor position found, possibly no text")
+        )))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
-  (warn "before insert")
-  (warn "~S"
-        (text model))
+  ;; (warn "before insert")
+  ;; (warn "~S"
+  ;;       (text model))
 
   (let ((cur-pos (find-cursor-position model)))
     (if cur-pos
         (progn                          ; then
-          (warn "cursor pos is present")
+          ;; (warn "cursor pos is present")
           (setf (text model)
 
 
                 (if (equal key-name "Return")
                     (progn              ;then
-                      (warn "doing Return")
+                      ;; (warn "doing Return")
                       (format nil "~A~A~A"
                               ;;  pre insert
                               ;; TODO it fails here, we need to test extensively this part in different cases
@@ -535,7 +542,7 @@
                               ))
                     ;; ---------------------------------------------------------------
                     (progn
-                      (warn "doint NON Return")
+                      ;; (warn "doint NON Return")
                       (format nil "~A~A~A"
                               ;;  pre insert
                               (subseq (text model) 0
@@ -552,16 +559,16 @@
           ;; ------------------------------------------------------
           (cond
             ((equal key-name "Return")
-             (warn "move cursor return 1")
+             ;; (warn "move cursor return 1")
              (move-cursor-down model :ignored)
              (move-cursor-home model))
             (T
-             (warn "move cursor normal 1")
+             ;; (warn "move cursor normal 1")
              (move-cursor-right model))))
 
         (progn                          ; else
           ;; TODO start adding tests
-          (warn "cursor pos is NIL")
+          ;; (warn "cursor pos is NIL")
           (setf (text model) (cond
                                ((equal key-name "Return")
                                 (for-enter))
@@ -569,17 +576,17 @@
           (reload-text-structure model)
           (cond
             ((equal key-name "Return")
-             (warn "move cursor return 2")
+             ;; (warn "move cursor return 2")
              (move-cursor-down model :ignored)
              (move-cursor-home model))
             (T
-             (warn "move cursor normal 2")
+             ;; (warn "move cursor normal 2")
              (move-cursor-right model))))))
-  (progn
-    (warn "---------- done insert --------------")
-    (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-    (warn "cursor text  ~S" (~> model text))
-    (warn "---------- finished insert --------------"))
+  ;; (progn
+  ;;   (warn "---------- done insert --------------")
+  ;;   (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+  ;;   (warn "cursor text  ~S" (~> model text))
+  ;;   (warn "---------- finished insert --------------"))
 
   )
 
@@ -920,8 +927,9 @@
 
       ((and (equal key-name "F7")
             (null mods))
-       (warn "model stats ------------------------------------------")
-       (warn "TODO - something will go here"))
+       ;; (warn "model stats ------------------------------------------")
+       ;; (warn "TODO - something will go here")
+       )
 
       ((and (equal key-name "F8")
             (null mods))
@@ -930,28 +938,29 @@
       ((and (equal key-name "F9")
             (null mods))
        (progn
-         (warn "examine model ------------------------------")
-         (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-         (warn "type of text ~S" (type-of (text model)))
-         (warn "file position ~S" (find-cursor-position model))
-         (warn "cursor stats ~S" (cursor-stats model))
-         (warn "text ~S" (sycamore:rope-string (text model)))
-         (warn "model text structure ~s" (text-structure model))
-         (warn "model text structure ~s" (print-text-stats (text model)))
-         (warn "view port ~S" (list
-                               :view-port-size
-                               (view-port-size model)
-                               :view-port-lines
-                               (view-port-lines model)
-                               :view-port-columns
-                               (view-port-columns model)
-                               :view-port-first-line
-                               (view-port-first-line model)
-                               :view-port-first-column
-                               (view-port-first-column model)))
-         (warn "sample text stats 2")
+         ;; (warn "examine model ------------------------------")
+         ;; (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+         ;; (warn "type of text ~S" (type-of (text model)))
+         ;; (warn "file position ~S" (find-cursor-position model))
+         ;; (warn "cursor stats ~S" (cursor-stats model))
+         ;; (warn "text ~S" (sycamore:rope-string (text model)))
+         ;; (warn "model text structure ~s" (text-structure model))
+         ;; (warn "model text structure ~s" (print-text-stats (text model)))
+         ;; (warn "view port ~S" (list
+         ;;                       :view-port-size
+         ;;                       (view-port-size model)
+         ;;                       :view-port-lines
+         ;;                       (view-port-lines model)
+         ;;                       :view-port-columns
+         ;;                       (view-port-columns model)
+         ;;                       :view-port-first-line
+         ;;                       (view-port-first-line model)
+         ;;                       :view-port-first-column
+         ;;                       (view-port-first-column model)))
+         ;; (warn "sample text stats 2")
          (print-hash-text-stats model (sample-text-stats-2 model))
-         (warn "--------------------------------------------")))
+         ;; (warn "--------------------------------------------")
+         ))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
             (equal mods '(:CTRL)))
@@ -1019,18 +1028,18 @@
        (move-cursor-right model))
       ((equal key-name "Up")
        (move-cursor-up model)
-       (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
-             (~> model cursor row)
-             (~> model view-port-first-line))
+       ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
+       ;;       (~> model cursor row)
+       ;;       (~> model view-port-first-line))
        (when (< (~> model cursor row)
                 (view-port-first-line model))
          (setf (view-port-first-line model) (~> model cursor row))))
       ((equal key-name "Down")
        (move-cursor-down model :ignored)
        (let ((pr (find-page-rows model)))
-         (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
-               (~> model cursor row)
-               (~> model view-port-first-line))
+         ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
+         ;;       (~> model cursor row)
+         ;;       (~> model view-port-first-line))
          (when (> (~> model cursor row)
                   (+
                    (view-port-first-line model)
@@ -1055,16 +1064,17 @@
            (progn
              (if (equal key-name "Return")
                  (progn
-                   (warn "going to insert Return character for ~S ~S" entered key-name)
+                   ;; (warn "going to insert Return character for ~S ~S" entered key-name)
                    (insert-character-at-cursor model entered key-name))
                  (progn
-                   (warn "going to insert character for ~S ~S" entered key-name)
+                   ;; (warn "going to insert character for ~S ~S" entered key-name)
                    (insert-character-at-cursor model entered key-name)))))))))
 
 ;;; events =====================================================================
 (defmethod process-event ((lisp-window basic-editor-window) event &rest args)
   (unless (member event '(:timeout :motion))
-    (unless (eq *environment* :testing) (warn "event ~S ~S" event args)))
+    ;; (unless (eq *environment* :testing) (warn "event ~S ~S" event args))
+    )
   (case event
     (:timeout
      ;; do nothing yet
@@ -1081,7 +1091,7 @@
     (:pressed
           (destructuring-bind ((button x y)) args
             (gui-app:mouse-button-pressed button)
-            (warn "mouse state ~S" (gui-app:mouse-button gui-app:*lisp-app*))
+            ;; (warn "mouse state ~S" (gui-app:mouse-button gui-app:*lisp-app*))
             (let*
                 ((children (~> *basic-editor-model*
                                world
@@ -1092,8 +1102,8 @@
                    (car (loop for c in children
                               when (boxes:mouse-over-p c)
                                 collect c))))
-              (warn "model world children under mouse ~S"
-                    first-child-found)
+              ;; (warn "model world children under mouse ~S"
+              ;;       first-child-found)
               (when first-child-found
                 (move-cursor-to *basic-editor-model* (row first-child-found) (col first-child-found)))
               )))
@@ -1112,8 +1122,7 @@
      (destructuring-bind ((entered key-name key-code mods)) args
        ;; example of accessing gtk window object
        ;; (gtk4:widget-grab-focus (gui-window:gir-window lisp-window))
-
-       (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
+       ;; (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
        (handle-key-pressed entered key-name key-code mods lisp-window)))
     (:menu-simple
      (destructuring-bind ((action)) args
