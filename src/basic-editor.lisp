@@ -141,6 +141,9 @@
 (defmethod cursor-stats ((model basic-editor-model))
   (sample-text-stats model))
 
+(defmethod the-container ((model basic-editor-model))
+  (~> model world boxes::children (nth 1 _)))
+
 (defun sample-text (n)
   (case n
     (:last-nl-yes
@@ -699,19 +702,29 @@
 (defun calculate-chars (model)
   (let*
       ((world (world model))
-       (text-container (make-node 20
-                                  340
-                                  (- (width world) 20 20)
-                                  (- (height world) 60) "yellow"))
+       (text-container
+         (make-node 20
+                    340
+                    (- (width world) 20 20)
+                    (- (height world) 60) "yellow"))
        (font-size 18)
        (margin-horizontal 0)
        (margin-vertical 0)
        (bwidth  (calculate-bwidth model))
        (bheight (calculate-bheight model ))
+       (my-container (the-container model))
        (wrap-column
-        (wrap-at-column model))
-       )
+         (progn
+           (warn "the container r is ~S - bwidth ~S"
+                 (width text-container)
+                 bwidth)
+           (if (and text-container (> bwidth 0))
+               (floor (/ (width text-container )
+                         (+ bwidth 3)))
+               80))))
     ;; (break "examine model in calculate chars ~S" model)
+    (warn "setting wrap column at ~S" wrap-column)
+    (setf (wrap-at-column model) wrap-column)
 
     (loop for last-char = nil then c
           for c across
@@ -959,10 +972,11 @@
                                      :view-port-first-column
                                      (view-port-first-column model)
                                      :container-width-pixels
-                                     (~> model world boxes::children (nth 1 _) boxes::width)
+                                     (boxes::width (the-container model))
                                      :container-height-pixels
-                                     (~> model world boxes::children (nth 1 _) boxes::height)
-                                     ))
+                                     (boxes::height (the-container model))
+                                     :wrap-at-column
+                                     (wrap-at-column model)))
                (warn "--------------------------------------------"))
              (progn
                (warn "no text loaded")))))
@@ -1122,7 +1136,16 @@
      (destructuring-bind ((w h)) args
        (gui-window:window-resize w h lisp-window)
        (setf (width lisp-window) w
-             (height lisp-window) h)))
+             (height lisp-window) h)
+       (let ((model *basic-editor-model*))
+         ;; (when (world model)
+         ;;   (let ((bwidth (calculate-bwidth model)))
+         ;;     (setf (wrap-at-column model)
+         ;;           (floor
+         ;;            (/
+         ;;             (boxes::width (the-container model))
+         ;;             bwidth)))))
+         )))
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
        ;; example of accessing gtk window object
