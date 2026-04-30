@@ -957,7 +957,12 @@
                                      :view-port-first-line
                                      (view-port-first-line model)
                                      :view-port-first-column
-                                     (view-port-first-column model)))
+                                     (view-port-first-column model)
+                                     :container-width-pixels
+                                     (~> model world boxes::children (nth 1 _) boxes::width)
+                                     :container-height-pixels
+                                     (~> model world boxes::children (nth 1 _) boxes::height)
+                                     ))
                (warn "--------------------------------------------"))
              (progn
                (warn "no text loaded")))))
