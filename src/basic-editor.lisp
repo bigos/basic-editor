@@ -945,10 +945,8 @@
                (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
                (warn "type of text ~S" (type-of (text model)))
                (warn "file position ~S" (find-cursor-position model))
-               (warn "cursor stats ~S" (cursor-stats model))
-               (warn "text ~S" (sycamore:rope-string (text model)))
-               (warn "model text structure ~s" (text-structure model))
-               (warn "model text structure ~s" (print-text-stats model))
+               ;; (warn "text ~S" (sycamore:rope-string (text model)))
+               (warn "model text structure ~S" (print-text-stats model))
                (warn "view port ~S" (list
                                      :view-port-size
                                      (view-port-size model)
@@ -960,8 +958,6 @@
                                      (view-port-first-line model)
                                      :view-port-first-column
                                      (view-port-first-column model)))
-               (warn "sample text stats 2")
-               (print-hash-text-stats model (sample-text-stats model))
                (warn "--------------------------------------------"))
              (progn
                (warn "no text loaded")))))
