@@ -937,30 +937,32 @@
 
       ((and (equal key-name "F9")
             (null mods))
-       (progn
-         ;; (warn "examine model ------------------------------")
-         ;; (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-         ;; (warn "type of text ~S" (type-of (text model)))
-         ;; (warn "file position ~S" (find-cursor-position model))
-         ;; (warn "cursor stats ~S" (cursor-stats model))
-         ;; (warn "text ~S" (sycamore:rope-string (text model)))
-         ;; (warn "model text structure ~s" (text-structure model))
-         ;; (warn "model text structure ~s" (print-text-stats (text model)))
-         ;; (warn "view port ~S" (list
-         ;;                       :view-port-size
-         ;;                       (view-port-size model)
-         ;;                       :view-port-lines
-         ;;                       (view-port-lines model)
-         ;;                       :view-port-columns
-         ;;                       (view-port-columns model)
-         ;;                       :view-port-first-line
-         ;;                       (view-port-first-line model)
-         ;;                       :view-port-first-column
-         ;;                       (view-port-first-column model)))
-         ;; (warn "sample text stats 2")
-         (print-hash-text-stats model (sample-text-stats-2 model))
-         ;; (warn "--------------------------------------------")
-         ))
+       (if (boundp 'text-structure)
+           (progn
+             (warn "examine model ------------------------------")
+             (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+             (warn "type of text ~S" (type-of (text model)))
+             (warn "file position ~S" (find-cursor-position model))
+             (warn "cursor stats ~S" (cursor-stats model))
+             (warn "text ~S" (sycamore:rope-string (text model)))
+             (warn "model text structure ~s" (text-structure model))
+             (warn "model text structure ~s" (print-text-stats (text model)))
+             (warn "view port ~S" (list
+                                   :view-port-size
+                                   (view-port-size model)
+                                   :view-port-lines
+                                   (view-port-lines model)
+                                   :view-port-columns
+                                   (view-port-columns model)
+                                   :view-port-first-line
+                                   (view-port-first-line model)
+                                   :view-port-first-column
+                                   (view-port-first-column model)))
+             (warn "sample text stats 2")
+             (print-hash-text-stats model (sample-text-stats-2 model))
+             (warn "--------------------------------------------"))
+           (progn
+             (warn "no text loaded"))))
       ;; (:SHIFT :CTRL :ALT :WIN)
       ((and (equal key-name "j")
             (equal mods '(:CTRL)))
