@@ -1138,13 +1138,15 @@
        (setf (width lisp-window) w
              (height lisp-window) h)
        (let ((model *basic-editor-model*))
-         ;; (when (world model)
-         ;;   (let ((bwidth (calculate-bwidth model)))
-         ;;     (setf (wrap-at-column model)
-         ;;           (floor
-         ;;            (/
-         ;;             (boxes::width (the-container model))
-         ;;             bwidth)))))
+         (when (world model)
+           (let ((bwidth (calculate-bwidth model)))
+             (when (> bwidth 0)
+               (setf (wrap-at-column model)
+                     (floor
+                      (/
+                       (width (the-container model))
+                       bwidth)))
+               (reload-text-structure model))))
          )))
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
