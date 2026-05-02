@@ -65,7 +65,8 @@
 
 (defclass/std cursor ()
   ((row)
-   (col)))
+   (col)
+   (text-position)))
 
 (defun print-object-inner (obj  stream)
   (print-unreadable-object (obj stream :type t :identity t)
@@ -93,9 +94,10 @@
 
 (defmethod print-object ((obj cursor) stream)
   (print-unreadable-object (obj stream :type t :identity t)
-    (format stream "~Sx~S"
+    (format stream "~Sx~S - ~S"
             (row obj)
-            (col obj))))
+            (col obj)
+            (text-position obj))))
 (defmethod print-object ((obj text-row) stream)
   (print-object-inner obj stream))
 
@@ -284,11 +286,15 @@
                                                                         (>= cur-col (wrap-at-column model)))
                                                                        (1+ row)
                                                                        row)
-        do
-           (when (or
-                  (eq c #\Newline)
-                  (>= cur-col (wrap-at-column model)))
-             (set-new-line row home (1+ i)))
+        do (progn
+             (when (or
+                    (eq c #\Newline)
+                    (>= cur-col (wrap-at-column model)))
+               (set-new-line row home (1+ i)))
+             ;; (when (eq (~> model cursor text-position) i)
+             ;;   (setf (~> model cursor row) row)
+             ;;   (setf (~> model cursor col) cur-col))
+             )
         finally
            (when i
              (unless (eq c #\Newline)
@@ -329,9 +335,6 @@
        (~> model cursor row)
        found-last-row))))
 
-(defmethod get-cursor-text-position ((model basic-editor-model))
-  (warn "finish me"))
-
 (defmethod move-cursor-to-text-position ((model basic-editor-model) text-position)
   (warn "finish me"))
 
@@ -342,13 +345,14 @@
     (let ((last-row (1- (hash-table-count the-data))) ; last row number
           (current-row (gethash row the-data)))
 
-      (let ((valid-row (and (>= row 0)
+      (let ((valid-row (and (>= row -1)
                             (<= row last-row)))
             (valid-col (and current-row
                             (<= 0 col (max-col current-row)))))
         (warn "early validation ~S ~S" valid-row valid-col)
         (warn "current row ~S" (current-row model))
-        (warn "row text: ~S" (row-text (current-row model) (text model)))
+        (warn "row text: ~S" (when (current-row model)
+                               (row-text (current-row model) (text model))))
         (let ((validated (and valid-row
                               valid-col)))
           (if validated
@@ -360,7 +364,8 @@
                 nil)))))))
 
 (defmethod move-cursor-to :before ((model basic-editor-model) row col)
-  (assert (valid-cursor-position model row col)))
+  ;; (assert (valid-cursor-position model row col))
+  )
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (move-cursor-to (cursor model) row col))
@@ -725,16 +730,11 @@
        (bheight (calculate-bheight model ))
        (my-container (the-container model))
        (wrap-column
-         (progn
-           ;; (warn "the container r is ~S - bwidth ~S"
-           ;;       (width text-container)
-           ;;       bwidth)
-           (if (and text-container (> bwidth 0))
-               (floor (/ (width text-container )
-                         (+ bwidth 3)))
-               80))))
-    ;; (break "examine model in calculate chars ~S" model)
-    ;; (warn "setting wrap column at ~S" wrap-column)
+         (if (and text-container (> bwidth 0))
+             (floor (/ (width text-container )
+                       (+ bwidth 3)))
+             80)))
+
     (setf (wrap-at-column model) wrap-column)
 
     (loop for last-char = nil then c
@@ -771,6 +771,9 @@
           for max-seen-col = 0 then (if outside
                                         max-seen-col
                                         (max col max-seen-col))
+          ;; when (and (eq row (~> model cursor row))
+          ;;           (eq col (~> model cursor col)))
+          ;;   do (setf (~> model cursor text-position) pos)
           unless outside
             collect (make-instance 'basic-editor-character
                                    :bchar c
@@ -966,7 +969,7 @@
          (if (slot-boundp model 'text-structure)
              (progn
                (warn "examine model ------------------------------")
-               (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+               (warn "cursor ~S" (~> model cursor))
                (warn "type of text ~S" (type-of (text model)))
                (warn "file position ~S" (find-cursor-position model))
                ;; (warn "text ~S" (sycamore:rope-string (text model)))
@@ -1152,16 +1155,12 @@
          (when (world model)
            (let ((bwidth (calculate-bwidth model)))
              (when (> bwidth 0)
-               ;; store current cursor file position
                (setf (wrap-at-column model)
                      (floor
                       (/
                        (width (the-container model))
                        bwidth)))
-               (reload-text-structure model)
-               ;; move cursor to stored file position
-               )))
-         )))
+               (reload-text-structure model)))))))
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
        ;; example of accessing gtk window object
