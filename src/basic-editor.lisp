@@ -96,6 +96,8 @@
     (format stream "~Sx~S"
             (row obj)
             (col obj))))
+(defmethod print-object ((obj text-row) stream)
+  (print-object-inner obj stream))
 
 ;;; ============================================================================
 ;;; review that
@@ -215,7 +217,6 @@
   (let ((the-data (data (text-structure model)))
         (row (~> model cursor row)))
     (gethash (1+ row) the-data)))
-
 
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
@@ -337,7 +338,10 @@
                             (<= row last-row)))
             (valid-col (and current-row
                             (<= 0 col (max-col current-row)))))
-        ;; (warn "early validation ~S ~S" valid-row valid-col)
+        (warn "early validation ~S ~S" valid-row valid-col)
+        (warn "current row ~S" (current-row model))
+        ;; TODO incorrect current row and row-text
+        (warn "row text: ~S" (row-text (current-row model) (text model)))
         (let ((validated (and valid-row
                               valid-col)))
           (if validated
