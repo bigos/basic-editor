@@ -350,7 +350,7 @@
     (let ((last-row (1- (hash-table-count the-data))) ; last row number
           (current-row (gethash row the-data)))
 
-      (let ((valid-row (and (>= row -1)
+      (let ((valid-row (and (>= row 0)
                             (<= row last-row)))
             (valid-col (and current-row
                             (<= 0 col (max-col current-row)))))
