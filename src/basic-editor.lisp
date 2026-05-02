@@ -680,41 +680,6 @@
 
     (+ theight 0)))
 
-(defun calculate-cursor (model)
-  (let* ((world (world model))
-         (text-container (make-node 20
-                                    340
-                                    (- (width world) 20 20)
-                                    (- (height world) 60) "yellow"))
-         (font-size 18)
-         (margin-horizontal 0)
-         (margin-vertical 0)
-         (bwidth  (calculate-bwidth model))
-         (bheight (calculate-bheight model )))
-    (let ((row (~> model cursor row))
-          (col (~> model cursor col)))
-      (make-instance 'basic-editor-cursor
-                     :bchar #\_
-                     :font-size font-size
-                     :coordinates-relative (make-coordinates-relative
-                                            (+ margin-horizontal
-                                               (ceiling
-                                                (* (- col (view-port-first-column model))
-                                                   (1+ bwidth) )))
-                                            (+ margin-vertical
-                                               (ceiling
-                                                (* (- row (view-port-first-line model))
-                                                   (1+ bheight))))
-                                            )
-                     :width bwidth
-                     :height bheight
-                     :color "#FFFFFF66"
-                     :row (~> model cursor row)
-                     :col (~> model cursor col)
-                     :pos nil
-                     :outside nil
-                     ))))
-
 (defun calculate-chars (model)
   (let*
       ((world (world model))
@@ -771,9 +736,29 @@
           for max-seen-col = 0 then (if outside
                                         max-seen-col
                                         (max col max-seen-col))
-          ;; when (and (eq row (~> model cursor row))
-          ;;           (eq col (~> model cursor col)))
-          ;;   do (setf (~> model cursor text-position) pos)
+          when (and (eq row (~> model cursor row))
+                    (eq col (~> model cursor col)))
+            collect (make-instance 'basic-editor-character
+                                   :bchar c
+                                   :font-size font-size
+                                   :coordinates-relative
+                                   (make-coordinates-relative
+                                    relx
+                                    rely)
+                                   :width bwidth
+                                   :height bheight
+                                   :color (if (and (= (~> model cursor row)
+                                                      row)
+                                                   (= (~> model cursor col)
+                                                      col))
+                                              "red"
+                                              "pink")
+                                   :row row
+                                   :col col
+                                   :pos pos
+                                   :outside outside
+                                   )
+              into cursors
           unless outside
             collect (make-instance 'basic-editor-character
                                    :bchar c
@@ -801,7 +786,7 @@
              (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
              (setf (view-port-columns model) max-seen-col)
              (setf (seen-chars model) the-chars)
-             (return the-chars))))
+             (return (list :chars the-chars :cursor cursors)))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
@@ -840,12 +825,12 @@
                    (let ((text-container (make-node 20
                                                     340
                                                     (- (width world) 20 20)
-                                                    (- (height world) 60) "yellow")))
+                                                    (- (height world) 60) "yellow"))
+                         (zzz (calculate-chars model)))
                      (add-children text-container
-                                   (calculate-chars model))
+                                   (getf zzz :chars))
                      (add-children text-container
-                                   (list
-                                    (calculate-cursor model))))
+                                   (getf zzz :cursor)))
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
