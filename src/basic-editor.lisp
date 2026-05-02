@@ -715,15 +715,15 @@
        (my-container (the-container model))
        (wrap-column
          (progn
-           (warn "the container r is ~S - bwidth ~S"
-                 (width text-container)
-                 bwidth)
+           ;; (warn "the container r is ~S - bwidth ~S"
+           ;;       (width text-container)
+           ;;       bwidth)
            (if (and text-container (> bwidth 0))
                (floor (/ (width text-container )
                          (+ bwidth 3)))
                80))))
     ;; (break "examine model in calculate chars ~S" model)
-    (warn "setting wrap column at ~S" wrap-column)
+    ;; (warn "setting wrap column at ~S" wrap-column)
     (setf (wrap-at-column model) wrap-column)
 
     (loop for last-char = nil then c
@@ -1190,7 +1190,8 @@
        ;; possibly steal menu focus
        ))
     (otherwise
-     (warn "not handled event ~S ~S" event args)))
+     (unless (eq event  :key-released)
+       (warn "not handled event ~S ~S" event args))))
 
   ;; moving widgets -------------------------
   ;; (warn "may implement moving widgets in response to actions)
