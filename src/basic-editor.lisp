@@ -693,7 +693,6 @@
        (margin-vertical 0)
        (bwidth  (calculate-bwidth model))
        (bheight (calculate-bheight model ))
-       (my-container (the-container model))
        (wrap-column
          (if (and text-container (> bwidth 0))
              (floor (/ (width text-container )
@@ -738,8 +737,11 @@
                                         (max col max-seen-col))
           when (and (eq row (~> model cursor row))
                     (eq col (~> model cursor col)))
-            collect (make-instance 'cursor
-                                   :bchar c
+            do (setf (~> model cursor text-position) pos)
+          when (and (eq row (~> model cursor row))
+                    (eq col (~> model cursor col)))
+            collect (make-instance 'basic-editor-cursor
+                                   :bchar #\_
                                    :font-size font-size
                                    :coordinates-relative
                                    (make-coordinates-relative
@@ -747,15 +749,10 @@
                                     rely)
                                    :width bwidth
                                    :height bheight
-                                   :color (if (and (= (~> model cursor row)
-                                                      row)
-                                                   (= (~> model cursor col)
-                                                      col))
-                                              "red"
-                                              "pink")
+                                   :color "#FFFF8844"
                                    :row row
                                    :col col
-                                   :text-position pos)
+                                   :pos pos)
               into cursors
           unless outside
             collect (make-instance 'basic-editor-character
@@ -784,7 +781,9 @@
              (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
              (setf (view-port-columns model) max-seen-col)
              (setf (seen-chars model) the-chars)
-             (return (list :chars the-chars :cursor cursors)))))
+             (return (list
+                      :chars the-chars
+                      :cursor cursors)))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
