@@ -342,7 +342,6 @@
                             (<= 0 col (max-col current-row)))))
         (warn "early validation ~S ~S" valid-row valid-col)
         (warn "current row ~S" (current-row model))
-        ;; TODO incorrect current row and row-text
         (warn "row text: ~S" (row-text (current-row model) (text model)))
         (let ((validated (and valid-row
                               valid-col)))
@@ -1138,7 +1137,7 @@
             (warn "mouse state released ~S" (gui-app:mouse-button gui-app:*lisp-app*))))
     (:scroll)
     (:resize
-     ;; also see defun calculate-chars
+
      (destructuring-bind ((w h)) args
        (gui-window:window-resize w h lisp-window)
        (setf (width lisp-window) w
