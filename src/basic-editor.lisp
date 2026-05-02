@@ -377,21 +377,8 @@
   (move-cursor-to (cursor model) row col))
 
 (defmethod move-cursor-left ((model basic-editor-model))
-  (cond ((valid-cursor-position model
-                                (~> model cursor row)
-                                (1- (~> model cursor col)))
-         (move-cursor-to model
-                         (~> model cursor row)
-                         (1- (~> model cursor col))))
-        ((and (previous-row model)
-              (valid-cursor-position model
-                                     (1- (~> model cursor row))
-                                     (max-col (previous-row model))))
-         (move-cursor-to model
-                         (1- (~> model cursor row))
-                         (max-col (previous-row model))))
-        (T ;; (warn "no more valid cursor positions")
-           )))
+  (when (> (~> model cursor text-position) 0)
+    (setf (~> model cursor text-position) (1- (~> model cursor text-position)))))
 
 (defmethod move-cursor-right ((model basic-editor-model))
   (setf (~> model cursor text-position) (1+ (~> model cursor text-position))))
