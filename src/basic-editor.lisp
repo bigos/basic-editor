@@ -411,7 +411,9 @@
       (setf (~> model cursor text-position) (1- (end cur-row))))))
 
 (defmethod move-cursor-first-line-home ((model basic-editor-model))
-  (move-cursor-to model 0 0))
+  (setf (~> model cursor text-position) 0))
+
+;;; TODO
 (defmethod move-cursor-last-line-end ((model basic-editor-model))
   (let ((last-row-cons (find-last-row model)))
     (move-cursor-to model (car last-row-cons) (cdr last-row-cons))))
