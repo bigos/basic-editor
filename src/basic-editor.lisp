@@ -25,7 +25,7 @@
 (defclass/std basic-editor-model (boxes:model)
   ((text :std "" :type string)
    (text-structure :type text-structure)
-   (cursor :std (make-instance 'cursor :row 0 :col 0))
+   (cursor :std (make-instance 'cursor :row 0 :col 0 :text-position 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
    (view-port-columns :std 0)
@@ -249,15 +249,16 @@
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
-  (let* ((text-container-width (~> model world width (- _ 20 20)))
+  (let* (
+         ;; (text-container-width (~> model world width (- _ 20 20)))
         (text (text model))
-        (font-size 18)
+        ;; (font-size 18)
         ;; (margin-horizontal 0)
         ;; (margin-vertical 0)
-        (bwidth  (calculate-bwidth model))
+        ;; (bwidth  (calculate-bwidth model))
         ;; (bheight (calculate-bheight model ))
-        (wrap-column (wrap-at-column model))
-        (wrap-col (view-port-columns model))
+        ;; (wrap-column (wrap-at-column model))
+        ;; (wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
     ;; (warn "zzzzz cols zzzzzzz ~S ~S"
     ;;       wrap-column
@@ -286,15 +287,18 @@
                                                                         (>= cur-col (wrap-at-column model)))
                                                                        (1+ row)
                                                                        row)
+        ;; when (and (~> model cursor text-position)
+        ;;           (eq (~> model cursor text-position) i))
+        ;;   do
+        ;;      (warn "set cursor for ~S" (list :row row :col cur-col :pos i))
+             ;; (setf (~> model cursor row) row)
+             ;; (setf (~> model cursor col) (max 0 cur-col))
+             ;; (setf (~> model cursor text-position) i)
         do (progn
              (when (or
                     (eq c #\Newline)
                     (>= cur-col (wrap-at-column model)))
-               (set-new-line row home (1+ i)))
-             ;; (when (eq (~> model cursor text-position) i)
-             ;;   (setf (~> model cursor row) row)
-             ;;   (setf (~> model cursor col) cur-col))
-             )
+               (set-new-line row home (1+ i))))
         finally
            (when i
              (unless (eq c #\Newline)
@@ -307,9 +311,11 @@
 
 (defmethod reload-text-structure ((model basic-editor-model))
   ;; (warn "=========== going to load string ================ ~S" (text model))
-  (let ((stats (sample-text-stats model)))
+  (let ((old-cursor (~> model cursor))
+        (stats (sample-text-stats model)))
     ;; (warn "got stats ~S" stats)
-    (setf (text-structure model) (make-instance 'text-structure :data stats))))
+    (setf (text-structure model) (make-instance 'text-structure :data stats))
+    ))
 
 (defmethod reload-text-structure :after ((model basic-editor-model))
   ;; (warn "after reloading text structure")
@@ -388,28 +394,7 @@
            )))
 
 (defmethod move-cursor-right ((model basic-editor-model))
-  (cond ((valid-cursor-position model
-                                (~> model cursor row)
-                                (1+ (~> model cursor col)))
-         (move-cursor-to model
-                         (~> model cursor row)
-                         (1+ (~> model cursor col))))
-        ((valid-cursor-position model
-                                (1+ (~> model cursor row))
-                                0)
-         (move-cursor-to model
-                         (1+ (~> model cursor row))
-                         0))
-        ((last-row model)
-         (progn
-           ;; (warn "trying to add newline")
-           (setf (text model) (format nil "~A~%" (text model)))
-           (reload-text-structure model)
-           (move-cursor-home model)
-           (move-cursor-down model :ignored)
-           ))
-        (T ;; (warn "no more valid cursor positions")
-           )))
+  (setf (~> model cursor text-position) (1+ (~> model cursor text-position))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
   (cond ((valid-cursor-position model
@@ -735,11 +720,11 @@
           for max-seen-col = 0 then (if outside
                                         max-seen-col
                                         (max col max-seen-col))
-          when (and (eq row (~> model cursor row))
-                    (eq col (~> model cursor col)))
-            do (setf (~> model cursor text-position) pos)
-          when (and (eq row (~> model cursor row))
-                    (eq col (~> model cursor col)))
+          when (eq (~> model cursor text-position) pos)
+            do (setf
+                (~> model cursor row) row
+                (~> model cursor col) col)
+          when (eq (~> model cursor text-position) pos)
             collect (make-instance 'basic-editor-cursor
                                    :bchar #\_
                                    :font-size font-size
