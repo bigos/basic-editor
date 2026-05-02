@@ -330,6 +330,8 @@
        found-last-row))))
 
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
+  (reload-text-structure model)
+
   (let ((the-data (data (text-structure model))))
     (let ((last-row (1- (hash-table-count the-data))) ; last row number
           (current-row (gethash row the-data)))
