@@ -329,6 +329,12 @@
        (~> model cursor row)
        found-last-row))))
 
+(defmethod get-cursor-text-position ((model basic-editor-model))
+  (warn "finish me"))
+
+(defmethod move-cursor-to-text-position ((model basic-editor-model) text-position)
+  (warn "finish me"))
+
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
   (reload-text-structure model)
 
