@@ -63,7 +63,7 @@
    (pos)
    (outside)))
 
-(defclass/std cursor ()
+(defclass/std cursor (boxes:node-character)
   ((row)
    (col)
    (text-position)))
@@ -738,7 +738,7 @@
                                         (max col max-seen-col))
           when (and (eq row (~> model cursor row))
                     (eq col (~> model cursor col)))
-            collect (make-instance 'basic-editor-character
+            collect (make-instance 'cursor
                                    :bchar c
                                    :font-size font-size
                                    :coordinates-relative
@@ -755,9 +755,7 @@
                                               "pink")
                                    :row row
                                    :col col
-                                   :pos pos
-                                   :outside outside
-                                   )
+                                   :text-position pos)
               into cursors
           unless outside
             collect (make-instance 'basic-editor-character
@@ -778,10 +776,10 @@
                                    :row row
                                    :col col
                                    :pos pos
-                                   :outside outside
-                                   )
+                                   :outside outside)
               into the-chars
           finally
+             ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
              (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
              (setf (view-port-columns model) max-seen-col)
