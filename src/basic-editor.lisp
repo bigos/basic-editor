@@ -1137,7 +1137,7 @@
             (warn "mouse state released ~S" (gui-app:mouse-button gui-app:*lisp-app*))))
     (:scroll)
     (:resize
-
+     ;; on resize move cursor to corresponding file position
      (destructuring-bind ((w h)) args
        (gui-window:window-resize w h lisp-window)
        (setf (width lisp-window) w
@@ -1146,12 +1146,15 @@
          (when (world model)
            (let ((bwidth (calculate-bwidth model)))
              (when (> bwidth 0)
+               ;; store current cursor file position
                (setf (wrap-at-column model)
                      (floor
                       (/
                        (width (the-container model))
                        bwidth)))
-               (reload-text-structure model))))
+               (reload-text-structure model)
+               ;; move cursor to stored file position
+               )))
          )))
     (:key-pressed
      (destructuring-bind ((entered key-name key-code mods)) args
