@@ -119,7 +119,7 @@
     (setf
      (text-position cursor) position
      (row cursor) (row the-row)
-     (col cursor) (1- (position (home the-row))))))
+     (col cursor) (1- (- position (home the-row))))))
 
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
@@ -366,15 +366,11 @@
 (defmethod move-cursor-first-line-home ((model basic-editor-model))
   (move-cursor-to-position model 0))
 
-;;; TODO
 (defmethod move-cursor-last-line-end ((model basic-editor-model))
-  (let ((last-row-cons (find-last-row model)))
-    (move-cursor-to model (car last-row-cons) (cdr last-row-cons))))
-;;; ----------------------------------------------------------------------------
+  (let ((last-row (last-row model)))
+    (move-cursor-to-position model (1- (end last-row)))))
 
-(defmethod find-cursor-end ((model basic-editor-model))
-  (max-col
-   (current-row model)))
+;;; ----------------------------------------------------------------------------
 
 (defmethod find-cursor-position ((model basic-editor-model))
   (let ((cur-row (current-row model)))
