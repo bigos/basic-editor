@@ -651,7 +651,7 @@
                                                       row)
                                                    (= (~> model cursor col)
                                                       col))
-                                              "white"
+                                              "red"
                                               "pink")
                                    :row row
                                    :col col
