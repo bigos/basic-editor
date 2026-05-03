@@ -358,104 +358,45 @@
   (format nil "~%"))
 
 (defmethod delete-character-at-cursor ((model basic-editor-model))
-  (let ((cur-pos (find-cursor-position model)))
+  (let ((cur-pos (~> model cursor text-position)))
 
     ;; (warn "will delete at row ~S col ~S pos ~S"
     ;;       (~> model cursor row)
     ;;       (~> model cursor col)
     ;;       cur-pos)
-    (if cur-pos
-        (progn
-          (setf (text model) (format nil "~A~A"
-                                     (subseq (text model) 0
-                                             cur-pos)
-                                     (subseq (text model) (+ 1 cur-pos)
-                                             (length (text model)))))
-          (reload-text-structure model))
-        ;; (warn "No cursor position found, possibly no text")
-        )))
+    (unless (equal (text model) "")
+      (if cur-pos
+          (progn
+            (setf (text model) (format nil "~A~A"
+                                       (subseq (text model) 0
+                                               cur-pos)
+                                       (subseq (text model) (+ 1 cur-pos)
+                                               (length (text model)))))
+            (reload-text-structure model))
+          ;; (warn "No cursor position found, possibly no text")
+          ))))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
   ;; TODO this desperately needs improving and testing
-  ;; (warn "before insert")
-  ;; (warn "~S"
-  ;;       (text model))
+  (warn "before insert key ~S ~S" entered key-name)
+  (warn "~S"
+        (text model))
 
-  (let ((cur-pos (find-cursor-position model)))
-    (if cur-pos
-        (progn                          ; then
-          ;; (warn "cursor pos is present")
-          (setf (text model)
+  (let ((cur-pos (or (~> model cursor text-position) 0))
+        (entered-key (if (equal key-name "Return")
+                         (format nil "~%")
+                         entered)))
+    (setf (text model) (format nil "~A~A~A"
+                               (subseq (text model) 0 cur-pos )
+                               entered-key
+                               (subseq (text model) cur-pos)))
+    (reload-text-structure model))
 
-
-                (if (equal key-name "Return")
-                    (progn              ;then
-                      ;; (warn "doing Return")
-                      (format nil "~A~A~A"
-                              ;;  pre insert
-                              ;; TODO it fails here, we need to test extensively this part in different cases
-                              ;; (warn "pre insert")
-                              ;; (break "before subrope ~S ~S" (length (text model)) (text model))
-
-                              (subseq (text model) 0
-                                                   (+ 0  cur-pos))
-                              ;; the insert
-                              ;; (warn "the insert")
-                              (for-enter)
-
-                              ;; post insert
-                              ;; (warn "post insert")
-                              (subseq (text model) (+ 0 cur-pos)
-                                                   (length (text model)))
-                              ;; (warn "after post insert")
-                              ))
-                    ;; ---------------------------------------------------------------
-                    (progn
-                      ;; (warn "doint NON Return")
-                      (format nil "~A~A~A"
-                              ;;  pre insert
-                              (subseq (text model) 0
-                                                   cur-pos)
-                              ;; the insert
-                              (cond
-                                ((equal key-name "Return")
-                                 (for-enter))
-                                (T entered))
-                              ;; post insert
-                              (subseq (text model) (+ 0 cur-pos)
-                                      (sycamore:rope-length (text model)))))))
-          (reload-text-structure model)
-          ;; ------------------------------------------------------
-          (cond
-            ((equal key-name "Return")
-             ;; (warn "move cursor return 1")
-             (move-cursor-down model :ignored)
-             (move-cursor-home model))
-            (T
-             ;; (warn "move cursor normal 1")
-             (move-cursor-right model))))
-
-        (progn                          ; else
-          ;; TODO start adding tests
-          ;; (warn "cursor pos is NIL")
-          (setf (text model) (cond
-                               ((equal key-name "Return")
-                                (for-enter))
-                               (T entered)))
-          (reload-text-structure model)
-          (cond
-            ((equal key-name "Return")
-             ;; (warn "move cursor return 2")
-             (move-cursor-down model :ignored)
-             (move-cursor-home model))
-            (T
-             ;; (warn "move cursor normal 2")
-             (move-cursor-right model))))))
-  ;; (progn
-  ;;   (warn "---------- done insert --------------")
-  ;;   (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
-  ;;   (warn "cursor text  ~S" (~> model text))
-  ;;   (warn "---------- finished insert --------------"))
+  (progn
+    (warn "---------- done insert --------------")
+    (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+    (warn "cursor text  ~S" (~> model text))
+    (warn "---------- finished insert --------------"))
 
   )
 
