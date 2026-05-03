@@ -119,7 +119,7 @@
     (setf
      (text-position cursor) position
      (row cursor) (row the-row)
-     (col cursor) (1- (- position (home the-row))))))
+     (col cursor) (- position (home the-row)))))
 
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
@@ -368,7 +368,7 @@
 
 (defmethod move-cursor-last-line-end ((model basic-editor-model))
   (let ((last-row (last-row model)))
-    (move-cursor-to-position model (1- (end last-row)))))
+    (move-cursor-to-position model  (1- (end last-row)))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -636,6 +636,28 @@
           for max-seen-col = 0 then (if outside
                                         max-seen-col
                                         (max col max-seen-col))
+
+          unless outside
+            collect (make-instance 'basic-editor-character
+                                   :bchar c
+                                   :font-size font-size
+                                   :coordinates-relative
+                                   (make-coordinates-relative
+                                    relx
+                                    rely)
+                                   :width bwidth
+                                   :height bheight
+                                   :color (if (and (= (~> model cursor row)
+                                                      row)
+                                                   (= (~> model cursor col)
+                                                      col))
+                                              "white"
+                                              "pink")
+                                   :row row
+                                   :col col
+                                   :pos pos
+                                   :outside outside)
+              into the-chars
           when (eq (~> model cursor text-position) pos)
             do (setf
                 (~> model cursor row) row
@@ -655,27 +677,6 @@
                                    :col col
                                    :pos pos)
               into cursors
-          unless outside
-            collect (make-instance 'basic-editor-character
-                                   :bchar c
-                                   :font-size font-size
-                                   :coordinates-relative
-                                   (make-coordinates-relative
-                                    relx
-                                    rely)
-                                   :width bwidth
-                                   :height bheight
-                                   :color (if (and (= (~> model cursor row)
-                                                      row)
-                                                   (= (~> model cursor col)
-                                                      col))
-                                              "red"
-                                              "pink")
-                                   :row row
-                                   :col col
-                                   :pos pos
-                                   :outside outside)
-              into the-chars
           finally
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
