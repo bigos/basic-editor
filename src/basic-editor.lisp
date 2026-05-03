@@ -499,15 +499,6 @@
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
-;;; we need text-container, wrap,
-(defmethod wrap-column ((model basic-editor-model) text-container-width bwidth)
-  (let* ((world (world model)))
-    (ecase (text-wrap model)
-      (:trim *boundary-gigabyte*) ;; trim wraps on ridiculously high column
-      (:wrap  (- (floor (/ text-container-width
-                           (1+ bwidth)))
-                 2)))))
-
 ;;; drawing ====================================================================
 (defun calculate-chars (model)
   (let*
