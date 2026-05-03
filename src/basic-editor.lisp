@@ -108,39 +108,19 @@
   (cons (~> cursor row)
         (~> cursor col)))
 
-(defmethod move-cursor-to ((cursor cursor) row col)
-  (setf
-   (row cursor) row
-   (col cursor) col))
-(defmethod move-cursor-left ((cursor cursor))
-  (setf
-   (row cursor) (row cursor)
-   (col cursor) (1- (col cursor))))
-(defmethod move-cursor-right ((cursor cursor))
-  (setf
-   (row cursor) (row cursor)
-   (col cursor) (1+ (col cursor))))
-(defmethod move-cursor-up ((cursor cursor))
-  (setf
-   (row cursor) (if (> (row cursor) 0)
-                    (1- (row cursor))
-                    0)
-   (col cursor) (col cursor)))
-(defmethod move-cursor-down ((cursor cursor) last-row)
-  (warn "setting row")
-  (setf
-   (row cursor) (1+ (row cursor)))
-  (warn "setting col")
-  (setf
-   (col cursor) (col cursor)))
-(defmethod move-cursor-home ((cursor cursor))
-  (setf
-   (row cursor) (row cursor)
-   (col cursor) 0))
-(defmethod move-cursor-end ((cursor cursor) last-col)
-  (setf
-   (row cursor) (row cursor)
-   (col cursor) last-col))
+(defmethod move-cursor-to-position ((model basic-editor-model) position)
+  (let* ((cursor (~> model cursor))
+         (the-data (data (text-structure model)))
+         (the-row (loop for hk being the hash-key in the-data
+                        for r = (gethash hk the-data)
+                        until (and (>= position (home r))
+                                   (<= position (end r)))
+                        finally (return r))))
+    (setf
+     (text-position cursor) position
+     (row cursor) (row the-row)
+     (col cursor) (1- (position (home the-row))))))
+
 ;;; ============================================================================
 (defmethod cursor-stats ((model basic-editor-model))
   (sample-text-stats model))
@@ -205,6 +185,10 @@
   (1- (- (end row)
          (home row))))
 
+(defmethod first-row ((model basic-editor-model))
+  (let ((the-data (data (text-structure model))))
+    (gethash 0 the-data)))
+
 (defmethod previous-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model)))
         (row (~> model cursor row)))
@@ -222,30 +206,12 @@
 
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
-    (1- (hash-table-count the-data))))
+    (gethash (1- (hash-table-count the-data)) the-data)))
 
-;; (experiment-text-structure)
-(defun experiment-text-structure ()
-  (let ((model (make-instance 'basic-editor-model))
-        (text-content (format nil "~%~%Ala ma kota~%~%Ola ma psa")))
-    (setf (text model) text-content)
-    (reload-text-structure model)
-    (break "examine the model ~S" model)
-    ;; find where the cursor is first used on loading
+(defmethod nth-row ((model basic-editor-model) nth)
+  (let ((the-data (data (text-structure model))))
+    (gethash nth the-data)))
 
-    (loop for k being the hash-key of (data (text-structure model))
-          do
-             (let ((zzz (gethash k (data (text-structure model)))))
-               (warn "row  ~s ~s ~s"
-                     k
-                     (list (row zzz)
-                           (home zzz)
-                           (end zzz)
-                           (max-col zzz))
-                     (row-text
-                      (gethash k (data (text-structure model))
-                               )
-                      (text model)))))))
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
@@ -287,13 +253,6 @@
                                                                         (>= cur-col (wrap-at-column model)))
                                                                        (1+ row)
                                                                        row)
-        ;; when (and (~> model cursor text-position)
-        ;;           (eq (~> model cursor text-position) i))
-        ;;   do
-        ;;      (warn "set cursor for ~S" (list :row row :col cur-col :pos i))
-             ;; (setf (~> model cursor row) row)
-             ;; (setf (~> model cursor col) (max 0 cur-col))
-             ;; (setf (~> model cursor text-position) i)
         do (progn
              (when (or
                     (eq c #\Newline)
@@ -346,72 +305,66 @@
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
   (reload-text-structure model)
 
-  (let ((the-data (data (text-structure model))))
-    (let ((last-row (1- (hash-table-count the-data))) ; last row number
-          (current-row (gethash row the-data)))
+  (let ((last-row (last-row model))
+        (current-row (current-row model)))
 
-      (let ((valid-row (and (>= row 0)
-                            (<= row last-row)))
-            (valid-col (and current-row
-                            (<= 0 col (max-col current-row)))))
-        (warn "early validation ~S ~S" valid-row valid-col)
-        (warn "current row ~S" (current-row model))
-        (warn "row text: ~S" (when (current-row model)
-                               (row-text (current-row model) (text model))))
-        (let ((validated (and valid-row
-                              valid-col)))
-          (if validated
-              (progn
-                ;; (warn "info: cursor position ~S ~S is valid" row col)
-                T)
-              (progn
-                ;; (warn "invalid cursor position ~S ~S" row col)
-                nil)))))))
-
-(defmethod move-cursor-to :before ((model basic-editor-model) row col)
-  ;; (assert (valid-cursor-position model row col))
-  )
+    (let ((valid-row (and (>= row 0)
+                          (<= row (row  last-row))))
+          (valid-col (and current-row
+                          (<= 0 col (max-col current-row)))))
+      (warn "early validation ~S ~S" valid-row valid-col)
+      (warn "current row ~S" (current-row model))
+      (warn "row text: ~S" (when (current-row model)
+                             (row-text (current-row model) (text model))))
+      (let ((validated (and valid-row
+                            valid-col)))
+        (if validated
+            (progn
+              ;; (warn "info: cursor position ~S ~S is valid" row col)
+              T)
+            (progn
+              ;; (warn "invalid cursor position ~S ~S" row col)
+              nil))))))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
-  (move-cursor-to (cursor model) row col))
+    (let ((nth-row (nth-row model row)))
+      (move-cursor-to-position model (+ col (home nth-row)))))
 
 (defmethod move-cursor-left ((model basic-editor-model))
   (when (> (~> model cursor text-position) 0)
-    (setf (~> model cursor text-position) (1- (~> model cursor text-position)))))
+    (move-cursor-to-position model (1- (~> model cursor text-position)))))
 
 (defmethod move-cursor-right ((model basic-editor-model))
-  (setf (~> model cursor text-position) (1+ (~> model cursor text-position))))
+  (move-cursor-to-position model (1+ (~> model cursor text-position))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
   (let ((column (~> model cursor col))
         (previous-row (previous-row model)))
     (when previous-row
-      (setf (~> model cursor text-position)
-            (min
-             (1- (end previous-row))
-             (+ column (home previous-row)))))))
+      (move-cursor-to-position model (min
+                                      (1- (end previous-row))
+                                      (+ column (home previous-row)))))))
 
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((column (~> model cursor col))
         (next-row (next-row model)))
     (when next-row
-      (setf (~> model cursor text-position)
-            (min
-             (1- (end next-row))
-             (+ column (home next-row)))))))
+      (move-cursor-to-position model (min
+                                      (1- (end next-row))
+                                      (+ column (home next-row)))))))
 
 (defmethod move-cursor-home ((model basic-editor-model))
   (let ((cur-row (current-row model)))
     (when cur-row
-      (setf (~> model cursor text-position) (home cur-row)))))
+      (move-cursor-to-position model (home cur-row)))))
 
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
   (let ((cur-row (current-row model)))
     (when cur-row
-      (setf (~> model cursor text-position) (1- (end cur-row))))))
+      (move-cursor-to-position model (1- (end cur-row))))))
 
 (defmethod move-cursor-first-line-home ((model basic-editor-model))
-  (setf (~> model cursor text-position) 0))
+  (move-cursor-to-position model 0))
 
 ;;; TODO
 (defmethod move-cursor-last-line-end ((model basic-editor-model))
