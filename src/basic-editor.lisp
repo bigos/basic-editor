@@ -122,9 +122,6 @@
      (col cursor) (- position (home the-row)))))
 
 ;;; ============================================================================
-(defmethod cursor-stats ((model basic-editor-model))
-  (sample-text-stats model))
-
 (defmethod the-container ((model basic-editor-model))
   (~> model world boxes::children (nth 1 _)))
 
@@ -272,35 +269,7 @@
   ;; (warn "=========== going to load string ================ ~S" (text model))
   (let ((stats (sample-text-stats model)))
     (warn "got stats ~S" stats)
-    (setf (text-structure model) (make-instance 'text-structure :data stats))
-    ))
-
-(defmethod reload-text-structure :after ((model basic-editor-model))
-  ;; (warn "after reloading text structure")
-  ;; after removing the last line cursor need to move to last position of the
-  ;; previous line
-  ;; after removing
-  ;; validate cursor
-  ;; if cursor is
-  ;; beyond the last row, move it to the last character of the last row
-  ;; beyond the last character on the line, move it to last character
-  ;; before the first column, move it to the first column
-  ;;
-  ;; zzzzzzzzzzzzz
-  )
-
-(defun is-first-line (model)
-  (zerop  (~> model cursor row)))
-
-(defun is-last-line (model)
-  (let ((found-last-row (hash-table-count (~> model text-structure data))))
-    (when found-last-row
-      (>=
-       (~> model cursor row)
-       found-last-row))))
-
-(defmethod move-cursor-to-text-position ((model basic-editor-model) text-position)
-  (warn "finish me"))
+    (setf (text-structure model) (make-instance 'text-structure :data stats))))
 
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
   (reload-text-structure model)
@@ -394,16 +363,6 @@
 (defmethod find-page-rows ((model basic-editor-model))
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
-(defmethod find-last-row ((model basic-editor-model))
-  (loop for last-char = nil then c
-        for c across (~> model text sycamore:rope-string)
-        for row = 0 then (if (equal last-char #\Newline)
-                             (1+ row) row)
-        for col = 0 then (if (equal last-char #\Newline)
-                             0 (1+ col))
-        for pos = 0  then (1+ pos)
-        finally
-           (return (cons row col))))
 
 (defun for-enter ()
   (format nil "~%"))
