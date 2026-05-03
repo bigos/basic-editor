@@ -215,17 +215,7 @@
   (let* (
          ;; (text-container-width (~> model world width (- _ 20 20)))
         (text (text model))
-        ;; (font-size 18)
-        ;; (margin-horizontal 0)
-        ;; (margin-vertical 0)
-        ;; (bwidth  (calculate-bwidth model))
-        ;; (bheight (calculate-bheight model ))
-        ;; (wrap-column (wrap-at-column model))
-        ;; (wrap-col (view-port-columns model))
         (lines-hash-table (make-hash-table)))
-    ;; (warn "zzzzz cols zzzzzzz ~S ~S"
-    ;;       wrap-column
-    ;;       wrap-col)
 
     (labels
         ((set-new-line (row home i)
@@ -472,9 +462,9 @@
 ;;; ----------------------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
-    (setf
-     (text model) "edit something"
-     (current-file model) nil)))
+    (setf (text model) "edit something")
+    (reload-text-structure model)
+    (setf (current-file model) nil)))
 
 ;; (funcall *client-fn-open-file* (cancelled-value))
 (defun open-file (filepath)
@@ -519,27 +509,6 @@
                  2)))))
 
 ;;; drawing ====================================================================
-(defun calculate-bwidth (model)
-  (let* ((font-size 18)
-         (margin-horizontal 0)
-         (margin-vertical 0)
-         (text-for-size  "pOly()/_")
-         (text-data (text-size text-for-size font-size ))
-         (twidth (floor (/ (getf text-data :width)
-                           (length text-for-size)))))
-
-    (+ twidth  0)))
-
-(defun calculate-bheight (model)
-  (let* ((font-size 18)
-         (margin-horizontal 0)
-         (margin-vertical 0)
-         (text-for-size  "pOly()/_")
-         (text-data (text-size text-for-size font-size ))
-         (theight          (getf text-data :height)))
-
-    (+ theight 0)))
-
 (defun calculate-chars (model)
   (let*
       ((world (world model))
@@ -551,8 +520,15 @@
        (font-size 18)
        (margin-horizontal 0)
        (margin-vertical 0)
-       (bwidth  (calculate-bwidth model))
-       (bheight (calculate-bheight model ))
+       (text-for-size  "pOly()/_")
+       (text-data (text-size text-for-size font-size ))
+
+       (twidth (floor (/ (getf text-data :width)
+                         (length text-for-size))))
+       (theight          (getf text-data :height))
+
+       (bwidth  (+ twidth 0))
+       (bheight (+ theight 0))
        (wrap-column
          (if (and text-container (> bwidth 0))
              (floor (/ (width text-container )
