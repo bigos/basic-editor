@@ -441,6 +441,14 @@
         :if-does-not-exist :create)))))
 
 ;;; drawing ====================================================================
+(defun calculate-bwidth (model)
+  (let* ((font-size 18)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size ))
+         (twidth (floor (/ (getf text-data :width)
+                           (length text-for-size)))))
+    (+ twidth 0)))
+
 (defun calculate-chars (model)
   (let*
       ((world (world model))
@@ -449,12 +457,11 @@
                     340
                     (- (width world) 20 20)
                     (- (height world) 60) "yellow"))
-       (font-size 18)
        (margin-horizontal 0)
        (margin-vertical 0)
+       (font-size 18)
        (text-for-size  "pOly()/_")
        (text-data (text-size text-for-size font-size ))
-
        (twidth (floor (/ (getf text-data :width)
                          (length text-for-size))))
        (theight          (getf text-data :height))
