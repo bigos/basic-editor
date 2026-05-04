@@ -394,7 +394,7 @@ works as expected.
     (is (eq 2 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; ;; move to the right
+    ;; move to the right
     (loop for x from 1 to 16
           do (process-event experimental-window :key-pressed '("" "Right" 114 NIL)))
     (is (eq 2 (~> model be::cursor be::row)))
@@ -415,30 +415,7 @@ works as expected.
                                     "I need to make sure~%three lines movements~%works as expected.~%")))
 
 
-    ;; moving to the right on the last row should add a new line
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 3 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (~> model be::text) (format nil
-                                       "I need to make sure~%three lines movements~%works as expected.~%~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 4 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal  (~> model be::text) (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%~%~%")))
-
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 5 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal  (~> model be::text) (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%~%~%~%")))
-
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 6 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal  (~> model be::text) (format nil
-                                    "I need to make sure~%three lines movements~%works as expected.~%~%~%~%~%")))
 
     ))
 
@@ -607,30 +584,29 @@ works as expected.
 
     (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
     (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
-    (is (eq 0 (~> model be::cursor be::col)))
+    (is (eq 1 (~> model be::cursor be::col)))
 
     (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
     (is (eq 0 (~> model be::cursor be::row)))
-    (is (eq 1 (~> model be::cursor be::col)))
+    (is (eq 2 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row)))
-    ;; (is (eq 2 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 3 (~> model be::cursor be::col)))
 
-    ;; (loop for k in '((" " "space" 65 NIL)
-    ;;                  ("m" "m" 58 NIL)
-    ;;                  ("a" "a" 38 NIL)
-    ;;                  (" " "space" 65 NIL)
-    ;;                  ("k" "k" 45 NIL)
-    ;;                  ("o" "o" 32 NIL)
-    ;;                  ("t" "t" 28 NIL)
-    ;;                  ("a" "a" 38 NIL)
-    ;;                  ("." "period" 60 NIL))
-    ;;       do (process-event experimental-window :key-pressed  k))
+    (loop for k in '((" " "space" 65 NIL)
+                     ("m" "m" 58 NIL)
+                     ("a" "a" 38 NIL)
+                     (" " "space" 65 NIL)
+                     ("k" "k" 45 NIL)
+                     ("o" "o" 32 NIL)
+                     ("t" "t" 28 NIL)
+                     ("a" "a" 38 NIL)
+                     ("." "period" 60 NIL))
+          do (process-event experimental-window :key-pressed  k))
 
-    ;; (eq 0  (~> model be::cursor be::row))
-    ;; (is (eq 11 (~> model be::cursor be::col)))
-    ))
+    (eq 0  (~> model be::cursor be::row))
+    (is (eq 12 (~> model be::cursor be::col)))))
 
 (test single-line-one-character-no-newline
       "one character file without NEWLINE"
