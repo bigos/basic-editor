@@ -303,7 +303,10 @@
     (move-cursor-to-position model (1- (~> model cursor text-position)))))
 
 (defmethod move-cursor-right ((model basic-editor-model))
-  (move-cursor-to-position model (1+ (~> model cursor text-position))))
+  (let ((last-row (last-row model)))
+    (move-cursor-to-position model (min
+                                    (1+ (~> model cursor text-position))
+                                    (1- (end last-row))))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
   (let ((column (~> model cursor col))
@@ -590,9 +593,7 @@
                                                     :color "#FFFF8844"
                                                     :row nil
                                                     :col nil
-                                                    :pos nil)
-                                     )))
-                      )))))
+                                                    :pos nil)))))))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
