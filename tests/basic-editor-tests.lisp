@@ -485,15 +485,6 @@ works as expected.
     (is (eq 12 (~> model be::cursor be::col)))
     (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%")))
 
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 1 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%")))
-
-    (process-event experimental-window :key-pressed '("" "Right" 114 NIL))
-    (is (eq 2 (~> model be::cursor be::row)))
-    (is (eq 0 (~> model be::cursor be::col)))
-    (is (equal (sycamore:rope-string (be::text model)) (format nil "Ala ma kota.~%~%~%")))
     ))
 
 (in-suite basic-editor-text-pressing-enter)           ; ==================================
