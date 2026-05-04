@@ -267,7 +267,7 @@
 (defmethod reload-text-structure ((model basic-editor-model))
   ;; (warn "=========== going to load string ================ ~S" (text model))
   (let ((stats (sample-text-stats model)))
-    (warn "got stats ~S" stats)
+    ;; (warn "got stats ~S" stats)
     (setf (text-structure model) (make-instance 'text-structure :data stats))))
 
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
