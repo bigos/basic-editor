@@ -92,35 +92,6 @@
   (print-object-inner obj stream))
 
 ;;; ============================================================================
-;;; review that
-
-(defmethod cursor-position ((cursor cursor))
-  (cons (~> cursor row)
-        (~> cursor col)))
-
-(defmethod move-cursor-to-position ((model basic-editor-model) position)
-  (reload-text-structure model)
-  (let* ((cursor (~> model cursor))
-         (the-data (data (text-structure model)))
-         (the-row (loop for hk being the hash-key in the-data
-                        for r = (gethash hk the-data)
-                        until (and (>= position (home r))
-                                   (<= position (end r)))
-                        finally (return r))))
-    (if (and (>= position (home the-row))
-             (<= position (end the-row)))
-        (setf
-         (text-position cursor) position
-         (row cursor) (row the-row)
-         (col cursor) (- position (home the-row)))
-        (progn
-          (warn "moving cursor outside normal range ~S" (list :position position :zzz the-row))
-          (setf
-           (text-position cursor) (1- (end the-row))
-           (row cursor) (row the-row)
-           (col cursor) (- (end  the-row) (home the-row)))))))
-
-;;; ============================================================================
 (defmethod the-container ((model basic-editor-model))
   (~> model world boxes::children (nth 1 _)))
 
@@ -259,7 +230,6 @@
   (let ((stats (sample-text-stats model)))
     ;; (warn "got stats ~S" stats)
     (setf (text-structure model) (make-instance 'text-structure :data stats))))
-
 
 ;;; ----------------------------------------------------------------------------
 
