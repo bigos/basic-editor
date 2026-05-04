@@ -11,6 +11,7 @@
                )
   :pathname "src/"
   :components ((:file "packages")
+               (:file "cursor")
                (:file "basic-editor"))
   :description "basic editor for GUI for clops in separate system")
 
