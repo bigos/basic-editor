@@ -605,13 +605,13 @@ works as expected.
     (is (eq 0 (~> model be::cursor be::row)))
     (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
-    ;; (is (eq 0 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
+    (is (eq 0 (~> model be::cursor be::row))) ; TODO fix me
+    (is (eq 0 (~> model be::cursor be::col)))
 
-    ;; (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
-    ;; (is (eq 0 (~> model be::cursor be::row)))
-    ;; (is (eq 1 (~> model be::cursor be::col)))
+    (process-event experimental-window :key-pressed '("l" "l" 46 NIL))
+    (is (eq 0 (~> model be::cursor be::row)))
+    (is (eq 1 (~> model be::cursor be::col)))
 
     ;; (process-event experimental-window :key-pressed '("a" "a" 38 NIL))
     ;; (is (eq 0 (~> model be::cursor be::row)))

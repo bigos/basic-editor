@@ -109,6 +109,7 @@
         (~> cursor col)))
 
 (defmethod move-cursor-to-position ((model basic-editor-model) position)
+  (reload-text-structure model)
   (let* ((cursor (~> model cursor))
          (the-data (data (text-structure model)))
          (the-row (loop for hk being the hash-key in the-data
@@ -116,10 +117,18 @@
                         until (and (>= position (home r))
                                    (<= position (end r)))
                         finally (return r))))
-    (setf
-     (text-position cursor) position
-     (row cursor) (row the-row)
-     (col cursor) (- position (home the-row)))))
+    (if (and (>= position (home the-row))
+             (<= position (end the-row)))
+        (setf
+         (text-position cursor) position
+         (row cursor) (row the-row)
+         (col cursor) (- position (home the-row)))
+        (progn
+          (warn "moving cursor outside normal range ~S" (list :position position :zzz the-row))
+          (setf
+           (text-position cursor) (1- (end the-row))
+           (row cursor) (row the-row)
+           (col cursor) (- (end  the-row) (home the-row)))))))
 
 ;;; ============================================================================
 (defmethod the-container ((model basic-editor-model))
@@ -377,7 +386,6 @@
           ))))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
-  ;; TODO this desperately needs improving and testing
   (warn "before insert key ~S ~S" entered key-name)
   (warn "~S"
         (text model))
@@ -390,8 +398,9 @@
                                (subseq (text model) 0 cur-pos )
                                entered-key
                                (subseq (text model) cur-pos)))
-    (incf (~> model cursor text-position))
-    (reload-text-structure model))
+    (reload-text-structure model)
+    (move-cursor-to-position model (1+ (~> model cursor text-position)))
+    )
 
   (progn
     (warn "---------- done insert --------------")
@@ -473,7 +482,9 @@
          (if (and text-container (> bwidth 0))
              (floor (/ (width text-container )
                        (+ bwidth 3)))
-             80)))
+             80))
+       (last-relx nil)
+       (last-rely nil))
 
     (setf (wrap-at-column model) wrap-column)
 
@@ -552,6 +563,9 @@
                                    :col col
                                    :pos pos)
               into cursors
+          do (setf
+              last-relx relx
+              last-rely rely)
           finally
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
@@ -560,7 +574,25 @@
              (setf (seen-chars model) the-chars)
              (return (list
                       :chars the-chars
-                      :cursor cursors)))))
+                      :cursor (if cursors
+                                  cursors
+                                  (when (and last-relx last-rely)
+                                    (list
+                                     (make-instance 'basic-editor-cursor
+                                                    :bchar #\_
+                                                    :font-size font-size
+                                                    :coordinates-relative
+                                                    (make-coordinates-relative
+                                                     (+ last-relx bwidth)
+                                                     last-rely)
+                                                    :width bwidth
+                                                    :height bheight
+                                                    :color "#FFFF8844"
+                                                    :row nil
+                                                    :col nil
+                                                    :pos nil)
+                                     )))
+                      )))))
 
 (defun text-size (text text-size)
   (cairo:select-font-face
