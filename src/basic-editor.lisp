@@ -366,9 +366,6 @@
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
 
-(defun for-enter ()
-  (format nil "~%"))
-
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (~> model cursor text-position)))
 
@@ -791,7 +788,7 @@
             (equal mods '(:CTRL)))
        ;; simulate Enter due to the menu focus problem
        (progn
-         (insert-character-at-cursor model (for-enter) nil)
+         (insert-character-at-cursor model (format nil "~%") nil)
          (move-cursor-down model :ignored)
          (move-cursor-home model)))
       ((and (equal key-name "n")
