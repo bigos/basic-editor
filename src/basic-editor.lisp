@@ -390,11 +390,12 @@
                                (subseq (text model) 0 cur-pos )
                                entered-key
                                (subseq (text model) cur-pos)))
+    (incf (~> model cursor text-position))
     (reload-text-structure model))
 
   (progn
     (warn "---------- done insert --------------")
-    (warn "cursor ~S ~S" (~> model cursor row) (~> model cursor col))
+    (warn "cursor ~S ~S ~S" (~> model cursor row) (~> model cursor col) (~> model cursor text-position))
     (warn "cursor text  ~S" (~> model text))
     (warn "---------- finished insert --------------"))
 
