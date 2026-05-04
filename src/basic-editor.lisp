@@ -280,19 +280,8 @@
                           (<= row (row  last-row))))
           (valid-col (and current-row
                           (<= 0 col (max-col current-row)))))
-      (warn "early validation ~S ~S" valid-row valid-col)
-      (warn "current row ~S" (current-row model))
-      (warn "row text: ~S" (when (current-row model)
-                             (row-text (current-row model) (text model))))
-      (let ((validated (and valid-row
-                            valid-col)))
-        (if validated
-            (progn
-              ;; (warn "info: cursor position ~S ~S is valid" row col)
-              T)
-            (progn
-              ;; (warn "invalid cursor position ~S ~S" row col)
-              nil))))))
+      (and valid-row
+           valid-col))))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
     (let ((nth-row (nth-row model row)))
@@ -386,9 +375,9 @@
           ))))
 
 (defmethod insert-character-at-cursor ((model basic-editor-model) entered key-name)
-  (warn "before insert key ~S ~S" entered key-name)
-  (warn "~S"
-        (text model))
+  ;; (warn "before insert key ~S ~S" entered key-name)
+  ;; (warn "~S"
+  ;;       (text model))
 
   (let ((cur-pos (or (~> model cursor text-position) 0))
         (entered-key (if (equal key-name "Return")
@@ -399,16 +388,7 @@
                                entered-key
                                (subseq (text model) cur-pos)))
     (reload-text-structure model)
-    (move-cursor-to-position model (1+ (~> model cursor text-position)))
-    )
-
-  (progn
-    (warn "---------- done insert --------------")
-    (warn "cursor ~S ~S ~S" (~> model cursor row) (~> model cursor col) (~> model cursor text-position))
-    (warn "cursor text  ~S" (~> model text))
-    (warn "---------- finished insert --------------"))
-
-  )
+    (move-cursor-to-position model (1+ (~> model cursor text-position)))))
 
 ;;; ----------------------------------------------------------------------------
 (defun new-file ()
