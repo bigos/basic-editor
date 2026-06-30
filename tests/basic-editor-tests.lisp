@@ -36,15 +36,25 @@
 
     (list :model model :experimental-window experimental-window)))
 
+;; (defun in-emacs ()
+;;   (equal 'swank::*current-standard-output* (synonym-stream-symbol *standard-output*)))
 
-;;; fails in terminal, we need terminal detection
+(defun in-terminal ()
+  (equal 'sb-sys:*stdout* (synonym-stream-symbol *standard-output*)))
+
+
+;;; fails in terminal, at compilation
 ;; (defun last-lines-of-output (n)
-;;   (serapeum:take n
-;;                  (serapeum:~> *standard-output*
-;;                               swank::real-output-stream
-;;                               swank/gray::data
-;;                               swank/gray::stream-data-buffer
-;;                               serapeum:lines)))
+;;   (unless (in-terminal)
+;;     (handler-case (serapeum:take n
+;;                                  (serapeum:~> *standard-output*
+;;                                               swank::real-output-stream
+;;                                               swank/gray::data
+;;                                               swank/gray::stream-data-buffer
+;;                                               serapeum:lines))
+;;       (error (c)
+;;         (format t ":&encountered error ~s~%" c)
+;;         (values nil nil)))))
 
 (defun char-kids (model)
   (loop for ch in (serapeum:~>  model
