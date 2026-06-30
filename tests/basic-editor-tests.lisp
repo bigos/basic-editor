@@ -36,13 +36,15 @@
 
     (list :model model :experimental-window experimental-window)))
 
-(defun last-lines-of-output (n)
-  (serapeum:take n
-                 (serapeum:~> *standard-output*
-                              swank::real-output-stream
-                              swank/gray::data
-                              swank/gray::stream-data-buffer
-                              serapeum:lines)))
+
+;;; fails in terminal, we need terminal detection
+;; (defun last-lines-of-output (n)
+;;   (serapeum:take n
+;;                  (serapeum:~> *standard-output*
+;;                               swank::real-output-stream
+;;                               swank/gray::data
+;;                               swank/gray::stream-data-buffer
+;;                               serapeum:lines)))
 
 (defun char-kids (model)
   (loop for ch in (serapeum:~>  model

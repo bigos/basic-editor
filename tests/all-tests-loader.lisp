@@ -6,7 +6,9 @@
 
 
 (ql:quickload :basic-editor/tests)
+
 (in-package #:basic-editor-test)
+
 (test-all)
 
 ;; (warn "standard output package ~s"

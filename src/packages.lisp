@@ -20,5 +20,6 @@
                 mouse-position
                 mouse-over-p
                 )
+  (:local-nicknames (#:sy #:sycamore))
   (:export
    main))
