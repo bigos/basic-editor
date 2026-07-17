@@ -24,10 +24,15 @@
 (defclass/std text-row ()
   ((row  :type integer)
    (home :type integer)
-   (end  :type integer)))
+   (end  :type integer))
+  (:documentation
+   "Element of text-structure hash"))
 
 (defclass/std text-structure ()
-  ((data :type hash-table)))
+  ((data :type hash-table))
+  (:documentation
+   "A hash where the keys are row numbers starting at 0.
+   values are instances of text-row"))
 
 (defclass/std basic-editor-window (boxes:boxes-window) (()))
 
