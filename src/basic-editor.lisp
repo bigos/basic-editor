@@ -188,7 +188,16 @@
   ;; (warn "=========== going to load string ================ ~S" (text model))
   (let ((stats (sample-text-stats model)))
     ;; (warn "got stats ~S" stats)
-    (setf (text-structure model) (make-instance 'text-structure :data stats))))
+    ;; (loop for k being the hash-key of stats
+    ;;       for v being the hash-value of stats
+    ;;       do (warn "for ~s we have ~S" k v))
+    ;;
+    ;; test-structure is a class holding a hash where
+    ;; keys are integer row numbers starting with 0 and
+    ;; values are instances of text-row
+    (let ((text-structure-obj (make-instance 'text-structure :data stats)))
+      (setf (text-structure model)
+            text-structure-obj))))
 
 ;;; ----------------------------------------------------------------------------
 
