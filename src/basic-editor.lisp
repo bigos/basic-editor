@@ -195,9 +195,8 @@
     ;; test-structure is a class holding a hash where
     ;; keys are integer row numbers starting with 0 and
     ;; values are instances of text-row
-    (let ((text-structure-obj (make-instance 'text-structure :data stats)))
-      (setf (text-structure model)
-            text-structure-obj))))
+    (let ((text-structure (make-instance 'text-structure :data stats)))
+      (setf (text-structure model) text-structure))))
 
 ;;; ----------------------------------------------------------------------------
 
