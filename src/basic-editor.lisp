@@ -231,7 +231,9 @@
     ;;       (~> model cursor col)
     ;;       cur-pos)
     (unless (equal (text model) "")
-      (if cur-pos
+      (if (and cur-pos
+               (>= cur-pos 0)
+               (< cur-pos (length (text  model))))
           (progn
             (setf (text model) (format nil "~A~A"
                                        (subseq (text model) 0
@@ -628,7 +630,9 @@
                                      :container-height-pixels
                                      (boxes::height (the-container model))
                                      :wrap-at-column
-                                     (wrap-at-column model)))
+                                     (wrap-at-column model)
+                                     :current-file
+                                     (current-file model)))
                (warn "--------------------------------------------"))
              (progn
                (warn "no text loaded")))))
