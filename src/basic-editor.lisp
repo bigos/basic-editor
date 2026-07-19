@@ -277,7 +277,7 @@
             (clean-filepath (subseq (cdr  filepath) 7))
             (text-content (alexandria:read-file-into-string clean-filepath)))
         ;; (warn "going to load ~S" clean-filepath)
-        (setf (current-file model) clean-filepath)
+        (setf (current-file model) filepath)
         (setf (text model) text-content)
         (reload-text-structure model)))))
 
@@ -300,6 +300,24 @@
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
+(defun file-save-selector ()
+  (let ((current-file (current-file *basic-editor-model*)))
+    (if current-file
+        ;; then
+        (progn
+          (assert (eql (car current-file) :selected))
+          (assert (stringp (cdr current-file)))
+
+          (gui-window-gtk:present-file-save-dialog
+           :title "Save me As"
+           :initial-folder (format nil "~A"
+                                   (uiop/pathname:pathname-directory-pathname
+                                    (cdr current-file)))
+
+           :initial-file (cdr current-file)))
+        ;; else
+        (gui-window-gtk:present-file-save-dialog
+         :title "Save me As"))))
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
@@ -656,7 +674,7 @@
       ((and (equal key-name "s")
             (equal mods '(:Alt)))
        (format T "keyboard selected save~%")
-       (gui-window-gtk:present-file-save-dialog))
+       (file-save-selector))
 
       ((and (equal key-name "a")
             (equal mods '(:Alt)))
@@ -821,18 +839,7 @@
           (gui-window-gtk:present-file-open-dialog))
          ((equalp action "save-as")
           (format T "menu selected save-as~%")
-          (if (current-file *basic-editor-model*)
-              ;; then
-              (gui-window-gtk:present-file-save-dialog
-               :title "Save me As"
-               :initial-folder (format nil "~A"
-                                       (uiop/pathname:pathname-directory-pathname
-                                        (current-file *basic-editor-model*)))
-
-               :initial-file (current-file *basic-editor-model*))
-              ;; else
-              (gui-window-gtk:present-file-save-dialog
-               :title "Save me As")))
+          (file-save-selector))
          ((equalp action "quit")
           (format T "menu selected quit~%")
           (gui-window-gtk:close-all-windows-and-quit))
