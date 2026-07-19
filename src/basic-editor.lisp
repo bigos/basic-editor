@@ -286,6 +286,10 @@
         (setf (text model) text-content)
         (reload-text-structure model)))))
 
+(defun cancel-open-file (ddd)
+  (warn "cancelled open file ~s" ddd))
+
+
 ;; (funcall *client-fn-save-file* (cancelled-value))
 (defun save-file (current-file-pair)
   (case (car current-file-pair)
@@ -298,12 +302,14 @@
            (warn "going to save ~S" clean-filepath)
            (warn "going to save AS ~S" clean-filepath))
        (setf (current-file model) clean-current-file-pair)
-       ;; TODO if we edit the file in the selector the program still does not see it
        (alexandria:write-string-into-file
         (text model)
         clean-filepath
         :if-exists :supersede
         :if-does-not-exist :create)))))
+
+(defun cancel-save-file (ddd)
+  (warn "cancelled save file ~s" ddd))
 
 (defun file-save-selector ()
   (let ((current-file-pair (current-file *basic-editor-model*)))
