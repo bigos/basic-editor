@@ -298,6 +298,7 @@
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
+
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
   (let* ((font-size 18)
@@ -651,7 +652,7 @@
       ((and (equal key-name "s")
             (equal mods '(:Alt)))
        (format T "keyboard selected save~%")
-       (error "finish me TODO"))
+       (gui-window-gtk:present-file-save-dialog))
 
       ((and (equal key-name "a")
             (equal mods '(:Alt)))
