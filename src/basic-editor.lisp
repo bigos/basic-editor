@@ -260,7 +260,7 @@
     (reload-text-structure model)
     (move-cursor-to-position model (1+ (~> model cursor text-position)))))
 
-;;; ----------------------------------------------------------------------------
+;;; file selectors -------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
     (setf (text model) "edit something")
@@ -272,27 +272,24 @@
   (assert (stringp (cdr current-file-pair)))
   (subseq (cdr current-file-pair) 7))
 
-;; (funcall *client-fn-open-file* (cancelled-value))
 (defun open-file (current-file-pair)
-   (case (car  current-file-pair)
+   (ecase (car  current-file-pair)
      (:cancelled
       nil)
      (:selected
       (let* ((model *basic-editor-model*)
              (clean-filepath (extract-filepath current-file-pair))
             (text-content (alexandria:read-file-into-string clean-filepath)))
-        ;; (warn "going to load ~S" clean-filepath)
+        (warn "going to load ~S" clean-filepath)
         (setf (current-file model) current-file-pair)
         (setf (text model) text-content)
         (reload-text-structure model)))))
 
 (defun cancel-open-file (ddd)
-  (warn "cancelled open file ~s" ddd))
+  (warn "Closed open file ~s" ddd))
 
-
-;; (funcall *client-fn-save-file* (cancelled-value))
 (defun save-file (current-file-pair)
-  (case (car current-file-pair)
+  (ecase (car current-file-pair)
     (:cancelled
      nil)
     (:selected
@@ -301,7 +298,7 @@
        (if (equal clean-filepath (current-file model))
            (warn "going to save ~S" clean-filepath)
            (warn "going to save AS ~S" clean-filepath))
-       (setf (current-file model) clean-current-file-pair)
+       (setf (current-file model) clean-filepath)
        (alexandria:write-string-into-file
         (text model)
         clean-filepath
@@ -309,20 +306,20 @@
         :if-does-not-exist :create)))))
 
 (defun cancel-save-file (ddd)
-  (warn "cancelled save file ~s" ddd))
+  (warn "Closed save file ~s" ddd))
 
 (defun file-save-selector ()
   (let ((current-file-pair (current-file *basic-editor-model*)))
     (if current-file-pair
         ;; then
         (let ((current-file (extract-filepath current-file-pair)))
-          (let ((the-folder (format nil "~A"
-                                    (uiop/pathname:pathname-directory-pathname
-                                     (uiop/pathname:absolute-pathname-p current-file)))))
-            (gui-window-gtk:present-file-save-dialog
-             :title (format nil "Save me AS")
-             :initial-folder the-folder
-             :initial-file current-file)))
+          (gui-window-gtk:present-file-save-dialog
+           :title (format nil "Save me AS")
+           :initial-folder (format nil "~A"
+                                   (uiop/pathname:pathname-directory-pathname
+                                    (uiop/pathname:absolute-pathname-p
+                                     current-file)))
+           :initial-file current-file))
         ;; else
         (gui-window-gtk:present-file-save-dialog
          :title "Save me As"))))
