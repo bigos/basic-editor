@@ -304,27 +304,24 @@
         :if-does-not-exist :create)))))
 
 (defun file-save-selector ()
-  (if (current-file *basic-editor-model*)
-      (let ((current-file (current-file *basic-editor-model*)))
-        (if current-file
-            ;; then
-            (progn
-              ;; (break "examine current file ~s" current-file)
-              (let ((the-folder (subseq (format nil "file://~a"
-                                                (uiop/pathname:pathname-directory-pathname
-                                                 (uiop/pathname:absolute-pathname-p (fix-filepath current-file))))
-                                        7)))
-                (warn "the folder ~S" the-folder)
-                (assert (eql (car current-file) :selected))
-                (assert (stringp (cdr current-file)))
+  (let ((current-file (current-file *basic-editor-model*)))
+    (if current-file
+        ;; then
+        (progn
+          (assert (eql (car current-file) :selected))
+          (assert (stringp (cdr current-file)))
 
-                (gui-window-gtk:present-file-save-dialog
-                 :title (format nil "Save me As ~s" the-folder)
-                 :initial-folder the-folder
-                 :initial-file (cdr current-file))))
-            ;; else
+          (let ((the-folder (format nil "~A"
+                                    (uiop/pathname:pathname-directory-pathname
+                                     (uiop/pathname:absolute-pathname-p (fix-filepath
+                                                                         current-file))))))
             (gui-window-gtk:present-file-save-dialog
-             :title "Save me As")))))
+             :title (format nil "Save me AS")
+             :initial-folder the-folder
+             :initial-file (cdr current-file))))
+        ;; else
+        (gui-window-gtk:present-file-save-dialog
+         :title "Save me As"))))
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
