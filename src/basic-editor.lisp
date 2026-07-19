@@ -266,38 +266,7 @@
     (reload-text-structure model)
     (setf (current-file model) nil)))
 
-;; (funcall *client-fn-open-file* (cancelled-value))
-(defun open-file (filepath)
-   (case (car  filepath)
-     (:cancelled
-      nil)
-     (:selected
-      (let* ((model *basic-editor-model*)
-            (clean-filepath (subseq (cdr  filepath) 7))
-            (text-content (alexandria:read-file-into-string clean-filepath)))
-        ;; (warn "going to load ~S" clean-filepath)
-        (setf (current-file model) clean-filepath)
-        (setf (text model) text-content)
-        (reload-text-structure model)))))
-
-;; (funcall *client-fn-save-file* (cancelled-value))
-(defun save-file (filepath)
-  (case (car filepath)
-    (:cancelled
-     nil)
-    (:selected
-     (let ((model *basic-editor-model*)
-           (clean-filepath (subseq (cdr filepath) 7)))
-       (if (equal clean-filepath (current-file model))
-           (warn "going to save ~S" clean-filepath)
-           (warn "going to save AS ~S" clean-filepath))
-       (setf (current-file model) clean-filepath)
-       ;; TODO if we edit the file in the selector the program still does not see it
-       (alexandria:write-string-into-file
-        (text model)
-        clean-filepath
-        :if-exists :supersede
-        :if-does-not-exist :create)))))
+;; other selectors moved to file: file-selectors.lisp
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
@@ -652,7 +621,7 @@
       ((and (equal key-name "s")
             (equal mods '(:Alt)))
        (format T "keyboard selected save~%")
-       (error "finish me TODO"))
+       (gui-window-gtk:present-file-save-dialog))
 
       ((and (equal key-name "a")
             (equal mods '(:Alt)))
