@@ -267,6 +267,9 @@
     (reload-text-structure model)
     (setf (current-file model) nil)))
 
+(defun fix-filepath (fpath)
+  (subseq (cdr fpath) 7))
+
 ;; (funcall *client-fn-open-file* (cancelled-value))
 (defun open-file (filepath)
    (case (car  filepath)
@@ -274,7 +277,7 @@
       nil)
      (:selected
       (let* ((model *basic-editor-model*)
-            (clean-filepath (subseq (cdr  filepath) 7))
+             (clean-filepath (fix-filepath filepath))
             (text-content (alexandria:read-file-into-string clean-filepath)))
         ;; (warn "going to load ~S" clean-filepath)
         (setf (current-file model) filepath)
@@ -288,7 +291,7 @@
      nil)
     (:selected
      (let ((model *basic-editor-model*)
-           (clean-filepath (subseq (cdr filepath) 7)))
+           (clean-filepath (fix-filepath filepath)))
        (if (equal clean-filepath (current-file model))
            (warn "going to save ~S" clean-filepath)
            (warn "going to save AS ~S" clean-filepath))
@@ -301,23 +304,27 @@
         :if-does-not-exist :create)))))
 
 (defun file-save-selector ()
-  (let ((current-file (current-file *basic-editor-model*)))
-    (if current-file
-        ;; then
-        (progn
-          (assert (eql (car current-file) :selected))
-          (assert (stringp (cdr current-file)))
+  (if (current-file *basic-editor-model*)
+      (let ((current-file (current-file *basic-editor-model*)))
+        (if current-file
+            ;; then
+            (progn
+              ;; (break "examine current file ~s" current-file)
+              (let ((the-folder (subseq (format nil "file://~a"
+                                                (uiop/pathname:pathname-directory-pathname
+                                                 (uiop/pathname:absolute-pathname-p (fix-filepath current-file))))
+                                        7)))
+                (warn "the folder ~S" the-folder)
+                (assert (eql (car current-file) :selected))
+                (assert (stringp (cdr current-file)))
 
-          (gui-window-gtk:present-file-save-dialog
-           :title "Save me As"
-           :initial-folder (format nil "~A"
-                                   (uiop/pathname:pathname-directory-pathname
-                                    (cdr current-file)))
-
-           :initial-file (cdr current-file)))
-        ;; else
-        (gui-window-gtk:present-file-save-dialog
-         :title "Save me As"))))
+                (gui-window-gtk:present-file-save-dialog
+                 :title (format nil "Save me As ~s" the-folder)
+                 :initial-folder the-folder
+                 :initial-file (cdr current-file))))
+            ;; else
+            (gui-window-gtk:present-file-save-dialog
+             :title "Save me As")))))
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
