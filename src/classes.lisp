@@ -15,7 +15,7 @@
    (text-wrap :std :wrap)               ; trim, wrap, word-wrap
    (world)
    (seen-chars)
-   (current-file)
+   (current-file :documentation "A cons used in open-file and other file requestors")
    ;; TODO
    (wrap-at-column :std 80) ; when in wrap mode column we wrap at
    ;; debug

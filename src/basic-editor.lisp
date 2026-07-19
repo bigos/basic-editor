@@ -267,35 +267,37 @@
     (reload-text-structure model)
     (setf (current-file model) nil)))
 
-(defun fix-filepath (fpath)
-  (subseq (cdr fpath) 7))
+(defun extract-filepath (current-file-pair)
+  (assert (eql (car current-file-pair) :selected))
+  (assert (stringp (cdr current-file-pair)))
+  (subseq (cdr current-file-pair) 7))
 
 ;; (funcall *client-fn-open-file* (cancelled-value))
-(defun open-file (filepath)
-   (case (car  filepath)
+(defun open-file (current-file-pair)
+   (case (car  current-file-pair)
      (:cancelled
       nil)
      (:selected
       (let* ((model *basic-editor-model*)
-             (clean-filepath (fix-filepath filepath))
+             (clean-filepath (extract-filepath current-file-pair))
             (text-content (alexandria:read-file-into-string clean-filepath)))
         ;; (warn "going to load ~S" clean-filepath)
-        (setf (current-file model) filepath)
+        (setf (current-file model) current-file-pair)
         (setf (text model) text-content)
         (reload-text-structure model)))))
 
 ;; (funcall *client-fn-save-file* (cancelled-value))
-(defun save-file (filepath)
-  (case (car filepath)
+(defun save-file (current-file-pair)
+  (case (car current-file-pair)
     (:cancelled
      nil)
     (:selected
      (let ((model *basic-editor-model*)
-           (clean-filepath (fix-filepath filepath)))
+           (clean-filepath (extract-filepath current-file-pair)))
        (if (equal clean-filepath (current-file model))
            (warn "going to save ~S" clean-filepath)
            (warn "going to save AS ~S" clean-filepath))
-       (setf (current-file model) clean-filepath)
+       (setf (current-file model) clean-current-file-pair)
        ;; TODO if we edit the file in the selector the program still does not see it
        (alexandria:write-string-into-file
         (text model)
@@ -304,21 +306,17 @@
         :if-does-not-exist :create)))))
 
 (defun file-save-selector ()
-  (let ((current-file (current-file *basic-editor-model*)))
-    (if current-file
+  (let ((current-file-pair (current-file *basic-editor-model*)))
+    (if current-file-pair
         ;; then
-        (progn
-          (assert (eql (car current-file) :selected))
-          (assert (stringp (cdr current-file)))
-
+        (let ((current-file (extract-filepath current-file-pair)))
           (let ((the-folder (format nil "~A"
                                     (uiop/pathname:pathname-directory-pathname
-                                     (uiop/pathname:absolute-pathname-p (fix-filepath
-                                                                         current-file))))))
+                                     (uiop/pathname:absolute-pathname-p current-file)))))
             (gui-window-gtk:present-file-save-dialog
              :title (format nil "Save me AS")
              :initial-folder the-folder
-             :initial-file (cdr current-file))))
+             :initial-file current-file)))
         ;; else
         (gui-window-gtk:present-file-save-dialog
          :title "Save me As"))))
