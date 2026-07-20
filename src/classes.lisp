@@ -8,7 +8,7 @@
    (cursor :std (make-instance 'cursor :row 0 :col 0 :text-position 0))
    (view-port-size :std (cons nil nil))
    (view-port-lines :std 0)
-   (view-port-columns :std 0)
+   (view-port-max-column :std 0)
    (view-port-first-line :std 0)
    (view-port-first-column :std 0)
    (all-lines-count :std 0)

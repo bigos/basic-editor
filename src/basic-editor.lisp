@@ -444,7 +444,7 @@
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
              (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
-             (setf (view-port-columns model) max-seen-col)
+             (setf (view-port-max-column model) max-seen-col)
              (setf (seen-chars model) the-chars)
              (return (list
                       :chars the-chars
@@ -517,7 +517,7 @@
                                   :color "white"
                                   :wrap 'truncate
                                   :text (format nil
-                                                "rowcols ~S ~S, fl ~S, fc ~S ~S"
+                                                "rowcols ~S ~S, fl ~S, fc ~S"
                                                 (let ((cursor-cons (cursor-position (cursor model))))
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
@@ -525,12 +525,12 @@
                                                 (cons
                                                  (view-port-lines
                                                   model)
-                                                 (view-port-columns
+                                                 (view-port-max-column
                                                   model))
                                                 (view-port-first-line   model)
                                                 (view-port-first-column model)
-                                                (sycamore:rope-string (text model))
-                                                ))))))
+                                                ))
+                   ))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -642,8 +642,8 @@
                                      (view-port-size model)
                                      :view-port-lines
                                      (view-port-lines model)
-                                     :view-port-columns
-                                     (view-port-columns model)
+                                     :view-port-max-column
+                                     (view-port-max-column model)
                                      :view-port-first-line
                                      (view-port-first-line model)
                                      :view-port-first-column
