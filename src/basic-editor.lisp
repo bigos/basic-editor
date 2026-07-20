@@ -866,6 +866,7 @@
   (gui-window:redraw-canvas lisp-window (format  nil "EVENT_~A" event)))
 
 ;;; main =======================================================================
+https://docs.gtk.org/gtk4/input-handling.html
 (defun menu-bar (app lisp-window)
   (let ((menu (gio:make-menu)))
     ;; stop the annoying menu selection when left and right arrows are pressed
