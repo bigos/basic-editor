@@ -866,7 +866,6 @@
   (gui-window:redraw-canvas lisp-window (format  nil "EVENT_~A" event)))
 
 ;;; main =======================================================================
-https://docs.gtk.org/gtk4/input-handling.html
 (defun menu-bar (app lisp-window)
   (let ((menu (gio:make-menu)))
     ;; stop the annoying menu selection when left and right arrows are pressed
@@ -925,9 +924,7 @@ https://docs.gtk.org/gtk4/input-handling.html
    gui-window-gtk:*initial-window-width*    600
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
-   ;; unless i cen fix the problem of unwanted menu focus
-   ;; I will not use Gtk4 menu
-   ;; gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
+   gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
    gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
    gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
