@@ -193,18 +193,11 @@
   (sample-text-stats model))
 
 (defmethod reload-text-structure ((model basic-editor-model))
-  ;; (warn "=========== going to load string ================ ~S" (text model))
-  (let ((stats (sample-text-stats model)))
-    ;; (warn "got stats ~S" stats)
-    ;; (loop for k being the hash-key of stats
-    ;;       for v being the hash-value of stats
-    ;;       do (warn "for ~s we have ~S" k v))
-    ;;
-    ;; test-structure is a class holding a hash where
-    ;; keys are integer row numbers starting with 0 and
-    ;; values are instances of text-row
-    (let ((text-structure (make-instance 'text-structure :data stats)))
-      (setf (text-structure model) text-structure))))
+  ;; test-structure is a class holding a hash where
+  ;; keys are integer row numbers starting with 0 and
+  ;; values are instances of text-row
+  (setf (text-structure model) (make-instance 'text-structure
+                                              :data (sample-text-stats model))))
 
 ;;; ----------------------------------------------------------------------------
 
