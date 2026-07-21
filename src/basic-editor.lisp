@@ -496,10 +496,8 @@
                                   :height  30
                                   :color "white"
                                   :wrap 'truncate
-                                  :text (format nil "Heading will go here. ~S - ~S"
-                                                (gui-app:mouse-button gui-app:*lisp-app*)
-                                                (cursor model)
-                                                ))
+                                  :text (format nil "Heading , mouse button ~S"
+                                                (gui-app:mouse-button gui-app:*lisp-app*)))
                    (let ((text-container (make-node 20
                                                     340
                                                     (- (width world) 20 20)
@@ -522,11 +520,11 @@
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
                                                           (cdr cursor-cons)))
-                                                (cons
-                                                 (view-port-lines
-                                                  model)
-                                                 (view-port-max-column
-                                                  model))
+                                                (list
+                                                 :lines
+                                                 (view-port-lines      model)
+                                                 :max-column
+                                                 (view-port-max-column model))
                                                 (view-port-first-line   model)
                                                 (view-port-first-column model)
                                                 ))
