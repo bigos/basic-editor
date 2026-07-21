@@ -138,6 +138,14 @@
   (let ((the-data (data (text-structure model))))
     (gethash nth the-data)))
 
+(defmethod wrap-toggle ((model basic-editor-model))
+  (setf (text-wrap model) (ecase (text-wrap model)
+                            (:trim
+                             :wrap)
+                            (:wrap
+                             :trim)
+                            (:word-wrap
+                             :trim))))
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
@@ -496,8 +504,9 @@
                                   :height  30
                                   :color "white"
                                   :wrap 'truncate
-                                  :text (format nil "Heading , mouse button ~S"
-                                                (gui-app:mouse-button gui-app:*lisp-app*)))
+                                  :text (format nil "Heading , mouse button ~S, wrap ~S"
+                                                (gui-app:mouse-button gui-app:*lisp-app*)
+                                                (text-wrap model)))
                    (let ((text-container (make-node 20
                                                     340
                                                     (- (width world) 20 20)
@@ -593,6 +602,7 @@
   (warn "Alt-f = open file")
   (warn "Alt-s = save file")
   (warn "Alt-a = about")
+  (warn "Alt-w = toggle wrap/trim")
   (warn "Alt-Home = move cursor to first row Home")
   (warn "Alt-End =  move cursor to last  row End")
   (warn "Ctrl-p = previous line")
@@ -683,6 +693,11 @@
             (equal mods '(:Alt)))
        (format T "keyboard selected about~%")
        (gui-window-gtk:present-about-dialog (about-dialog)))
+
+      ((and (equal key-name "w")
+            (equal mods '(:Alt)))
+       (format T "keyboard selected wrap toggle~%")
+       (wrap-toggle model))
 
       ((and (equal key-name "Home")
             (equal mods '(:Alt)))
