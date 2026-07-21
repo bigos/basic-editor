@@ -384,11 +384,11 @@
           for maxcol = 0 then (max maxcol col)
           for relx = (+ margin-horizontal
                         (ceiling
-                         (* (- col (view-port-first-column model))
+                         (* (- col (first-column (view-port model)))
                             (1+ bwidth) )))
           for rely = (+ margin-vertical
                         (ceiling
-                         (* (- row (view-port-first-line model))
+                         (* (- row (first-line (view-port model)))
                             (1+ bheight))))
           for min-rely = 0 then (min rely min-rely)
           for outside = (let ((max-x-coord (+ relx bwidth))
@@ -451,8 +451,8 @@
           finally
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
-             (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
-             (setf (view-port-max-column model) max-seen-col)
+             (setf (lines (view-port model)) (when max-seen-row (1+ max-seen-row)))
+             (setf (max-column (view-port model)) max-seen-col)
              (setf (seen-chars model) the-chars)
              (return (list
                       :chars the-chars
@@ -531,11 +531,11 @@
                                                           (cdr cursor-cons)))
                                                 (list
                                                  :lines
-                                                 (view-port-lines      model)
+                                                 (lines (view-port      model))
                                                  :max-column
-                                                 (view-port-max-column model))
-                                                (view-port-first-line   model)
-                                                (view-port-first-column model)
+                                                 (max-column (view-port model)))
+                                                (first-line (view-port   model))
+                                                (first-column (view-port model))
                                                 ))
                    ))))
 
@@ -647,15 +647,15 @@
                (warn "model text structure ~S" (print-text-stats model))
                (warn "view port ~S" (list
                                      :view-port-size
-                                     (view-port-size model)
+                                     (size (view-port model))
                                      :view-port-lines
-                                     (view-port-lines model)
+                                     (lines (view-port model))
                                      :view-port-max-column
-                                     (view-port-max-column model)
+                                     (max-column (view-port model))
                                      :view-port-first-line
-                                     (view-port-first-line model)
+                                     (first-line (view-port model))
                                      :view-port-first-column
-                                     (view-port-first-column model)
+                                     (first-column (view-port model))
                                      :container-width-pixels
                                      (boxes::width (the-container model))
                                      :container-height-pixels
@@ -710,27 +710,27 @@
 
       ((and (equal key-name "p")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-line model) (1- (view-port-first-line model)) ))
+       (setf (first-line (view-port model)) (1- (first-line (view-port model))) ))
       ((and (equal key-name "n")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-line model) (1+ (view-port-first-line model)) ))
+       (setf (first-line (view-port model)) (1+ (first-line (view-port model))) ))
       ((equal key-name "Page_Up")
-       (let ((fl (- (view-port-first-line model)
+       (let ((fl (- (first-line (view-port model))
                     (find-page-rows model))))
-         (setf (view-port-first-line model) fl)
+         (setf (first-line (view-port model)) fl)
          (move-cursor-to model fl 0)))
       ((equal key-name "Page_Down")
-       (let ((fl (+ (view-port-first-line model)
+       (let ((fl (+ (first-line (view-port model))
                     (find-page-rows model))))
-         (setf (view-port-first-line model) fl)
+         (setf (first-line (view-port model)) fl)
          (move-cursor-to model fl 0)))
 
       ((and (equal key-name "b")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-column model) (1- (view-port-first-column model))))
+       (setf (first-column (view-port model)) (1- (first-column (view-port model)))))
       ((and (equal key-name "f")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-column model) (1+ (view-port-first-column model))))
+       (setf (first-column (view-port model)) (1+ (first-column (view-port model)))))
       ((equal key-name "Left")
        ;; handle menu bar focus problem
        (move-cursor-left model))
@@ -741,21 +741,21 @@
        (move-cursor-up model)
        ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
        ;;       (~> model cursor row)
-       ;;       (~> model view-port-first-line))
+       ;;       (~> model view-port first-line))
        (when (< (~> model cursor row)
-                (view-port-first-line model))
-         (setf (view-port-first-line model) (~> model cursor row))))
+                (first-line (view-port model)))
+         (setf (first-line (view-port model)) (~> model cursor row))))
       ((equal key-name "Down")
        (move-cursor-down model :ignored)
        (let ((pr (find-page-rows model)))
          ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
          ;;       (~> model cursor row)
-         ;;       (~> model view-port-first-line))
+         ;;       (~> model view-port first-line))
          (when (> (~> model cursor row)
-                  (+
-                   (view-port-first-line model)
+                  (+ (first-line (view-port model))
                    pr))
-           (setf (view-port-first-line model) (-
+           (setf (first-line (view-port model))
+                 (-
                                                (~> model cursor row)
                                                pr)))))
       ((equal key-name "Home")

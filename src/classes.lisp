@@ -6,11 +6,7 @@
   ((text :std "" :type string)
    (text-structure :type text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0 :text-position 0))
-   (view-port-size :std (cons nil nil))
-   (view-port-lines :std 0)
-   (view-port-max-column :std 0)
-   (view-port-first-line :std 0)
-   (view-port-first-column :std 0)
+   (view-port :std (make-instance 'view-port))
    (all-lines-count :std 0)
    (text-wrap :std :wrap)               ; trim, wrap, word-wrap
    (world)
@@ -20,6 +16,13 @@
    (wrap-at-column :std 80) ; when in wrap mode column we wrap at
    ;; debug
    ))
+
+(defclass/std view-port ()
+  ((size :std (cons nil nil))
+   (lines :std 0)
+   (max-column :std 0)
+   (first-line :std 0)
+   (first-column :std 0)))
 
 (defclass/std text-row ()
   ((row  :type integer)
