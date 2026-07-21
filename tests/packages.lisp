@@ -12,6 +12,7 @@
                 #:*basic-editor-model*
                 #:width
                 #:height
-                #:view-port-first-line
-                #:view-port-first-column
+                #:view-port
+                #:first-line
+                #:first-column
                 #:process-event))
