@@ -32,7 +32,7 @@
    "Element of text-structure hash"))
 
 (defclass/std text-structure ()
-  ((data :type hash-table))
+  ((data :type hash-table :doc "The hash."))
   (:documentation
    "A hash where the keys are row numbers starting at 0.
    values are instances of text-row"))
