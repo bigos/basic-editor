@@ -3,7 +3,7 @@
 (in-package #:basic-editor)
 
 (defclass/std basic-editor-model (boxes:model)
-  ((text :std "" :type string)
+  ((text :std (sy:rope ""))
    (text-structure :type text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0 :text-position 0))
    (view-port-size :std (cons nil nil))
