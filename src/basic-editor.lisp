@@ -616,10 +616,6 @@
             (null mods))
        (key-handling-f1-help))
 
-      ((and (equal key-name "F5")
-            (null mods))
-       (gui-app::refresh-menu-all-windows))
-
       ((and (equal key-name "F7")
             (null mods))
        ;; (warn "model stats ------------------------------------------")
