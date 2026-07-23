@@ -895,6 +895,12 @@
        (gui-menu:build-items
         (gui-menu:prepare-item-simple lisp-window app menu "Quit" "quit"))))
      (gui-menu:prepare-submenu
+      "View"
+      (gui-menu:prepare-section
+       nil
+       (gui-menu:build-items
+        (gui-menu:prepare-item-simple lisp-window app menu "Show Line Numbers" "show-line-numbers"))))
+     (gui-menu:prepare-submenu
       "Help"
       ;; for now I plan to have only the About menu item
       (gui-menu:prepare-section
