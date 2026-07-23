@@ -854,6 +854,13 @@
          ((equalp action "quit")
           (format T "menu selected quit~%")
           (gui-window-gtk:close-all-windows-and-quit))
+         ;; View
+         ((equalp action "toggle-line-numbers")
+          (format T "menu selected toggle line numbers~%")
+          (setf (show-line-numbers *basic-editor-model*) (if (show-line-numbers *basic-editor-model*)
+                                                             nil
+                                                             T))
+          (warn "toggled showing lines to ~S" (show-line-numbers *basic-editor-model*)))
          ;; Help
          ((equalp action "about")
           (format T "menu selected about~%")
@@ -898,7 +905,7 @@
       (gui-menu:prepare-section
        nil
        (gui-menu:build-items
-        (gui-menu:prepare-item-simple lisp-window app menu "Show Line Numbers" "show-line-numbers"))))
+        (gui-menu:prepare-item-simple lisp-window app menu "Toggle Line Numbers" "toggle-line-numbers"))))
      (gui-menu:prepare-submenu
       "Help"
       ;; for now I plan to have only the About menu item

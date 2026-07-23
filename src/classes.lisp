@@ -9,6 +9,7 @@
    (view-port :std (make-instance 'view-port))
    (all-lines-count :std 0)
    (text-wrap :std :wrap)               ; trim, wrap, word-wrap
+   (show-line-numbers :std nil)
    (world)
    (seen-chars)
    (current-file :documentation "A cons used in open-file and other file requestors")
