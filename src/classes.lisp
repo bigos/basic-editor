@@ -6,20 +6,23 @@
   ((text :std (sy:rope ""))
    (text-structure :type text-structure)
    (cursor :std (make-instance 'cursor :row 0 :col 0 :text-position 0))
-   (view-port-size :std (cons nil nil))
-   (view-port-lines :std 0)
-   (view-port-columns :std 0)
-   (view-port-first-line :std 0)
-   (view-port-first-column :std 0)
+   (view-port :std (make-instance 'view-port))
    (all-lines-count :std 0)
    (text-wrap :std :wrap)               ; trim, wrap, word-wrap
    (world)
    (seen-chars)
-   (current-file)
+   (current-file :documentation "A cons used in open-file and other file requestors")
    ;; TODO
    (wrap-at-column :std 80) ; when in wrap mode column we wrap at
    ;; debug
    ))
+
+(defclass/std view-port ()
+  ((size :std (cons nil nil))
+   (lines :std 0)
+   (max-column :std 0)
+   (first-line :std 0)
+   (first-column :std 0)))
 
 (defclass/std text-row ()
   ((row  :type integer)
@@ -29,7 +32,7 @@
    "Element of text-structure hash"))
 
 (defclass/std text-structure ()
-  ((data :type hash-table))
+  ((data :type hash-table :doc "The hash."))
   (:documentation
    "A hash where the keys are row numbers starting at 0.
    values are instances of text-row"))

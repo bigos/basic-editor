@@ -138,6 +138,14 @@
   (let ((the-data (data (text-structure model))))
     (gethash nth the-data)))
 
+(defmethod wrap-toggle ((model basic-editor-model))
+  (setf (text-wrap model) (ecase (text-wrap model)
+                            (:trim
+                             :wrap)
+                            (:wrap
+                             :trim)
+                            (:word-wrap
+                             :trim))))
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
@@ -185,19 +193,11 @@
   (sample-text-stats model))
 
 (defmethod reload-text-structure ((model basic-editor-model))
-  ;; (warn "=========== going to load string ================ ~S" (text model))
-  (let ((stats (sample-text-stats model)))
-    ;; (warn "got stats ~S" stats)
-    ;; (loop for k being the hash-key of stats
-    ;;       for v being the hash-value of stats
-    ;;       do (warn "for ~s we have ~S" k v))
-    ;;
-    ;; test-structure is a class holding a hash where
-    ;; keys are integer row numbers starting with 0 and
-    ;; values are instances of text-row
-    (let ((text-structure-obj (make-instance 'text-structure :data stats)))
-      (setf (text-structure model)
-            text-structure-obj))))
+  ;; test-structure is a class holding a hash where
+  ;; keys are integer row numbers starting with 0 and
+  ;; values are instances of text-row
+  (setf (text-structure model) (make-instance 'text-structure
+                                              :data (sample-text-stats model))))
 
 ;;; ----------------------------------------------------------------------------
 
@@ -232,7 +232,9 @@
     ;;       (~> model cursor col)
     ;;       cur-pos)
     (unless (equal (text model) "")
-      (if cur-pos
+      (if (and cur-pos
+               (>= cur-pos 0)
+               (< cur-pos (length (text  model))))
           (progn
             (setf (text model) (format nil "~A~A"
                                        (subseq (text model) 0
@@ -259,46 +261,69 @@
     (reload-text-structure model)
     (move-cursor-to-position model (1+ (~> model cursor text-position)))))
 
-;;; ----------------------------------------------------------------------------
+;;; file selectors -------------------------------------------------------------
 (defun new-file ()
   (let ((model *basic-editor-model*))
     (setf (text model) "edit something")
     (reload-text-structure model)
     (setf (current-file model) nil)))
 
-;; (funcall *client-fn-open-file* (cancelled-value))
-(defun open-file (filepath)
-   (case (car  filepath)
+(defun extract-filepath (current-file-pair)
+  (assert (eql (car current-file-pair) :selected))
+  (assert (stringp (cdr current-file-pair)))
+  (subseq (cdr current-file-pair) 7))
+
+(defun open-file (current-file-pair)
+   (ecase (car  current-file-pair)
      (:cancelled
       nil)
      (:selected
       (let* ((model *basic-editor-model*)
-            (clean-filepath (subseq (cdr  filepath) 7))
+             (clean-filepath (extract-filepath current-file-pair))
             (text-content (alexandria:read-file-into-string clean-filepath)))
-        ;; (warn "going to load ~S" clean-filepath)
-        (setf (current-file model) clean-filepath)
+        (warn "going to load ~S" clean-filepath)
+        (setf (current-file model) current-file-pair)
         (setf (text model) text-content)
         (reload-text-structure model)))))
 
-;; (funcall *client-fn-save-file* (cancelled-value))
-(defun save-file (filepath)
-  (case (car filepath)
+(defun cancel-open-file (ddd)
+  (warn "Closed open file ~s" ddd))
+
+(defun save-file (current-file-pair)
+  (ecase (car current-file-pair)
     (:cancelled
      nil)
     (:selected
      (let ((model *basic-editor-model*)
-           (clean-filepath (subseq (cdr filepath) 7)))
+           (clean-filepath (extract-filepath current-file-pair)))
        (if (equal clean-filepath (current-file model))
            (warn "going to save ~S" clean-filepath)
            (warn "going to save AS ~S" clean-filepath))
        (setf (current-file model) clean-filepath)
-       ;; TODO if we edit the file in the selector the program still does not see it
        (alexandria:write-string-into-file
         (text model)
         clean-filepath
         :if-exists :supersede
         :if-does-not-exist :create)))))
 
+(defun cancel-save-file (ddd)
+  (warn "Closed save file ~s" ddd))
+
+(defun file-save-selector ()
+  (let ((current-file-pair (current-file *basic-editor-model*)))
+    (if current-file-pair
+        ;; then
+        (let ((current-file (extract-filepath current-file-pair)))
+          (gui-window-gtk:present-file-save-dialog
+           :title (format nil "Save me AS")
+           :initial-folder (format nil "~A"
+                                   (uiop/pathname:pathname-directory-pathname
+                                    (uiop/pathname:absolute-pathname-p
+                                     current-file)))
+           :initial-file current-file))
+        ;; else
+        (gui-window-gtk:present-file-save-dialog
+         :title "Save me As"))))
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
@@ -352,11 +377,11 @@
           for maxcol = 0 then (max maxcol col)
           for relx = (+ margin-horizontal
                         (ceiling
-                         (* (- col (view-port-first-column model))
+                         (* (- col (first-column (view-port model)))
                             (1+ bwidth) )))
           for rely = (+ margin-vertical
                         (ceiling
-                         (* (- row (view-port-first-line model))
+                         (* (- row (first-line (view-port model)))
                             (1+ bheight))))
           for min-rely = 0 then (min rely min-rely)
           for outside = (let ((max-x-coord (+ relx bwidth))
@@ -419,8 +444,8 @@
           finally
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
-             (setf (view-port-lines model) (when max-seen-row (1+ max-seen-row)))
-             (setf (view-port-columns model) max-seen-col)
+             (setf (lines (view-port model)) (when max-seen-row (1+ max-seen-row)))
+             (setf (max-column (view-port model)) max-seen-col)
              (setf (seen-chars model) the-chars)
              (return (list
                       :chars the-chars
@@ -472,10 +497,9 @@
                                   :height  30
                                   :color "white"
                                   :wrap 'truncate
-                                  :text (format nil "Heading will go here. ~S - ~S"
+                                  :text (format nil "Heading , mouse button ~S, wrap ~S"
                                                 (gui-app:mouse-button gui-app:*lisp-app*)
-                                                (cursor model)
-                                                ))
+                                                (text-wrap model)))
                    (let ((text-container (make-node 20
                                                     340
                                                     (- (width world) 20 20)
@@ -493,20 +517,20 @@
                                   :color "white"
                                   :wrap 'truncate
                                   :text (format nil
-                                                "rowcols ~S ~S, fl ~S, fc ~S ~S"
+                                                "rowcols ~S ~S, fl ~S, fc ~S"
                                                 (let ((cursor-cons (cursor-position (cursor model))))
                                                   (format nil "[~S ~S]"
                                                           (car cursor-cons)
                                                           (cdr cursor-cons)))
-                                                (cons
-                                                 (view-port-lines
-                                                  model)
-                                                 (view-port-columns
-                                                  model))
-                                                (view-port-first-line   model)
-                                                (view-port-first-column model)
-                                                (sycamore:rope-string (text model))
-                                                ))))))
+                                                (list
+                                                 :lines
+                                                 (lines (view-port      model))
+                                                 :max-column
+                                                 (max-column (view-port model)))
+                                                (first-line (view-port   model))
+                                                (first-column (view-port model))
+                                                ))
+                   ))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -571,6 +595,7 @@
   (warn "Alt-f = open file")
   (warn "Alt-s = save file")
   (warn "Alt-a = about")
+  (warn "Alt-w = toggle wrap/trim")
   (warn "Alt-Home = move cursor to first row Home")
   (warn "Alt-End =  move cursor to last  row End")
   (warn "Ctrl-p = previous line")
@@ -615,21 +640,23 @@
                (warn "model text structure ~S" (print-text-stats model))
                (warn "view port ~S" (list
                                      :view-port-size
-                                     (view-port-size model)
+                                     (size (view-port model))
                                      :view-port-lines
-                                     (view-port-lines model)
-                                     :view-port-columns
-                                     (view-port-columns model)
+                                     (lines (view-port model))
+                                     :view-port-max-column
+                                     (max-column (view-port model))
                                      :view-port-first-line
-                                     (view-port-first-line model)
+                                     (first-line (view-port model))
                                      :view-port-first-column
-                                     (view-port-first-column model)
+                                     (first-column (view-port model))
                                      :container-width-pixels
                                      (boxes::width (the-container model))
                                      :container-height-pixels
                                      (boxes::height (the-container model))
                                      :wrap-at-column
-                                     (wrap-at-column model)))
+                                     (wrap-at-column model)
+                                     :current-file
+                                     (current-file model)))
                (warn "--------------------------------------------"))
              (progn
                (warn "no text loaded")))))
@@ -653,12 +680,17 @@
       ((and (equal key-name "s")
             (equal mods '(:Alt)))
        (format T "keyboard selected save~%")
-       (gui-window-gtk:present-file-save-dialog))
+       (file-save-selector))
 
       ((and (equal key-name "a")
             (equal mods '(:Alt)))
        (format T "keyboard selected about~%")
        (gui-window-gtk:present-about-dialog (about-dialog)))
+
+      ((and (equal key-name "w")
+            (equal mods '(:Alt)))
+       (format T "keyboard selected wrap toggle~%")
+       (wrap-toggle model))
 
       ((and (equal key-name "Home")
             (equal mods '(:Alt)))
@@ -671,27 +703,27 @@
 
       ((and (equal key-name "p")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-line model) (1- (view-port-first-line model)) ))
+       (setf (first-line (view-port model)) (1- (first-line (view-port model))) ))
       ((and (equal key-name "n")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-line model) (1+ (view-port-first-line model)) ))
+       (setf (first-line (view-port model)) (1+ (first-line (view-port model))) ))
       ((equal key-name "Page_Up")
-       (let ((fl (- (view-port-first-line model)
+       (let ((fl (- (first-line (view-port model))
                     (find-page-rows model))))
-         (setf (view-port-first-line model) fl)
+         (setf (first-line (view-port model)) fl)
          (move-cursor-to model fl 0)))
       ((equal key-name "Page_Down")
-       (let ((fl (+ (view-port-first-line model)
+       (let ((fl (+ (first-line (view-port model))
                     (find-page-rows model))))
-         (setf (view-port-first-line model) fl)
+         (setf (first-line (view-port model)) fl)
          (move-cursor-to model fl 0)))
 
       ((and (equal key-name "b")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-column model) (1- (view-port-first-column model))))
+       (setf (first-column (view-port model)) (1- (first-column (view-port model)))))
       ((and (equal key-name "f")
             (equal mods '(:CTRL)))
-       (setf (view-port-first-column model) (1+ (view-port-first-column model))))
+       (setf (first-column (view-port model)) (1+ (first-column (view-port model)))))
       ((equal key-name "Left")
        ;; handle menu bar focus problem
        (move-cursor-left model))
@@ -702,21 +734,21 @@
        (move-cursor-up model)
        ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
        ;;       (~> model cursor row)
-       ;;       (~> model view-port-first-line))
+       ;;       (~> model view-port first-line))
        (when (< (~> model cursor row)
-                (view-port-first-line model))
-         (setf (view-port-first-line model) (~> model cursor row))))
+                (first-line (view-port model)))
+         (setf (first-line (view-port model)) (~> model cursor row))))
       ((equal key-name "Down")
        (move-cursor-down model :ignored)
        (let ((pr (find-page-rows model)))
          ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
          ;;       (~> model cursor row)
-         ;;       (~> model view-port-first-line))
+         ;;       (~> model view-port first-line))
          (when (> (~> model cursor row)
-                  (+
-                   (view-port-first-line model)
+                  (+ (first-line (view-port model))
                    pr))
-           (setf (view-port-first-line model) (-
+           (setf (first-line (view-port model))
+                 (-
                                                (~> model cursor row)
                                                pr)))))
       ((equal key-name "Home")
@@ -818,18 +850,7 @@
           (gui-window-gtk:present-file-open-dialog))
          ((equalp action "save-as")
           (format T "menu selected save-as~%")
-          (if (current-file *basic-editor-model*)
-              ;; then
-              (gui-window-gtk:present-file-save-dialog
-               :title "Save me As"
-               :initial-folder (format nil "~A"
-                                       (uiop/pathname:pathname-directory-pathname
-                                        (current-file *basic-editor-model*)))
-
-               :initial-file (current-file *basic-editor-model*))
-              ;; else
-              (gui-window-gtk:present-file-save-dialog
-               :title "Save me As")))
+          (file-save-selector))
          ((equalp action "quit")
           (format T "menu selected quit~%")
           (gui-window-gtk:close-all-windows-and-quit))
@@ -909,9 +930,7 @@
    gui-window-gtk:*initial-window-width*    600
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
-   ;; unless i cen fix the problem of unwanted menu focus
-   ;; I will not use Gtk4 menu
-   ;; gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
+   gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
    gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
    gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
