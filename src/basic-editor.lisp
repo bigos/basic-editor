@@ -616,6 +616,10 @@
             (null mods))
        (key-handling-f1-help))
 
+      ((and (equal key-name "F5")
+            (null mods))
+       (gui-app::refresh-menu-all-windows))
+
       ((and (equal key-name "F7")
             (null mods))
        ;; (warn "model stats ------------------------------------------")
@@ -877,7 +881,6 @@
     ;; stop the annoying menu selection when left and right arrows are pressed
     ;; i could not make it work
     ;; (gir:invoke (menu 'gtk_widget_set_focusable) nil)
-
 
     (gui-menu:build-menu
      menu
