@@ -520,6 +520,15 @@
                          (add-children text-container
                                        (getf zzz :cursor))
 
+                         (add-children linenum-container (list
+                                                          (make-instance 'node-text
+                                                                         :coordinates-relative (make-coordinates-relative 10 10)
+                                                                         :width 80
+                                                                         :height 30
+                                                                         :color "white"
+                                                                         :wrap 'truncate
+                                                                         :text (format nil "line 1"))))
+
                          (add-children outer-container (list linenum-container
                                                              text-container)))))
 
