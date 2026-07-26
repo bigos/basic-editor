@@ -500,15 +500,28 @@
                                   :text (format nil "Heading , mouse button ~S, wrap ~S"
                                                 (gui-app:mouse-button gui-app:*lisp-app*)
                                                 (text-wrap model)))
-                   (let ((text-container (make-node 20
-                                                    340
-                                                    (- (width world) 20 20)
-                                                    (- (height world) 60) "yellow"))
-                         (zzz (calculate-chars model)))
-                     (add-children text-container
-                                   (getf zzz :chars))
-                     (add-children text-container
-                                   (getf zzz :cursor)))
+                   (let ((outer-container (boxes::make-node-right 20
+                                                                  340
+                                                                  (- (width world) 20 20)
+                                                                  (- (height world) 60) "black")))
+
+                     (let ((linenum-container (make-node 20
+                                                         120
+                                                         120
+                                                         (- (height world) 60) "red")))
+
+                       (let ((text-container (make-node 20
+                                                        340
+                                                        (- (width world) 20 20)
+                                                        (- (height world) 60) "yellow"))
+                             (zzz (calculate-chars model)))
+                         (add-children text-container
+                                       (getf zzz :chars))
+                         (add-children text-container
+                                       (getf zzz :cursor))
+
+                         (add-children outer-container (list linenum-container
+                                                             text-container)))))
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
