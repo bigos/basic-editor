@@ -522,6 +522,7 @@
 
                          (add-children linenum-container (list
                                                           (make-instance 'node-text
+                                                                         ;; use getf zzz chars to find the coordinates of the first character
                                                                          :coordinates-relative (make-coordinates-relative 10 10)
                                                                          :width 80
                                                                          :height 30
