@@ -50,13 +50,15 @@
                          (~> obj boxes::coordinates-relative boxes::x)
                          (~> obj boxes::coordinates-relative boxes::y)
                          :wh
-                         (width obj)
-                         (height obj)
+                         (boxes::width obj)
+                         (boxes::height obj)
                          ;; (color obj)
                          ;; (bchar obj)
                          :row/col
                          (row obj)
                          (col obj)
+                         :out
+                         (outside obj)
                          ))))
 
 
@@ -114,6 +116,20 @@
   (subseq text
           (home row)
           (end row)))
+
+(defun model-characters (model)
+  (~> model world
+      boxes:children (elt _ 1)
+      boxes:children (elt  1)
+      boxes:children))
+
+(defun first-col-characters (model)
+  (loop for c in
+              (model-characters model)
+        when (and (typep c 'basic-editor-character)
+                  (eq (col c) 0)
+                  (null (outside c)))
+          collect c))
 
 (defun max-col (row)
   (if row
