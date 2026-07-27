@@ -14,7 +14,7 @@
 (defparameter *boundary-kilobyte* (expt 2 10))
 (defparameter *boundary-megabyte* (expt 2 20))
 (defparameter *boundary-gigabyte* (expt 2 30))
-
+0000
 (defun pseudo (default &rest rest-args )
   (warn "running pseudo ~S" (list default rest-args ))
   default)
@@ -36,15 +36,28 @@
 ;; (defmethod print-object ((obj standard-object) stream)
 ;;   (print-object-inner obj stream))
 
-(defmethod print-object ((obj basic-editor-character) stream)
-  (print-object-inner obj stream))
-
 ;; (defmethod print-object ((obj basic-editor-character) stream)
-;;   (print-unreadable-object (obj stream :type t :identity t)
-;;     (format stream "~a - ~S ~S"
-;;             (bchar obj)
-;;             (row obj)
-;;             (col obj))))
+;;   (print-object-inner obj stream))
+
+(defmethod print-object ((obj basic-editor-character) stream)
+  (print-unreadable-object (obj stream :type t :identity t)
+    (format stream "~s" (list
+                         ;; (slot-value obj 'parent)
+                         :abs
+                         (~> obj boxes::coordinates-absolute boxes::x)
+                         (~> obj boxes::coordinates-absolute boxes::y)
+                         :rel
+                         (~> obj boxes::coordinates-relative boxes::x)
+                         (~> obj boxes::coordinates-relative boxes::y)
+                         :wh
+                         (width obj)
+                         (height obj)
+                         ;; (color obj)
+                         ;; (bchar obj)
+                         :row/col
+                         (row obj)
+                         (col obj)
+                         ))))
 
 
 (defmethod print-object ((obj text-row) stream)
