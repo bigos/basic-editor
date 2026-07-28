@@ -543,20 +543,26 @@
 
                          (add-children linenum-container
                                        (loop for lc in (~> text-container boxes:children)
-                                             do (warn "trying ~s" lc)
-                                             collect
-                                             (make-instance 'node-text
-                                                            :coordinates-relative (make-coordinates-relative 10
-                                                                                                             (~> lc boxes::coordinates-relative boxes::y))
-                                                            :width 80
-                                                            :height 15
-                                                            :color "white"
-                                                            :wrap 'truncate
-                                                            :text (format nil "~S" (~> lc row ))
-                                                            )))
+                                             when (and (typep lc 'basic-editor-character)
+                                                       (zerop (col lc)))
+                                               collect
+                                               (progn
+                                                 (warn "~s" (row lc))
+                                                 (make-instance 'node-text
+                                                                :coordinates-relative (make-coordinates-relative 10
+                                                                                                                 (~> lc boxes::coordinates-relative boxes::y))
+                                                                :width 80
+                                                                :height 15
+                                                                :color "white"
+                                                                :wrap 'truncate
+                                                                :text (format nil "~S" (~> lc row ))
+                                                                ))))
 
-                         (add-children outer-container (list linenum-container
-                                                             text-container)))))
+                         (add-children outer-container
+                                       (if (show-line-numbers model)
+                                           (list linenum-container
+                                                 text-container)
+                                           (list text-container))))))
 
 
 
