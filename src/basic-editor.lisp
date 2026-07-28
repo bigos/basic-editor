@@ -43,12 +43,16 @@
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~s" (list
                          ;; (slot-value obj 'parent)
-                         :abs
-                         (~> obj boxes::coordinates-absolute boxes::x)
-                         (~> obj boxes::coordinates-absolute boxes::y)
-                         :rel
-                         (~> obj boxes::coordinates-relative boxes::x)
-                         (~> obj boxes::coordinates-relative boxes::y)
+                         ;; :abs
+                         ;; (~> obj boxes::coordinates-absolute boxes::x)
+                         ;; (~> obj boxes::coordinates-absolute boxes::y)
+                         ;; :rel
+                         ;; (if (boundp (boxes::coordinates-relative obj))
+                         ;;     (~> obj boxes::coordinates-relative boxes::x)
+                         ;;     "unbound")
+                         ;; (if (boundp (boxes::coordinates-relative obj))
+                         ;;     (~> obj boxes::coordinates-relative boxes::y)
+                         ;;     "unbound")
                          :wh
                          (boxes::width obj)
                          (boxes::height obj)
@@ -116,20 +120,6 @@
   (subseq text
           (home row)
           (end row)))
-
-(defun model-characters (model)
-  (~> model world
-      boxes:children (elt _ 1)
-      boxes:children (elt  1)
-      boxes:children))
-
-(defun first-col-characters (model)
-  (loop for c in
-              (model-characters model)
-        when (and (typep c 'basic-editor-character)
-                  (eq (col c) 0)
-                  (null (outside c)))
-          collect c))
 
 (defun max-col (row)
   (if row
@@ -544,23 +534,32 @@
                                                         (- (width world) 20 20)
                                                         (- (height world) 60) "yellow"))
                              (zzz (calculate-chars model)))
+
                          (add-children text-container
                                        (getf zzz :chars))
                          (add-children text-container
                                        (getf zzz :cursor))
 
-                         (add-children linenum-container (list
-                                                          (make-instance 'node-text
-                                                                         ;; use getf zzz chars to find the coordinates of the first character
-                                                                         :coordinates-relative (make-coordinates-relative 10 10)
-                                                                         :width 80
-                                                                         :height 30
-                                                                         :color "white"
-                                                                         :wrap 'truncate
-                                                                         :text (format nil "line 1"))))
+
+                         (add-children linenum-container
+                                       (loop for lc in (~> text-container boxes:children)
+                                             do (warn "trying ~s" lc)
+                                             collect
+                                             (make-instance 'node-text
+                                                            :coordinates-relative (make-coordinates-relative 10
+                                                                                                             (~> lc boxes::coordinates-relative boxes::y))
+                                                            :width 80
+                                                            :height 15
+                                                            :color "white"
+                                                            :wrap 'truncate
+                                                            :text (format nil "~S" (~> lc row ))
+                                                            )))
 
                          (add-children outer-container (list linenum-container
                                                              text-container)))))
+
+
+
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
