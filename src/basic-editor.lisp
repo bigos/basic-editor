@@ -540,6 +540,7 @@
                          (add-children text-container
                                        (getf zzz :cursor))
 
+
                          (add-children linenum-container
                                        (loop for lc in (~> text-container boxes:children)
                                              when (and (typep lc 'basic-editor-character)
