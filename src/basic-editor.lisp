@@ -121,6 +121,15 @@
           (home row)
           (end row)))
 
+;;; TODO finish me
+(defun model-characters (model)
+  (~> model world
+      boxes:children (elt _ 1)
+      boxes:children (elt _ (if (show-line-numbers model)
+                                1
+                                0))          ; take into consderation the area for line numbers
+      boxes:children))
+
 (defun max-col (row)
   (if row
       (max-col2 row)

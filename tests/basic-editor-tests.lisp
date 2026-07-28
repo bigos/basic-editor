@@ -57,11 +57,7 @@
 ;;         (values nil nil)))))
 
 (defun char-kids (model)
-  (loop for ch in (serapeum:~>  model
-                                basic-editor::world
-                                boxes::children
-                                (nth 1 _)
-                                boxes::children)
+  (loop for ch in (be::model-characters model)
         unless (typep ch 'be::basic-editor-cursor)
           collect ch))
 
