@@ -547,7 +547,7 @@
                                                        (zerop (col lc)))
                                                collect
                                                (progn
-                                                 (warn "~s" (row lc))
+                                                 ;; (warn "zaq ~s" (row lc))
                                                  (make-instance 'node-text
                                                                 :coordinates-relative (make-coordinates-relative 10
                                                                                                                  (~> lc boxes::coordinates-relative boxes::y))
