@@ -540,7 +540,6 @@
                          (add-children text-container
                                        (getf zzz :cursor))
 
-
                          (add-children linenum-container
                                        (loop for lc in (~> text-container boxes:children)
                                              when (and (typep lc 'basic-editor-character)
@@ -563,9 +562,6 @@
                                            (list linenum-container
                                                  text-container)
                                            (list text-container))))))
-
-
-
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
