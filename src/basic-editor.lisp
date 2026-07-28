@@ -42,11 +42,6 @@
 (defmethod print-object ((obj basic-editor-character) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~s" (list
-                         ;; :parent
-                         ;; (type-of (boxes::parent obj))
-                         ;; :abs
-                         ;; (~> obj boxes::coordinates-absolute boxes::x)
-                         ;; (~> obj boxes::coordinates-absolute boxes::y)
                          :rel
                          (boxes::x (boxes::coordinates-relative obj))
                          (boxes::y (boxes::coordinates-relative obj))
