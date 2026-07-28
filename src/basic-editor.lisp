@@ -42,17 +42,14 @@
 (defmethod print-object ((obj basic-editor-character) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~s" (list
-                         ;; (slot-value obj 'parent)
+                         ;; :parent
+                         ;; (type-of (boxes::parent obj))
                          ;; :abs
                          ;; (~> obj boxes::coordinates-absolute boxes::x)
                          ;; (~> obj boxes::coordinates-absolute boxes::y)
-                         ;; :rel
-                         ;; (if (boundp (boxes::coordinates-relative obj))
-                         ;;     (~> obj boxes::coordinates-relative boxes::x)
-                         ;;     "unbound")
-                         ;; (if (boundp (boxes::coordinates-relative obj))
-                         ;;     (~> obj boxes::coordinates-relative boxes::y)
-                         ;;     "unbound")
+                         :rel
+                         (boxes::x (boxes::coordinates-relative obj))
+                         (boxes::y (boxes::coordinates-relative obj))
                          :wh
                          (boxes::width obj)
                          (boxes::height obj)
@@ -64,7 +61,6 @@
                          :out
                          (outside obj)
                          ))))
-
 
 (defmethod print-object ((obj text-row) stream)
   (print-object-inner obj stream))
