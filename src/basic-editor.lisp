@@ -525,42 +525,41 @@
                      (let ((linenum-container (make-node 20
                                                          120
                                                          120
-                                                         (- (height world) 60) "red")))
+                                                         (- (height world) 60) "red"))
+                           (text-container (make-node 20
+                                                      340
+                                                      (- (width world) 20 20)
+                                                      (- (height world) 60) "yellow"))
+                           (zzz (calculate-chars model)))
 
-                       (let ((text-container (make-node 20
-                                                        340
-                                                        (- (width world) 20 20)
-                                                        (- (height world) 60) "yellow"))
-                             (zzz (calculate-chars model)))
-
-                         (add-children text-container
-                                       (getf zzz :chars))
-                         (add-children text-container
-                                       (getf zzz :cursor))
+                       (add-children text-container
+                                     (getf zzz :chars))
+                       (add-children text-container
+                                     (getf zzz :cursor))
 
 
-                         (add-children linenum-container
-                                       (loop for lc in (~> text-container boxes:children)
-                                             when (and (typep lc 'basic-editor-character)
-                                                       (zerop (col lc)))
-                                               collect
-                                               (progn
-                                                 ;; (warn "zaq ~s" (row lc))
-                                                 (make-instance 'node-text
-                                                                :coordinates-relative (make-coordinates-relative 10
-                                                                                                                 (~> lc boxes::coordinates-relative boxes::y))
-                                                                :width 80
-                                                                :height 15
-                                                                :color "white"
-                                                                :wrap 'truncate
-                                                                :text (format nil "~S" (~> lc row ))
-                                                                ))))
+                       (add-children linenum-container
+                                     (loop for lc in (~> text-container boxes:children)
+                                           when (and (typep lc 'basic-editor-character)
+                                                     (zerop (col lc)))
+                                             collect
+                                             (progn
+                                               ;; (warn "zaq ~s" (row lc))
+                                               (make-instance 'node-text
+                                                              :coordinates-relative (make-coordinates-relative 10
+                                                                                                               (~> lc boxes::coordinates-relative boxes::y))
+                                                              :width 80
+                                                              :height 15
+                                                              :color "white"
+                                                              :wrap 'truncate
+                                                              :text (format nil "~S" (~> lc row ))
+                                                              ))))
 
-                         (add-children outer-container
-                                       (if (show-line-numbers model)
-                                           (list linenum-container
-                                                 text-container)
-                                           (list text-container))))))
+                       (add-children outer-container
+                                     (if (show-line-numbers model)
+                                         (list linenum-container
+                                               text-container)
+                                         (list text-container)))))
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
@@ -593,7 +592,7 @@
   (let ((model *basic-editor-model*)
         (world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
-    (setf (world model) world) ;
+    (setf (world model) world)          ;
 
     ;; =========================================================================
     (adding-children model)
