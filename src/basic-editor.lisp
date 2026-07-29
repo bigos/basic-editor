@@ -611,16 +611,10 @@
   (let ((model *basic-editor-model*)
         (world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
-    (setf (world model) world) ; zzzzzzzzzzzzzzzzzzz
-    (boxes:absolute-coordinates world)
+    (setf (world model) world) ;
 
     ;; =========================================================================
     (adding-children model)
-
-    ;; (warn "adding absolute coordinates -----------------------------------")
-    ;; (boxes:absolute-coordinates world)
-
-    ;; (warn "rendering -----------------------------------------------")
     (render world)
 
     ;; blue square follows the mouse ------------------------------------------
