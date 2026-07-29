@@ -618,7 +618,7 @@
     (adding-children model)
 
     ;; (warn "adding absolute coordinates -----------------------------------")
-    (boxes:absolute-coordinates world)
+    ;; (boxes:absolute-coordinates world)
 
     ;; (warn "rendering -----------------------------------------------")
     (render world)
