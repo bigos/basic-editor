@@ -130,6 +130,7 @@
   (1- (- (end row)
          (home row))))
 
+;;; ----------------------------------------------------------------------------
 (defmethod first-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
     (gethash 0 the-data)))
@@ -156,6 +157,7 @@
 (defmethod nth-row ((model basic-editor-model) nth)
   (let ((the-data (data (text-structure model))))
     (gethash nth the-data)))
+;;; ----------------------------------------------------------------------------
 
 (defmethod wrap-toggle ((model basic-editor-model))
   (setf (text-wrap model) (ecase (text-wrap model)
@@ -215,7 +217,6 @@
                                               :data (sample-text-stats model))))
 
 ;;; ----------------------------------------------------------------------------
-
 (defmethod find-cursor-position ((model basic-editor-model))
   (let ((cur-row (current-row model)))
     (when cur-row
@@ -239,6 +240,7 @@
   (- (find-last-visible-row model)
      (find-first-visible-row model)))
 
+;;; ----------------------------------------------------------------------------
 (defmethod delete-character-at-cursor ((model basic-editor-model))
   (let ((cur-pos (~> model cursor text-position)))
 
