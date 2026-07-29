@@ -588,26 +588,8 @@
   ;; paint background
   (let ((cv 0.95)) (cairo:set-source-rgb  cv cv cv))
   (cairo:paint)
-  (when nil
-    ;; (cairo:select-font-face "Ubuntu Mono" :italic :bold)
-    ;; (cairo:set-font-size 10)
-    ;; (cairo:move-to 10 10)
-    ;; (gui-window:set-rgba "black")
-    ;; (cairo:show-text (format nil "try moving the mouse over the window and outside of it"))
-
-
-    ;; (cairo:select-font-face "Ubuntu Mono" :italic :bold)
-    ;; (cairo:set-font-size 15)
-    ;; (cairo:move-to 10 100)
-    ;; (let ((cmotion    (gui-app:current-motion-window-p gui-app:*lisp-app* window)))
-    ;;   (if cmotion
-    ;;       (gui-window:set-rgba "green")
-    ;;       (gui-window:set-rgba "red"))
-    ;;   (cairo:show-text (format nil "motion ~A" cmotion)))
-    )
 
   ;; ==================================================================
-
   (let ((model *basic-editor-model*)
         (world (boxes::make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
