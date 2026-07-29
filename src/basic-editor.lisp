@@ -85,7 +85,7 @@
 
 ;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (model)
-  (let ((rx (text-stats model)))
+  (let ((rx (sample-text-stats model)))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
 
     (loop for r being the hash-value of rx
@@ -206,10 +206,6 @@
              (unless (eq c #\Newline)
                (set-new-line (1+ row) home (1+ i))))))
     lines-hash-table))
-
-;;; ghex is my hex editor
-(defun text-stats (model)
-  (sample-text-stats model))
 
 (defmethod reload-text-structure ((model basic-editor-model))
   ;; test-structure is a class holding a hash where
