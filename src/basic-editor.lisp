@@ -14,7 +14,7 @@
 (defparameter *boundary-kilobyte* (expt 2 10))
 (defparameter *boundary-megabyte* (expt 2 20))
 (defparameter *boundary-gigabyte* (expt 2 30))
-0000
+
 (defun pseudo (default &rest rest-args )
   (warn "running pseudo ~S" (list default rest-args ))
   default)
