@@ -488,8 +488,10 @@
   (handler-bind
       ((simple-warning
          (lambda (w)
-           (muffle-warning w))))
-
+           (when  (alexandria:starts-with-subseq
+                   "function returned with status ~a"
+                   (simple-condition-format-control w))
+             (muffle-warning w)))))
     (cairo:select-font-face
      "Ubuntu Mono"
      ;;"Advaita Mono"
@@ -499,7 +501,10 @@
   (handler-bind
       ((simple-warning
          (lambda (w)
-           (muffle-warning w))))
+           (when  (alexandria:starts-with-subseq
+                   "function returned with status ~a"
+                   (simple-condition-format-control w))
+             (muffle-warning w)))))
     (cairo:set-font-size text-size))
 
   (multiple-value-bind (xb yb width height)
@@ -509,12 +514,9 @@
                ;; i found it with debugger
                ;; (break "examine the warning ~S" warning)
                (when  (alexandria:starts-with-subseq
-                      ;; "bare references to struct types are deprecated."
                       "function returned with status ~a"
                       (simple-condition-format-control warning))
-
                  (muffle-warning warning)))))
-
         (cairo:text-extents (format nil "~A" text)))
 
     (list :xb xb :yb yb :width width :height height)))
@@ -865,10 +867,8 @@
              (height lisp-window) h)
        (let ((model *basic-editor-model*))
          (when (world model)
-           (warn "before calculationg bwidth")
            ;; TODO here we have a pointer warning to investigate
            (let ((bwidth (calculate-bwidth model)))
-             (warn "got bwidth")
              (when (> bwidth 0)
                (setf (wrap-at-column model)
                      (floor
