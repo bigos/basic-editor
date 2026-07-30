@@ -506,10 +506,12 @@
       (handler-bind
           ((simple-warning
              (lambda (warning)
-               (when T ;; (alexandria:starts-with-subseq
-                     ;;  ;; "bare references to struct types are deprecated."
-                     ;;  "function returned with status NULL-POINTER"
-                     ;;  (simple-condition-format-control warning))
+               ;; i found it with debugger
+               ;; (break "examine the warning ~S" warning)
+               (when  (alexandria:starts-with-subseq
+                      ;; "bare references to struct types are deprecated."
+                      "function returned with status ~a"
+                      (simple-condition-format-control warning))
 
                  (muffle-warning warning)))))
 
