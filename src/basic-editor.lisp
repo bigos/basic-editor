@@ -485,24 +485,32 @@
                                                     :pos nil)))))))))
 
 (defun text-size (text text-size)
+  (warn "before set font selection")
   (cairo:select-font-face
    "Ubuntu Mono"
    ;;"Advaita Mono"
    ;; "Liberation Mono"
-                          :normal :normal)
+   :normal :normal)
+  (warn "before set font size")
   (cairo:set-font-size text-size)
-
+  (warn "before text extens")
   (multiple-value-bind (xb yb width height)
-      (handler-bind
-          ((alexandria:simple-style-warning
-             (lambda (warning)
-               (when (alexandria:starts-with-subseq
-                      "bare references to struct types are deprecated."
-                      (simple-condition-format-control warning))
-                 (muffle-warning warning)))))
+      ;; (handler-bind
+      ;;     ((alexandria:simple-style-warning
+      ;;        (lambda (warning)
+      ;;          (when (alexandria:starts-with-subseq
+      ;;                 ;; "bare references to struct types are deprecated."
+      ;;                 "function returned with status NULL-POINTER"
+      ;;                 (simple-condition-format-control warning))
+      ;;            (muffle-warning warning)))))
 
-        (cairo:text-extents (format nil "~A" text)))
-    (list :xb xb :yb yb :width width :height height)))
+      ;;   (cairo:text-extents (format nil "~A" text)))
+
+    (cairo:text-extents (format nil "~A" text))
+
+    (progn
+      (warn "finished text size")
+      (list :xb xb :yb yb :width width :height height))))
 
 (defun adding-children (model)
   (let ((world (world model)))
