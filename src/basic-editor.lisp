@@ -532,12 +532,6 @@
                                                       (- (height world) 60) "yellow"))
                            (zzz (calculate-chars model)))
 
-                       (add-children text-container
-                                     (getf zzz :chars))
-                       (add-children text-container
-                                     (getf zzz :cursor))
-
-
                        (add-children linenum-container
                                      (loop for lc in (~> text-container boxes:children)
                                            when (and (typep lc 'basic-editor-character)
@@ -552,8 +546,13 @@
                                                               :height 15
                                                               :color "white"
                                                               :wrap 'truncate
-                                                              :text (format nil "~S" (~> lc row ))
-                                                              ))))
+                                                              :text (format nil "~S" (~> lc row ))))))
+                       (add-children text-container
+                                     (getf zzz :chars))
+                       (add-children text-container
+                                     (getf zzz :cursor))
+
+
 
                        (add-children outer-container
                                      (if (show-line-numbers model)
