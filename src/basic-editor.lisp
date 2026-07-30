@@ -530,10 +530,10 @@
                                                       340
                                                       (- (width world) 20 20)
                                                       (- (height world) 60) "yellow"))
-                           (zzz (calculate-chars model)))
+                           (calculated-characters (calculate-chars model)))
 
                        (add-children text-container
-                                     (getf zzz :chars))
+                                     (getf calculated-characters :chars))
                        (add-children linenum-container
                                      (loop for lc in (~> text-container boxes:children)
                                            when (and (typep lc 'basic-editor-character)
@@ -550,7 +550,7 @@
                                                               :wrap 'truncate
                                                               :text (format nil "~S" (~> lc row ))))))
                        (add-children text-container
-                                     (getf zzz :cursor))
+                                     (getf calculated-characters :cursor))
 
 
 
