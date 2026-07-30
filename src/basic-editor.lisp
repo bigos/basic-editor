@@ -867,7 +867,6 @@
              (height lisp-window) h)
        (let ((model *basic-editor-model*))
          (when (world model)
-           ;; TODO here we have a pointer warning to investigate
            (let ((bwidth (calculate-bwidth model)))
              (when (> bwidth 0)
                (setf (wrap-at-column model)
