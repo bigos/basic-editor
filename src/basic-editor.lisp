@@ -881,7 +881,8 @@
                                 collect c))))
               ;; (warn "model world children under mouse ~S"
               ;;       first-child-found)
-              (when first-child-found
+              (when (and first-child-found
+                         (typep first-child-found 'basic-editor-character))
                 (move-cursor-to *basic-editor-model* (row first-child-found) (col first-child-found)))
               )))
     (:released
