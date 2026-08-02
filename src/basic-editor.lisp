@@ -520,6 +520,50 @@
 
     (list :xb xb :yb yb :width width :height height)))
 
+(defun adding-children-viewport (model world)
+  (let ((outer-container (boxes::make-node-right 20
+                                                 340
+                                                 (- (width world) 20 20)
+                                                 (- (height world) 60) "black")))
+
+    (let ((linenum-container (make-node 20
+                                        120
+                                        120
+                                        (- (height world) 60) "red"))
+          (text-container (make-node 20
+                                     340
+                                     (- (width world) 20 20)
+                                     (- (height world) 60) "yellow"))
+          (calculated-characters (calculate-chars model)))
+
+      (add-children text-container
+                    (getf calculated-characters :chars))
+      (add-children linenum-container
+                    (loop for lc in (~> text-container boxes:children)
+                          when (and (typep lc 'basic-editor-character)
+                                    (zerop (col lc)))
+                            collect
+                            (progn
+                              ;; (warn "zaq ~s" (row lc))
+                              (make-instance 'node-text
+                                             :coordinates-relative (make-coordinates-relative 10
+                                                                                              (~> lc boxes::coordinates-relative boxes::y))
+                                             :width 80
+                                             :height 15
+                                             :color "white"
+                                             :wrap 'truncate
+                                             :text (format nil "~S" (~> lc row ))))))
+      (add-children text-container
+                    (getf calculated-characters :cursor))
+
+
+
+      (add-children outer-container
+                    (if (show-line-numbers model)
+                        (list linenum-container
+                              text-container)
+                        (list text-container))))))
+
 (defun adding-children (model)
   (let ((world (world model)))
     (add-children world
@@ -533,48 +577,8 @@
                                   :text (format nil "Heading , mouse button ~S, wrap ~S"
                                                 (gui-app:mouse-button gui-app:*lisp-app*)
                                                 (text-wrap model)))
-                   (let ((outer-container (boxes::make-node-right 20
-                                                                  340
-                                                                  (- (width world) 20 20)
-                                                                  (- (height world) 60) "black")))
 
-                     (let ((linenum-container (make-node 20
-                                                         120
-                                                         120
-                                                         (- (height world) 60) "red"))
-                           (text-container (make-node 20
-                                                      340
-                                                      (- (width world) 20 20)
-                                                      (- (height world) 60) "yellow"))
-                           (calculated-characters (calculate-chars model)))
-
-                       (add-children text-container
-                                     (getf calculated-characters :chars))
-                       (add-children linenum-container
-                                     (loop for lc in (~> text-container boxes:children)
-                                           when (and (typep lc 'basic-editor-character)
-                                                     (zerop (col lc)))
-                                             collect
-                                             (progn
-                                               ;; (warn "zaq ~s" (row lc))
-                                               (make-instance 'node-text
-                                                              :coordinates-relative (make-coordinates-relative 10
-                                                                                                               (~> lc boxes::coordinates-relative boxes::y))
-                                                              :width 80
-                                                              :height 15
-                                                              :color "white"
-                                                              :wrap 'truncate
-                                                              :text (format nil "~S" (~> lc row ))))))
-                       (add-children text-container
-                                     (getf calculated-characters :cursor))
-
-
-
-                       (add-children outer-container
-                                     (if (show-line-numbers model)
-                                         (list linenum-container
-                                               text-container)
-                                         (list text-container)))))
+                   (adding-children-viewport model world)
 
                    (make-instance 'node-text
                                   :coordinates-relative (make-coordinates-relative 10 50)
