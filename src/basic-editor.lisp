@@ -557,7 +557,6 @@
                     (getf calculated-characters :cursor))
 
 
-
       (add-children outer-container
                     (if (show-line-numbers model)
                         (list linenum-container
