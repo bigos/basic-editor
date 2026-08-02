@@ -868,14 +868,14 @@
     (:pressed
           (destructuring-bind ((button x y)) args
             (gui-app:mouse-button-pressed button)
-            ;; (warn "mouse state ~S" (gui-app:mouse-button gui-app:*lisp-app*))
+            (warn "mouse state ~S" (gui-app:mouse-button gui-app:*lisp-app*))
             (let*
                 ((children (~> *basic-editor-model*
                                world
                                boxes:children
                                (nth 1 _)
                                boxes:children))
-                 (first-child-found
+                 (first-child-found ;; TODO because i added structure this no longer works
                    (car (loop for c in children
                               when (boxes:mouse-over-p c)
                                 collect c))))
@@ -883,6 +883,7 @@
               ;;       first-child-found)
               (when (and first-child-found
                          (typep first-child-found 'basic-editor-character))
+                (warn "clicked ready to move cursor ~S" first-child-found)
                 (move-cursor-to *basic-editor-model* (row first-child-found) (col first-child-found)))
               )))
     (:released

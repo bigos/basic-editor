@@ -63,6 +63,7 @@
            valid-col))))
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
+  (warn "clicked to move cursor to ~S ~S" row col)
     (let ((nth-row (nth-row model row)))
       (move-cursor-to-position model (+ col (home nth-row)))))
 
