@@ -343,10 +343,16 @@
          :title "Save me As"))))
 
 ;;; drawing ====================================================================
+(defun calculate-text-data ()
+  (let* ((font-size 18)
+         (text-for-size  "pOly()/_")
+         (text-data (text-size text-for-size font-size )))
+    text-data))
+
 (defun calculate-bwidth (model)
   (let* ((font-size 18)
          (text-for-size  "pOly()/_")
-         (text-data (text-size text-for-size font-size ))
+         (text-data (calculate-text-data))
          (twidth (floor (/ (getf text-data :width)
                            (length text-for-size)))))
     (+ twidth 0)))
