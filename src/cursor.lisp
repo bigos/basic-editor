@@ -9,13 +9,6 @@
 ;; (setf *break-on-signals* T)
 ;; (setf *print-circle* T)
 
-(defclass/std cursor (boxes:node-character)
-  ((row)
-   (col)
-   (text-position)))
-
-;;; review that
-
 (defmethod cursor-position ((cursor cursor))
   (cons (~> cursor row)
         (~> cursor col)))

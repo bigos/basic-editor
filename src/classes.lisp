@@ -51,3 +51,8 @@
    (col)
    (pos)
    (outside)))
+
+(defclass/std cursor (boxes:node-character)
+  ((row)
+   (col)
+   (text-position)))
