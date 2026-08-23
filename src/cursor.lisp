@@ -42,6 +42,12 @@
             (col obj)
             (text-position obj))))
 
+(defun max-col (row)
+  (if row
+      (1- (- (end row)
+             (home row)))
+      0))
+
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
   (reload-text-structure model)
 

@@ -121,12 +121,6 @@
                                 0))          ; take into consderation the area for line numbers
       boxes:children))
 
-(defun max-col (row)
-  (if row
-      (1- (- (end row)
-             (home row)))
-      0))
-
 ;;; ----------------------------------------------------------------------------
 (defmethod first-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
