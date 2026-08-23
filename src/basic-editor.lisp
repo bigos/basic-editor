@@ -123,12 +123,9 @@
 
 (defun max-col (row)
   (if row
-      (max-col2 row)
+      (1- (- (end row)
+             (home row)))
       0))
-
-(defmethod max-col2 ((row text-row))
-  (1- (- (end row)
-         (home row))))
 
 ;;; ----------------------------------------------------------------------------
 (defmethod first-row ((model basic-editor-model))
