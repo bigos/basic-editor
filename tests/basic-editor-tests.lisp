@@ -22,7 +22,7 @@
 
 (defun load-file-and-model (fname)
   (let ((experimental-window (main :testing T))
-        (world (boxes::make-node-down
+        (world (boxes:make-node-down
                 0 0 600 400 "#cccccc88"))
         (model *basic-editor-model*))
 
