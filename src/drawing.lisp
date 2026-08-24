@@ -181,7 +181,7 @@
     (list :xb xb :yb yb :width width :height height)))
 
 (defun adding-children-viewport (model world)
-  (let ((outer-container (boxes::make-node-right 20
+  (let ((outer-container (boxes:make-node-right 20
                                                  340
                                                  (- (width world) 20 20)
                                                  (- (height world) 60) "black")))
@@ -207,7 +207,7 @@
                               ;; (warn "zaq ~s" (row lc))
                               (make-instance 'node-text
                                              :coordinates-relative (make-coordinates-relative 10
-                                                                                              (~> lc boxes::coordinates-relative boxes::y))
+                                                                                              (~> lc boxes:coordinates-relative boxes:y))
                                              :width 80
                                              :height 15
                                              :color "white"
@@ -268,7 +268,7 @@
 
   ;; ==================================================================
   (let ((model *basic-editor-model*)
-        (world (boxes::make-node-down
+        (world (boxes:make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
     (setf (world model) world)
 

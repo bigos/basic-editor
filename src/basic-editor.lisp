@@ -43,11 +43,11 @@
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~s" (list
                          :rel
-                         (boxes::x (boxes::coordinates-relative obj))
-                         (boxes::y (boxes::coordinates-relative obj))
+                         (boxes:x (boxes:coordinates-relative obj))
+                         (boxes:y (boxes:coordinates-relative obj))
                          :wh
-                         (boxes::width obj)
-                         (boxes::height obj)
+                         (boxes:width obj)
+                         (boxes:height obj)
                          ;; (color obj)
                          ;; (bchar obj)
                          :row/col
@@ -62,7 +62,7 @@
 
 ;;; ============================================================================
 (defmethod the-container ((model basic-editor-model))
-  (~> model world boxes::children (nth 1 _)))
+  (~> model world boxes:children (nth 1 _)))
 
 (defun sample-text (n)
   (case n
@@ -334,9 +334,9 @@
                                      :view-port-first-column
                                      (first-column (view-port model))
                                      :container-width-pixels
-                                     (boxes::width (the-container model))
+                                     (boxes:width (the-container model))
                                      :container-height-pixels
-                                     (boxes::height (the-container model))
+                                     (boxes:height (the-container model))
                                      :wrap-at-column
                                      (wrap-at-column model)
                                      :current-file
@@ -635,7 +635,7 @@
    gui-window-gtk:*client-fn-cancel-save-file* 'basic-editor::cancel-save-file
 
    *basic-editor-model* (make-instance 'basic-editor-model)
-   boxes::*model* *basic-editor-model*
+   boxes:*model* *basic-editor-model*
    )
 
   (if testing
