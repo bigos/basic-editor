@@ -112,7 +112,6 @@
           (home row)
           (end row)))
 
-;;; TODO finish me
 (defun model-characters (model)
   (~> model world
       boxes:children (elt _ 1)
