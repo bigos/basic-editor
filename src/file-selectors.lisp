@@ -10,6 +10,7 @@
   (subseq (cdr current-file-pair) 7))
 
 (defun open-file (current-file-pair)
+  (warn "opening file with ~S" current-file-pair)
    (ecase (car  current-file-pair)
      (:cancelled
       nil)
@@ -17,7 +18,7 @@
       (let* ((model *basic-editor-model*)
              (clean-filepath (extract-filepath current-file-pair))
             (text-content (alexandria:read-file-into-string clean-filepath)))
-        ;; (warn "going to load ~S" clean-filepath)
+        (warn "going to load ~S" clean-filepath)
         (setf (current-file model) current-file-pair)
         (setf (text model) text-content)
         (reload-text-structure model)))))
