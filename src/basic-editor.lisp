@@ -269,6 +269,13 @@
     (reload-text-structure model)
     (move-cursor-to-position model (1+ (~> model cursor text-position)))))
 
+;;; for file selectors ---------------------------------------------------------
+(defun new-file ()
+  (let ((model *basic-editor-model*))
+    (setf (text model) "edit something")
+    (reload-text-structure model)
+    (setf (current-file model) nil)))
+
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
   (let* ((font-size 18)
@@ -947,6 +954,7 @@
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
    gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
+   ;; file selector settings
    gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
    gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
    gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file

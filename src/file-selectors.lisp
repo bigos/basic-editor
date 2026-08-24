@@ -1,13 +1,8 @@
 (declaim (optimize (speed 0) (safety 3) (debug 3)))
 
-(in-package #:basic-editor)
+(in-package #:file-selectors)
 
 ;;; file selectors -------------------------------------------------------------
-(defun new-file ()
-  (let ((model *basic-editor-model*))
-    (setf (text model) "edit something")
-    (reload-text-structure model)
-    (setf (current-file model) nil)))
 
 (defun extract-filepath (current-file-pair)
   (assert (eql (car current-file-pair) :selected))

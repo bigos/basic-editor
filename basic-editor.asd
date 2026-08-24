@@ -18,8 +18,8 @@
   :components ((:file "packages")
                (:file "classes" :depends-on ("packages"))
                (:file "cursor")
-               (:file "file-selectors")
-               (:file "basic-editor"))
+               (:file "file-selectors" :depends-on ("packages"))
+               (:file "basic-editor" :depends-on ("packages")))
   :description "basic editor for GUI for clops in separate system")
 
 
