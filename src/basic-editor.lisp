@@ -479,7 +479,7 @@
     (:pressed
           (destructuring-bind ((button x y)) args
             (gui-app:mouse-button-pressed button)
-            (warn "mouse state ~S" (gui-app:mouse-button gui-app:*lisp-app*))
+            (warn "mouse state ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))
             (let*
                 ((children (~> *basic-editor-model*
                                world
@@ -500,7 +500,7 @@
     (:released
           (destructuring-bind ((button x y)) args
             (gui-app:mouse-button-released button)
-            (warn "mouse state released ~S" (gui-app:mouse-button gui-app:*lisp-app*))))
+            (warn "mouse state released ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))))
     (:scroll)
     (:resize
      ;; on resize move cursor to corresponding file position
