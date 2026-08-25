@@ -553,6 +553,8 @@
           (gui-window-gtk:present-about-dialog (about-dialog)))
          (T
           (format T "unhandled menu action ~S~%" action)))
+
+       (gtk4:widget-grab-focus gui-window-gtk:*canvas-widget*)
        ;; possibly steal menu focus
        ))
     (otherwise
@@ -567,9 +569,6 @@
 ;;; main =======================================================================
 (defun menu-bar (app lisp-window)
   (let ((menu (gio:make-menu)))
-    ;; stop the annoying menu selection when left and right arrows are pressed
-    ;; i could not make it work
-    ;; (gir:invoke (menu 'gtk_widget_set_focusable) nil)
 
     (gui-menu:build-menu
      menu
