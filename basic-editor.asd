@@ -21,6 +21,7 @@
                (:file "drawing")
                (:file "file-selectors")
                (:file "events")
+               (:file "key-handling")
                (:file "basic-editor"))
   :description "basic editor for GUI for clops in separate system")
 
