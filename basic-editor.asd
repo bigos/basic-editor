@@ -20,6 +20,7 @@
                (:file "cursor")
                (:file "drawing")
                (:file "file-selectors")
+               (:file "events")
                (:file "basic-editor"))
   :description "basic editor for GUI for clops in separate system")
 
