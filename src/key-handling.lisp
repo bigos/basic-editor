@@ -184,7 +184,10 @@
        (delete-character-at-cursor model))
       ((and (equal key-name "M")
             (equal mods '(:SHIFT :CTRL)))
-       (warn "TODO implement toggling menubar sensitive"))
+       (progn
+         (gui-window-gtk::toggle-menubar-sensitive)
+         (warn "toggled menubar ~S"
+               (gui-window-gtk:is-menu-sensitive ))))
       (T
        (if (equal entered "")
            (format t "unhandled key ~S~%" (list entered key-name key-code mods))
