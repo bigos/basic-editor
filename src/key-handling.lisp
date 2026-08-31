@@ -6,7 +6,7 @@
 (defun key-handling-f1-help ()
   (warn "------------ F1 Help --------------------")
   (warn "F1 = help")
-  (warn "Ctrl Shift D")                 ; calls the debugger directly, bypassing handle-key-pressed
+  (warn "Ctrl Shift D = interactive debugger")   ; calls it directly, bypassing handle-key-pressed
   (warn "F7 = stats")
   (warn "F8 = debug")
   (warn "F9 = examine model")
@@ -21,11 +21,12 @@
   (warn "Ctrl-n = next line")
   (warn "Ctrl-b = backwards character")
   (warn "Ctrl-f = forwards character")
+  (warn "Ctrl-M = toggle menu sensitive")
   (warn "-----------------------------------------"))
 
 (defun handle-key-pressed (entered key-name key-code mods lisp-window)
   (alexandria:write-string-into-file
-   (format nil "~S~%" (list entered key-name key-code mods))
+   (format T "~S~%" (list entered key-name key-code mods))
    "/tmp/basic-editor-log-key-presses.txt" :if-exists :append
                                            :if-does-not-exist :create)
 
@@ -181,6 +182,9 @@
             (equal mods nil)
             (move-cursor-left model))
        (delete-character-at-cursor model))
+      ((and (equal key-name "M")
+            (equal mods '(:SHIFT :CTRL)))
+       (warn "TODO implement toggling menubar sensitive"))
       (T
        (if (equal entered "")
            (format t "unhandled key ~S~%" (list entered key-name key-code mods))
