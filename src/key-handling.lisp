@@ -185,9 +185,7 @@
       ((and (equal key-name "M")
             (equal mods '(:SHIFT :CTRL)))
        (progn
-         (gui-window-gtk::toggle-menubar-sensitive)
-         (warn "toggled menubar ~S"
-               (gui-window-gtk:is-menu-sensitive ))))
+         (warn "implement toggling menu sensitivity or hiding")))
       (T
        (if (equal entered "")
            (format t "unhandled key ~S~%" (list entered key-name key-code mods))
