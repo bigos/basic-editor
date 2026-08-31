@@ -6,6 +6,7 @@
 (defun key-handling-f1-help ()
   (warn "------------ F1 Help --------------------")
   (warn "F1 = help")
+  (warn "Ctrl Shift D")                 ; calls the debugger directly, bypassing handle-key-pressed
   (warn "F7 = stats")
   (warn "F8 = debug")
   (warn "F9 = examine model")
