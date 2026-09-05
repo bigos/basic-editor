@@ -132,7 +132,9 @@
 
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
-    (gethash (1- (hash-table-count the-data)) the-data)))
+    ;; (assert (> (hash-table-count the-data) 0))
+    (when (>= (hash-table-count the-data) 1)
+        (gethash (1- (hash-table-count the-data)) the-data))))
 
 (defmethod nth-row ((model basic-editor-model) nth)
   (let ((the-data (data (text-structure model))))
@@ -184,9 +186,10 @@
                     (>= cur-col (wrap-at-column model)))
                (set-new-line row home (1+ i))))
         finally
-           (when i
-             (unless (eq c #\Newline)
-               (set-new-line (1+ row) home (1+ i))))))
+           (if i
+               (unless (eq c #\Newline)
+                 (set-new-line (1+ row) home (1+ i)))
+               (set-new-line 0 0 0))))
     lines-hash-table))
 
 (defmethod reload-text-structure ((model basic-editor-model))
