@@ -101,9 +101,9 @@
       boxes:children))
 
 ;;; ----------------------------------------------------------------------------
-;; (defmethod initialize-instance :after ((model basic-editor-model) &key)
-;;   ;; (new-file model)
-;;   (assert (equal "" (text of model))))
+(defmethod initialize-instance :after ((model basic-editor-model) &key)
+  (new-file model)
+  (assert (equal "" (text model))))
 
 (defun new-file (model)
   (setf (text model) "")
