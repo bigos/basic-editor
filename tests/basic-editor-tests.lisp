@@ -28,7 +28,7 @@
 
     (process-event experimental-window :resize '(710 250))
 
-    (be::new-file)
+    (be::new-file model)
     (be::open-file (cons :selected
                          (format nil "file://~A" fname)))
     (setf (be::world model) world)
@@ -201,7 +201,7 @@
         (model *basic-editor-model*)
         (world (boxes::make-node-down 0 0 600 400 "#cccccc88")))
     (setf (be::world model) world)
-    (be::new-file)
+    (be::new-file model)
     (be::open-file (cons :selected "file:///home/jacek/.bashrc"))
 
     (basic-editor::adding-children model)

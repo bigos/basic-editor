@@ -91,7 +91,7 @@
       ((and (equal key-name "n")
             (equal mods '(:Alt)))
        (format T "keyboard selected new~%")
-       (new-file))
+       (new-file *basic-editor-model*))
       ((and (equal key-name "f")
             (equal mods '(:Alt)))
        (format T "keyboard selected open~%")

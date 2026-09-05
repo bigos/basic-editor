@@ -74,7 +74,7 @@
          ;; File
          ((equalp action "new")
           (format T "menu selected new~%")
-          (new-file))
+          (new-file *basic-editor-model*))
          ((equalp action "open")
           (format T "menu selected open~%")
           (gui-window-gtk:present-file-open-dialog))
