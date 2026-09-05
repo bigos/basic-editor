@@ -132,9 +132,7 @@
 
 (defmethod last-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
-    ;; (assert (> (hash-table-count the-data) 0))
-    (when (>= (hash-table-count the-data) 1)
-        (gethash (1- (hash-table-count the-data)) the-data))))
+    (gethash (1- (hash-table-count the-data)) the-data)))
 
 (defmethod nth-row ((model basic-editor-model) nth)
   (let ((the-data (data (text-structure model))))
