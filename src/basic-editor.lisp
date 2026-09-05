@@ -64,26 +64,6 @@
 (defmethod the-container ((model basic-editor-model))
   (~> model world boxes:children (nth 1 _)))
 
-(defun sample-text (n)
-  (case n
-    (:last-nl-yes
-     (format nil "~A~%~A~%~A~%"
-             "Ala ma kota"
-             "Ola ma psa"
-             "A, ja mam Lisp."))
-    (:last-nl-no
-     (format nil "~A~%~A~%~A"
-             "Ala ma kota"
-             "Ola ma psa"
-             "A, ja mam Lisp."))
-    (:first-nl-yes
-     (format nil "~%~A~%~%~%~A"
-             "Ala ma kota"
-             "A ja Lisp."))
-    (T
-     (format nil "one line no NL"))))
-
-;; (print-text-stats (sample-text :first-nl-yes))
 (defun print-text-stats (model)
   (let ((rx (sample-text-stats model)))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
