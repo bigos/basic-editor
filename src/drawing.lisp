@@ -281,14 +281,7 @@
       (when (and (eq (gui-app:current-motion app)
                      window)
                  (gui-app:mouse-coordinates app))
-        ;; (gui-window:set-rgba "blue")
-        ;; (cairo:rectangle
-        ;;  (car (gui-app:mouse-coordinates app))
-        ;;  (cdr (gui-app:mouse-coordinates app))
-        ;;  25
-        ;;  25)
-        ;; (cairo:fill-path)
-    (render-mouse (gui-app:mouse-coordinates app ))))))
+        (render-mouse (gui-app:mouse-coordinates app ))))))
 
 (defun render-mouse (mouse-position)
   (when mouse-position
