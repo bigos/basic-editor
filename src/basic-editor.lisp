@@ -149,9 +149,7 @@
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
-  (let* (
-         ;; (text-container-width (~> model world width (- _ 20 20)))
-        (text (text model))
+  (let* ((text (text model))
         (lines-hash-table (make-hash-table)))
 
     (labels
