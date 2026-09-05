@@ -101,6 +101,13 @@
       boxes:children))
 
 ;;; ----------------------------------------------------------------------------
+(defun new-file ()
+  (let ((model *basic-editor-model*))
+    (setf (text model) "edit something")
+    (reload-text-structure model)
+    (setf (current-file model) nil)))
+
+;;; ----------------------------------------------------------------------------
 (defmethod first-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
     (gethash 0 the-data)))

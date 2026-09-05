@@ -3,12 +3,6 @@
 (in-package #:basic-editor)
 
 ;;; file selectors -------------------------------------------------------------
-(defun new-file ()
-  (let ((model *basic-editor-model*))
-    (setf (text model) "edit something")
-    (reload-text-structure model)
-    (setf (current-file model) nil)))
-
 (defun extract-filepath (current-file-pair)
   (assert (eql (car current-file-pair) :selected))
   (assert (stringp (cdr current-file-pair)))
