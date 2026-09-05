@@ -93,12 +93,11 @@
           (end row)))
 
 (defun model-characters (model)
-  (~> model world
-      boxes:children (elt _ 1)
-      boxes:children (elt _ (if (show-line-numbers model)
-                                1
-                                0))          ; take into consderation the area for line numbers
-      boxes:children))
+  (labels ((box-with-text () (if (show-line-numbers model) 1 0)))
+    (~> model world
+        boxes:children (elt _ 1)
+        boxes:children (elt _ (box-with-text))          ; take into consderation the area for line numbers
+        boxes:children)))
 
 ;;; ----------------------------------------------------------------------------
 (defmethod initialize-instance :after ((model basic-editor-model) &key)
