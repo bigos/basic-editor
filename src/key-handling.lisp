@@ -87,31 +87,31 @@
            (move-cursor-down model :ignored)
            (move-cursor-home model)))
 
-        ((match-key "n" '(:Alt))
+        ((match-key "n" '(:ALT))
          (format T "keyboard selected new~%")
          (new-file *basic-editor-model*))
 
-        ((match-key "f" '(:Alt))
+        ((match-key "f" '(:ALT))
          (format T "keyboard selected open~%")
          (gui-window-gtk:present-file-open-dialog))
 
-        ((match-key "s" '(:Alt))
+        ((match-key "s" '(:ALT))
          (format T "keyboard selected save~%")
          (file-save-selector))
 
-        ((match-key "a" '(:Alt))
+        ((match-key "a" '(:ALT))
          (format T "keyboard selected about~%")
          (gui-window-gtk:present-about-dialog (about-dialog)))
 
-        ((match-key "w" '(:Alt))
+        ((match-key "w" '(:ALT))
          (format T "keyboard selected wrap toggle~%")
          (wrap-toggle model))
 
-        ((match-key "Home" '(:Alt))
+        ((match-key "Home" '(:ALT))
          (format T "keyboard selected Alt Home~%")
          (move-cursor-first-line-home model))
 
-        ((match-key "End" '(:Alt))
+        ((match-key "End" '(:ALT))
          (format T "keyboard selected Alt End~%")
          (move-cursor-last-line-end model))
 
