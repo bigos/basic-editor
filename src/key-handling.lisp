@@ -126,33 +126,34 @@
                       (find-page-rows model))))
            (setf (first-line (view-port model)) fl)
            (move-cursor-to model fl 0)))
-        ((equal key-name "Page_Down")
+
+        ((match-key "Page_Down")
          (let ((fl (+ (first-line (view-port model))
                       (find-page-rows model))))
            (setf (first-line (view-port model)) fl)
            (move-cursor-to model fl 0)))
 
-        ((and (equal key-name "b")
-              (equal mods '(:CTRL)))
+        ((match-key "b" '(:CTRL))
          (setf (first-column (view-port model)) (1- (first-column (view-port model)))))
-        ((and (equal key-name "f")
-              (equal mods '(:CTRL)))
+
+        ((match-key "f" '(:CTRL))
          (setf (first-column (view-port model)) (1+ (first-column (view-port model)))))
-        ((equal key-name "Left")
+
+        ((match-key "Left")
          ;; handle menu bar focus problem
          (move-cursor-left model))
-        ((equal key-name "Right")
+
+        ((match-key "Right")
          ;; handle menu bar focus problem
          (move-cursor-right model))
-        ((equal key-name "Up")
+
+        ((match-key "Up")
          (move-cursor-up model)
-         ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
-         ;;       (~> model cursor row)
-         ;;       (~> model view-port first-line))
          (when (< (~> model cursor row)
                   (first-line (view-port model)))
            (setf (first-line (view-port model)) (~> model cursor row))))
-        ((equal key-name "Down")
+
+        ((match-key "Down")
          (move-cursor-down model :ignored)
          (let ((pr (find-page-rows model)))
            ;; (warn "cursor on last line zzzz 1-- row ~S --first line ~S"
@@ -165,19 +166,21 @@
                    (-
                     (~> model cursor row)
                     pr)))))
-        ((equal key-name "Home")
+
+        ((match-key "Home")
          (move-cursor-home model))
-        ((equal key-name "End")
+
+        ((match-key "End")
          (move-cursor-end model :ignored))
-        ((and (equal key-name "Delete")
-              (equal mods nil))
+
+        ((match-key "Delete")
          (delete-character-at-cursor model))
-        ((and (equal key-name "BackSpace")
-              (equal mods nil))
+
+        ((match-key "BackSpace")
          (move-cursor-left model)
          (delete-character-at-cursor model))
-        ((and (equal key-name "M")
-              (equal mods '(:SHIFT :CTRL)))
+
+        ((match-key "M" '(:SHIFT :CTRL))
          (progn
            (warn "implement toggling menu sensitivity or hiding")))
         (T
