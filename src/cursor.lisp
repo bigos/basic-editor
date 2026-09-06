@@ -9,6 +9,13 @@
 ;; (setf *break-on-signals* T)
 ;; (setf *print-circle* T)
 
+(defmethod print-object ((obj cursor) stream)
+  (print-unreadable-object (obj stream :type t :identity t)
+    (format stream "~Sx~S - ~S"
+            (row obj)
+            (col obj)
+            (text-position obj))))
+
 (defmethod cursor-position ((cursor cursor))
   (cons (~> cursor row)
         (~> cursor col)))
@@ -34,13 +41,6 @@
            (text-position cursor) (1- (end the-row))
            (row cursor) (row the-row)
            (col cursor) (- (end  the-row) (home the-row)))))))
-
-(defmethod print-object ((obj cursor) stream)
-  (print-unreadable-object (obj stream :type t :identity t)
-    (format stream "~Sx~S - ~S"
-            (row obj)
-            (col obj)
-            (text-position obj))))
 
 (defun max-col (row)
   (if row
