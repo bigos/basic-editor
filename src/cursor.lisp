@@ -109,6 +109,10 @@
     (when cur-row
       (move-cursor-to-position model (1- (end cur-row))))))
 
+;; (defmethod anaphoric-move-cursor-end ((model basic-editor-model) ignored)
+;;   (awhen (current-row model)   ;; closest to the ideal
+;;          (move-cursor-to-position model (1- (end it)))))
+
 (defmethod move-cursor-first-line-home ((model basic-editor-model))
   (move-cursor-to-position model 0))
 
