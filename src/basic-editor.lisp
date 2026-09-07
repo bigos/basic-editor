@@ -201,6 +201,11 @@
       (+ (~> model cursor col)
          (home cur-row)))))
 
+;; (defmethod anaphoric-find-cursor-position ((model basic-editor-model))
+;;   (awhen (current-row model)
+;;          (+ (~> model cursor col)
+;;             (home it))))
+
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
