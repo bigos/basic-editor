@@ -84,6 +84,13 @@
                                         (1- (end previous-row))
                                         (+ column (home previous-row))))))))
 
+;; (defmethod anaphoric-move-cursor-up ((model basic-editor-model))
+;;   (let ((column (~> model cursor col)))
+;;     (awhen (previous-row model) ;; not as readable because of the 3 lines
+;;            (move-cursor-to-position model (min
+;;                                            (1- (end it))
+;;                                            (+ column (home it)))))))
+
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((column (~> model cursor col))
         (next-row (next-row model)))
