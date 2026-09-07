@@ -77,12 +77,12 @@
                                     (1- (end last-row))))))
 
 (defmethod move-cursor-up ((model basic-editor-model))
-  (let ((column (~> model cursor col))
-        (previous-row (previous-row model)))
-    (when previous-row
-      (move-cursor-to-position model (min
-                                      (1- (end previous-row))
-                                      (+ column (home previous-row)))))))
+  (let ((column (~> model cursor col)))
+    (let ((previous-row (previous-row model)))
+      (when previous-row
+        (move-cursor-to-position model (min
+                                        (1- (end previous-row))
+                                        (+ column (home previous-row))))))))
 
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((column (~> model cursor col))

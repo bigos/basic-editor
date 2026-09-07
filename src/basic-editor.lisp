@@ -203,7 +203,7 @@
 
 ;; (defmethod anaphoric-find-cursor-position ((model basic-editor-model))
 ;;   (awhen (current-row model)
-;;          (+ (~> model cursor col)
+;;          (+ (~> model cursor col) ;; perhaps this line makes it too complicated
 ;;             (home it))))
 
 (defmethod find-first-visible-row ((model basic-editor-model))
