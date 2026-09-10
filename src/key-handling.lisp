@@ -35,6 +35,7 @@
     (let ((model *basic-editor-model*))
       (cond
         ((match-key "F1")
+         (gtk4:widget-grab-focus gui-window-gtk:*canvas-widget*)
          (key-handling-f1-help))
 
         ((match-key "F7")
