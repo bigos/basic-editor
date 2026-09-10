@@ -35,8 +35,17 @@
     (let ((model *basic-editor-model*))
       (cond
         ((match-key "F1")
-         (gtk4:widget-grab-focus gui-window-gtk:*canvas-widget*)
-         (key-handling-f1-help))
+         (key-handling-f1-help)
+         (warn "canvas widget is ~S" gui-window-gtk:*canvas-widget*)
+         (setf
+          (gtk4:widget-can-focus-p
+           (~> lisp-window gui-window:gir-window gtk4:widget-first-child gtk4:widget-first-child))
+          T)
+
+         (~> lisp-window gui-window:gir-window gtk4:widget-first-child gtk4:widget-first-child
+             gtk4:widget-grab-focus)
+
+      )
 
         ((match-key "F7")
          ;; (warn "model stats ------------------------------------------")
