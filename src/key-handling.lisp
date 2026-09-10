@@ -106,6 +106,14 @@
          (format T "keyboard selected wrap toggle~%")
          (wrap-toggle model))
 
+        ((match-key "l" '(:ALT))
+         (format T "keyboard selected toggle LINE numbers~%")
+         (progn
+           (setf (show-line-numbers *basic-editor-model*) (if (show-line-numbers *basic-editor-model*)
+                                                              nil
+                                                              T))
+           (warn "toggled showing lines to ~S" (show-line-numbers *basic-editor-model*))))
+
         ((match-key "Home" '(:ALT))
          (format T "keyboard selected Alt Home~%")
          (move-cursor-first-line-home model))
