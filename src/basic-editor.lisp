@@ -19,13 +19,6 @@
   (warn "running pseudo ~S" (list default rest-args ))
   default)
 
-(defmacro once-only ((&rest names) &body body)
-  (let ((gensyms (loop for n in names collect (gensym (string-upcase (symbol-name n))))))
-    `(let (,@(loop for g in gensyms collect `(,g (gensym (string-upcase ,(symbol-name g))))))
-       `(let (,,@(loop for g in gensyms for n in names collect ``(,,g ,,n)))
-          ,(let (,@(loop for n in names for g in gensyms collect `(,n ,g)))
-             ,@body)))))
-
 ;;; minimal window -------------------------------------------------------------
 (defparameter *basic-editor-model* nil)
 
