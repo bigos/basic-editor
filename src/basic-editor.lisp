@@ -145,7 +145,13 @@
                             (:wrap
                              :trim)
                             (:word-wrap
-                             :trim))))
+                             :trim)))
+  (progn
+    (format T "menu selected toggle line numbers~%")
+    (setf (show-line-numbers *basic-editor-model*) (if (show-line-numbers *basic-editor-model*)
+                                                       nil
+                                                       T))
+    (warn "toggled showing lines to ~S" (show-line-numbers *basic-editor-model*))))
 
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))

@@ -86,11 +86,7 @@
           (gui-window-gtk:close-all-windows-and-quit))
          ;; View
          ((equalp action "toggle-line-numbers")
-          (format T "menu selected toggle line numbers~%")
-          (setf (show-line-numbers *basic-editor-model*) (if (show-line-numbers *basic-editor-model*)
-                                                             nil
-                                                             T))
-          (warn "toggled showing lines to ~S" (show-line-numbers *basic-editor-model*)))
+          (wrap-toggle *basic-editor-model*))
          ;; Help
          ((equalp action "about")
           (format T "menu selected about~%")
