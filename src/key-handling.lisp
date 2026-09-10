@@ -21,7 +21,6 @@
   (warn "Ctrl-n = next line")
   (warn "Ctrl-b = backwards character")
   (warn "Ctrl-f = forwards character")
-  (warn "Ctrl-M = toggle menu sensitive")
   (warn "-----------------------------------------"))
 
 (defun handle-key-pressed (entered key-name key-code mods lisp-window)
@@ -180,9 +179,6 @@
          (move-cursor-left model)
          (delete-character-at-cursor model))
 
-        ((match-key "M" '(:SHIFT :CTRL))
-         (progn
-           (warn "implement toggling menu sensitivity or hiding")))
         (T
          (if (equal entered "")
              (format t "unhandled key ~S~%" (list entered key-name key-code mods))
