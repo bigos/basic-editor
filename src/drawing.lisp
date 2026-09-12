@@ -4,6 +4,7 @@
 
 ;;; drawing ====================================================================
 (defun calculate-bwidth (model)
+  (assert (typep model 'basic-editor-model))
   (let* ((font-size 18)
          (text-for-size  "pOly()/_")
          (text-data (text-size text-for-size font-size ))
@@ -12,6 +13,7 @@
     (+ twidth 0)))
 
 (defun calculate-chars (model)
+  (assert (typep model 'basic-editor-model))
   (let*
       ((world (world model))
        (text-container
@@ -181,6 +183,8 @@
     (list :xb xb :yb yb :width width :height height)))
 
 (defun adding-children-viewport (model world)
+  (assert (typep model 'basic-editor-model))
+  (assert (typep world 'boxes:node))
   (let ((outer-container (boxes:make-node-right 20
                                                  340
                                                  (- (width world) 20 20)
@@ -224,6 +228,7 @@
                         (list text-container))))))
 
 (defun adding-children (model)
+  (assert (typep model 'basic-editor-model))
   (let ((world (world model)))
     (add-children world
                   (list
