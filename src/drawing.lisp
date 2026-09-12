@@ -277,8 +277,8 @@
         (world (boxes:make-node-down
                 0 0 (width window) (height window) "#cccccc88")))
     (setf (world model) world)
-
     ;; =========================================================================
+
     (adding-children model)
     (render world)
 
