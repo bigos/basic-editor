@@ -10,6 +10,7 @@
   (warn "F7 = stats")
   (warn "F8 = debug")
   (warn "F9 = examine model")
+  (warn "Alt-l = toggle line numbers")
   (warn "Alt-n = new file")
   (warn "Alt-f = open file")
   (warn "Alt-s = save file")
