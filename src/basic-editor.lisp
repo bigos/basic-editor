@@ -61,9 +61,6 @@
   (print-object-inner obj stream))
 
 ;;; ============================================================================
-(defmethod the-container ((model basic-editor-model))
-  (~> model world boxes:children (nth 1 _)))
-
 (defun print-text-stats (model)
   (let ((rx (sample-text-stats model)))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
@@ -76,6 +73,7 @@
                        )))))
 
 (defun print-hash-text-stats (model hash)
+  (assert (typep model 'basic-editor-model))
   (warn "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
   (let ((rx hash))
     ;; (format t "we have ~s lines ================= ~S~%" (hash-table-count lf) txt)
@@ -91,6 +89,9 @@
   (subseq text
           (home row)
           (end row)))
+
+(defmethod the-container ((model basic-editor-model))
+  (~> model world boxes:children (nth 1 _)))
 
 (defun model-characters (model)
   (labels ((box-with-text () (if (show-line-numbers model) 1 0)))
