@@ -316,18 +316,18 @@
 
 (defun main (&key (testing nil))
   (setf
-   gui-drawing:*client-fn-draw-objects*  'basic-editor::draw-window
+   gui-drawing:*client-fn-draw-objects*  'basic-editor:draw-window
    gui-window-gtk:*client-fn-menu-bar*      nil
-   gui-events:*client-fn-process-event* 'basic-editor::process-event
+   gui-events:*client-fn-process-event* 'basic-editor:process-event
    gui-window-gtk:*initial-window-width*    600
    gui-window-gtk:*initial-window-height*   400
    gui-window-gtk:*initial-title*           "Basic-Editor"
    ;; do not use menu bar without the focus fix. It is very annoying.
    ;; gui-window-gtk:*client-fn-menu-bar* 'basic-editor::menu-bar
-   gui-window-gtk:*client-fn-open-file* 'basic-editor::open-file
-   gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor::cancel-open-file
-   gui-window-gtk:*client-fn-save-file* 'basic-editor::save-file
-   gui-window-gtk:*client-fn-cancel-save-file* 'basic-editor::cancel-save-file
+   gui-window-gtk:*client-fn-open-file* 'basic-editor:open-file
+   gui-window-gtk:*client-fn-cancel-open-file* 'basic-editor:cancel-open-file
+   gui-window-gtk:*client-fn-save-file* 'basic-editor:save-file
+   gui-window-gtk:*client-fn-cancel-save-file* 'basic-editor:cancel-save-file
 
    *basic-editor-model* (make-instance 'basic-editor-model)
    boxes:*model* *basic-editor-model*

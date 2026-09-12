@@ -22,4 +22,12 @@
                 )
   (:local-nicknames (#:sy #:sycamore))
   (:export
-   main))
+   main
+   draw-window
+   process-event
+   menu-bar
+   open-file
+   cancel-open-file
+   save-file
+   cancel-save-file
+   ))
