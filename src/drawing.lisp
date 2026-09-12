@@ -229,6 +229,7 @@
 
 (defun adding-children (model)
   (assert (typep model 'basic-editor-model))
+  (warn "adding children to the world")
   (let ((world (world model)))
     (add-children world
                   (list
@@ -281,38 +282,38 @@
     (adding-children model)
     (render world)
 
-    ;; blue square follows the mouse ------------------------------------------
-    (let ((app gui-app:*lisp-app*))
-      (when (and (eq (gui-app:current-motion app)
-                     window)
-                 (gui-app:mouse-coordinates app))
-        (render-mouse (gui-app:mouse-coordinates app ))))))
+    (render-mouse window)))
 
-(defun render-mouse (mouse-position)
-  (when mouse-position
-    (let* (
-           (mx (car mouse-position))
-           (my (cdr mouse-position))
-           (px (+ mx 20))
-           (py (+ my 20))
-           (po 6)
-           (ao 15))
-      (when mouse-position
-        (labels ((drrr ()
-                   (cairo:line-to (+ 50 mx) (+ po 50 my)) ; end
-                   (cairo:line-to px (+ po py))
-                   (cairo:line-to (+ ao mx) (+ 50 my))
-                   (cairo:line-to mx my)  ;mp
-                   (cairo:line-to (+ 50 mx) (+ ao my))
-                   (cairo:line-to (+ po px) py)
-                   (cairo:line-to (+ po 50 mx) (+ 50 my)) ; end
-                   (cairo:line-to (+ 50 mx) (+ po 50 my)) ; end
-                   ))
-          (drrr)
-          (cairo:set-source-rgba 0.2 1.0 0.3 0.3)
-          (cairo:fill-path)
+(defun render-mouse (window)
+  (let ((app gui-app:*lisp-app*))
+    (when (and (eq (gui-app:current-motion app)
+                   window)
+               (gui-app:mouse-coordinates app))
+      (let ((mouse-position (gui-app:mouse-coordinates app )))
+        (when mouse-position
+          (let* (
+                 (mx (car mouse-position))
+                 (my (cdr mouse-position))
+                 (px (+ mx 20))
+                 (py (+ my 20))
+                 (po 6)
+                 (ao 15))
+            (when mouse-position
+              (labels ((drrr ()
+                         (cairo:line-to (+ 50 mx) (+ po 50 my)) ; end
+                         (cairo:line-to px (+ po py))
+                         (cairo:line-to (+ ao mx) (+ 50 my))
+                         (cairo:line-to mx my) ;mp
+                         (cairo:line-to (+ 50 mx) (+ ao my))
+                         (cairo:line-to (+ po px) py)
+                         (cairo:line-to (+ po 50 mx) (+ 50 my)) ; end
+                         (cairo:line-to (+ 50 mx) (+ po 50 my)) ; end
+                         ))
+                (drrr)
+                (cairo:set-source-rgba 0.2 1.0 0.3 0.3)
+                (cairo:fill-path)
 
-          (cairo:set-line-width 1.0)
-          (drrr)
-          (cairo:set-source-rgb 0.0 0.0 0.0) ; http://davidbau.com/colors/
-          (cairo:stroke))))))
+                (cairo:set-line-width 1.0)
+                (drrr)
+                (cairo:set-source-rgb 0.0 0.0 0.0) ; http://davidbau.com/colors/
+                (cairo:stroke)))))))))
