@@ -25,10 +25,7 @@
             (gui-app:mouse-button-pressed button)
             (warn "mouse state ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))
             (let*
-                ((children (~> *basic-editor-model*
-                               world
-                               boxes:children
-                               (nth 1 _)
+                ((children (~> (the-container *basic-editor-model*)
                                boxes:children))
                  (first-child-found ;; TODO because i added structure this no longer works
                    (car (loop for c in children
