@@ -36,7 +36,8 @@
                   (> bwidth 0))
              (floor (/ (width text-container )
                        (+ bwidth 3)))
-             80)))
+             80))
+       (model-text-wrap (eq (text-wrap model) :wrap)))
 
     (setf (wrap-at-column model) wrap-column)
 
@@ -48,10 +49,12 @@
                 (sycamore:rope-string
                  (text model))
           for row = 0 then (if (or (equal last-char #\Newline)
-                                   (>= col wrap-column))
+                                   (and model-text-wrap
+                                    (>= col wrap-column)))
                                (1+ row) row)
           for col = 0 then (if (or (equal last-char #\Newline)
-                                   (>= col wrap-column))
+                                   (and model-text-wrap
+                                    (>= col wrap-column)))
                                0 (1+ col))
           for pos = 0  then (1+ pos)
           for maxcol = 0 then (max maxcol col)
