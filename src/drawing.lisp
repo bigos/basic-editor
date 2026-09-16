@@ -219,7 +219,7 @@
                                              :height 15
                                              :color "white"
                                              :wrap 'truncate
-                                             :text (format nil "~S" (~> lc row ))))))
+                                             :text (format nil "~S" (~> lc row (1+ _) ))))))
       (add-children text-container
                     (getf calculated-characters :cursor))
 
