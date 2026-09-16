@@ -12,6 +12,9 @@
                            (length text-for-size)))))
     (+ twidth 0)))
 
+(defun model-text-wrap (model)
+  (eq (text-wrap model) :wrap))
+
 (defun calculate-chars (model)
   (assert (typep model 'basic-editor-model))
   (let*
@@ -37,7 +40,7 @@
              (floor (/ (width text-container )
                        (+ bwidth 3)))
              80))
-       (model-text-wrap (eq (text-wrap model) :wrap)))
+       (model-text-wrap (model-text-wrap model)))
 
     (setf (wrap-at-column model) wrap-column)
 
@@ -48,6 +51,11 @@
           for c across
                 (sycamore:rope-string
                  (text model))
+
+          for trim-row = 0 then (if (equal last-char #\Newline)  ;handle trim wrap
+                                    (1+ trim-row) trim-row)
+          for trim-col = 0 then (if (equal last-char #\Newline)  ;handle trim wrap
+                                    0 (1+ trim-col))
           for row = 0 then (if (or (equal last-char #\Newline)
                                    (and model-text-wrap
                                     (>= col wrap-column)))
@@ -99,6 +107,8 @@
                                               "pink")
                                    :row row
                                    :col col
+                                   :trim-row trim-row
+                                   :trim-col trim-col
                                    :pos pos
                                    :outside outside)
               into the-chars
@@ -211,7 +221,7 @@
                                     (zerop (col lc)))
                             collect
                             (progn
-                              ;; (warn "zaq ~s" (row lc))
+                              (warn "zaq ~s ~s" (row lc) lc)
                               (make-instance 'node-text
                                              :coordinates-relative (make-coordinates-relative 10
                                                                                               (~> lc boxes:coordinates-relative boxes:y))
@@ -219,7 +229,7 @@
                                              :height 15
                                              :color "white"
                                              :wrap 'truncate
-                                             :text (format nil "~S" (~> lc row (1+ _) ))))))
+                                             :text (format nil "zz ~S" (~> lc row (1+ _) ))))))
       (add-children text-container
                     (getf calculated-characters :cursor))
 

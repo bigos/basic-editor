@@ -36,8 +36,8 @@
 ;; (defmethod print-object ((obj standard-object) stream)
 ;;   (print-object-inner obj stream))
 
-;; (defmethod print-object ((obj basic-editor-character) stream)
-;;   (print-object-inner obj stream))
+(defmethod print-object ((obj basic-editor-character) stream)
+  (print-object-inner obj stream))
 
 (defmethod print-object ((obj basic-editor-character) stream)
   (print-unreadable-object (obj stream :type t :identity t)

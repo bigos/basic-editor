@@ -43,6 +43,8 @@
 (defclass/std basic-editor-character (boxes:node-character)
   ((row)
    (col)
+   (trim-row)
+   (trim-col)
    (pos)
    (outside)))
 
