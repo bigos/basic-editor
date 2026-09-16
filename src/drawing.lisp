@@ -218,7 +218,7 @@
       (add-children linenum-container
                     (loop for lc in (~> text-container boxes:children)
                           when (and (typep lc 'basic-editor-character)
-                                    (zerop (col lc)))
+                                    (zerop (trim-col lc)))
                             collect
                             (progn
                               (warn "zaq ~s ~s" (row lc) lc)
@@ -229,7 +229,7 @@
                                              :height 15
                                              :color "white"
                                              :wrap 'truncate
-                                             :text (format nil "zz ~S" (~> lc row (1+ _) ))))))
+                                             :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
       (add-children text-container
                     (getf calculated-characters :cursor))
 
