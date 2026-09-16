@@ -40,8 +40,8 @@
 
     (setf (wrap-at-column model) wrap-column)
 
-    (loop last-relx = nil then relx
-          last-rely = nil then rely
+    (loop for last-relx = nil then relx
+          for last-rely = nil then rely
           for last-char = nil then c
 
           for c across
