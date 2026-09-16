@@ -32,16 +32,18 @@
        (bwidth  (+ twidth 0))
        (bheight (+ theight 0))
        (wrap-column
-         (if (and text-container (> bwidth 0))
+         (if (and text-container
+                  (> bwidth 0))
              (floor (/ (width text-container )
                        (+ bwidth 3)))
-             80))
-       (last-relx nil)
-       (last-rely nil))
+             80)))
 
     (setf (wrap-at-column model) wrap-column)
 
-    (loop for last-char = nil then c
+    (loop last-relx = nil then relx
+          last-rely = nil then rely
+          for last-char = nil then c
+
           for c across
                 (sycamore:rope-string
                  (text model))
@@ -116,9 +118,7 @@
                                    :col col
                                    :pos pos)
               into cursors
-          do (setf
-              last-relx relx
-              last-rely rely)
+
           finally
              ;; (warn "CURSORS ~S" cursors)
              (setf (all-lines-count model) row)
