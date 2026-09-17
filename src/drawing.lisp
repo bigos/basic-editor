@@ -37,8 +37,9 @@
        (wrap-column
          (if (and text-container
                   (> bwidth 0))
-             (floor (/ (width text-container )
-                       (+ bwidth 3)))
+             (- (floor (/ (width text-container )
+                          (+ bwidth 1)))
+                2)
              80))
        (model-text-wrap (model-text-wrap model)))
 
