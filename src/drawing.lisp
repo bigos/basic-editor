@@ -15,15 +15,10 @@
 (defun model-text-wrap (model)
   (eq (text-wrap model) :wrap))
 
-(defun calculate-chars (model)
+(defun calculate-chars (model text-container linenum-container)
   (assert (typep model 'basic-editor-model))
   (let*
       ((world (world model))
-       (text-container
-         (make-node 20
-                    340
-                    (- (width world) 20 20)
-                    (- (height world) 60) "yellow"))
        (margin-horizontal 0)
        (margin-vertical 0)
        (font-size 18)
@@ -31,15 +26,24 @@
        (text-data (text-size text-for-size font-size ))
        (twidth (calculate-bwidth model))
        (theight          (getf text-data :height))
-
        (bwidth  (+ twidth 0))
        (bheight (+ theight 0))
+       ;; (linenum-width (if linenum-container
+       ;;                    (width linenum-container)
+       ;;                    0))
        (wrap-column
          (if (and text-container
                   (> bwidth 0))
-             (- (floor (/ (width text-container )
-                          (+ bwidth 1)))
-                2)
+             (- (floor
+                 (/
+                  (width text-container) 10
+                  )
+                 )
+                (case (text-wrap model)
+                  (:trim 2)
+                  (:wrap 3)
+                  (t 3)))
+
              80))
        (model-text-wrap (model-text-wrap model)))
 
@@ -59,11 +63,11 @@
                                     0 (1+ trim-col))
           for row = 0 then (if (or (equal last-char #\Newline)
                                    (and model-text-wrap
-                                    (>= col wrap-column)))
+                                        (>= col wrap-column)))
                                (1+ row) row)
           for col = 0 then (if (or (equal last-char #\Newline)
                                    (and model-text-wrap
-                                    (>= col wrap-column)))
+                                        (>= col wrap-column)))
                                0 (1+ col))
           for pos = 0  then (1+ pos)
           for maxcol = 0 then (max maxcol col)
@@ -157,7 +161,12 @@
                                                     :color "#FFFF8844"
                                                     :row nil
                                                     :col nil
-                                                    :pos nil)))))))))
+                                                    :pos nil))
+                                    )
+                                  )
+                      )
+                     )
+          )))
 
 (defun text-size (text text-size)
   (handler-bind
@@ -204,15 +213,21 @@
                                                  (- (width world) 20 20)
                                                  (- (height world) 60) "black")))
 
-    (let ((linenum-container (make-node 20
+    (let* ((linenum-container (make-node 20
                                         120
                                         120
                                         (- (height world) 60) "red"))
           (text-container (make-node 20
                                      340
-                                     (- (width world) 20 20)
+                                     (- (width world) 20 20
+                                        (if (show-line-numbers model)
+                                            (width linenum-container)
+                                            0)
+                                        )
                                      (- (height world) 60) "yellow"))
-          (calculated-characters (calculate-chars model)))
+          (calculated-characters (calculate-chars model
+                                                  text-container
+                                                  (when (show-line-numbers model) linenum-container))))
 
       (add-children text-container
                     (getf calculated-characters :chars))
