@@ -237,7 +237,7 @@
                                     (zerop (trim-col lc)))
                             collect
                             (progn
-                              (warn "zaq ~s ~s" (row lc) lc)
+                              ;; (warn "zaq ~s ~s" (row lc) lc)
                               (make-instance 'node-text
                                              :coordinates-relative (make-coordinates-relative 10
                                                                                               (~> lc boxes:coordinates-relative boxes:y))
@@ -258,7 +258,7 @@
 
 (defun adding-children (model)
   (assert (typep model 'basic-editor-model))
-  (warn "adding children to the world")
+  ;; (warn "adding children to the world")
   (let ((world (world model)))
     (add-children world
                   (list
