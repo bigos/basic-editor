@@ -303,17 +303,15 @@
 
   ;; ==================================================================
   (let ((model *basic-editor-model*))
-    (if (null (world model))
-        (progn
-          (world (boxes:make-node-down
-                  0 0 (width window) (height window) "#cccccc88"))
-          (setf (world model) world)))
+    (when (null (world model))
+      (setf (world model) (world (boxes:make-node-down
+                                  0 0 (width window) (height window) "#cccccc88"))))
     ;; =========================================================================
 
     (adding-children model)
-    (render world)
+    (render (world model)))
 
-    (render-mouse window)))
+  (render-mouse window))
 
 (defun render-mouse (window)
   (let ((app gui-app:*lisp-app*))
