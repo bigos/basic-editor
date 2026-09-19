@@ -162,11 +162,7 @@
                                                     :row nil
                                                     :col nil
                                                     :pos nil))
-                                    )
-                                  )
-                      )
-                     )
-          )))
+                                    )))))))
 
 (defun text-size (text text-size)
   (handler-bind
