@@ -303,7 +303,8 @@
 
   ;; ==================================================================
   (let ((model *basic-editor-model*))
-    (when (null (world model))
+
+    (when T
       (setf (world model) (boxes:make-node-down
                            0 0 (width window) (height window) "#cccccc88")))
     ;; =========================================================================
