@@ -229,6 +229,8 @@
                                                   text-container
                                                   (when (show-line-numbers model) linenum-container))))
       ;; ----------------------------------------------------------------------------------------------
+      (add-children text-container
+                    (getf calculated-characters :chars))
 
       (add-children linenum-container
                     (loop for lc in (~> text-container boxes:children)
@@ -246,8 +248,7 @@
                                              :wrap 'truncate
                                              :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
 
-      (add-children text-container
-                    (getf calculated-characters :chars))
+
       (add-children text-container
                     (getf calculated-characters :cursor))
 
