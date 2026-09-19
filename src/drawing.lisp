@@ -228,9 +228,8 @@
           (calculated-characters (calculate-chars model
                                                   text-container
                                                   (when (show-line-numbers model) linenum-container))))
+      ;; ----------------------------------------------------------------------------------------------
 
-      (add-children text-container
-                    (getf calculated-characters :chars))
       (add-children linenum-container
                     (loop for lc in (~> text-container boxes:children)
                           when (and (typep lc 'basic-editor-character)
@@ -246,6 +245,9 @@
                                              :color "white"
                                              :wrap 'truncate
                                              :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
+
+      (add-children text-container
+                    (getf calculated-characters :chars))
       (add-children text-container
                     (getf calculated-characters :cursor))
 
