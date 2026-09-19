@@ -304,8 +304,8 @@
   ;; ==================================================================
   (let ((model *basic-editor-model*))
     (when (null (world model))
-      (setf (world model) (world (boxes:make-node-down
-                                  0 0 (width window) (height window) "#cccccc88"))))
+      (setf (world model) (boxes:make-node-down
+                           0 0 (width window) (height window) "#cccccc88")))
     ;; =========================================================================
 
     (adding-children model)
