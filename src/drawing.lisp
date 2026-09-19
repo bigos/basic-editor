@@ -302,10 +302,12 @@
   (cairo:paint)
 
   ;; ==================================================================
-  (let ((model *basic-editor-model*)
-        (world (boxes:make-node-down
-                0 0 (width window) (height window) "#cccccc88")))
-    (setf (world model) world)
+  (let ((model *basic-editor-model*))
+    (if (null (world model))
+        (progn
+          (world (boxes:make-node-down
+                  0 0 (width window) (height window) "#cccccc88"))
+          (setf (world model) world)))
     ;; =========================================================================
 
     (adding-children model)
