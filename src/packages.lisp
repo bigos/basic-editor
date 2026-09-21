@@ -16,6 +16,7 @@
                 text
                 render
                 bchar
+                children
                 add-children
                 mouse-position
                 mouse-over-p
