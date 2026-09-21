@@ -305,13 +305,13 @@
 
     ;; do not create world all the time
     (if (world model)
-        (progn
-          (setf (children (world model)) nil
-                (width (world model)) (width window)
-                (height (world model)) (height window)))
-        (progn ; else
-          (setf (world model) (boxes:make-node-down
-                               0 0 (width window) (height window) "#cccccc88"))))
+        ;; then
+        (setf (children (world model)) nil
+              (width (world model))  (width window)
+              (height (world model)) (height window))
+        ;; else
+        (setf (world model) (boxes:make-node-down
+                             0 0 (width window) (height window) "#cccccc88")))
     ;; =========================================================================
 
     (adding-children model)
