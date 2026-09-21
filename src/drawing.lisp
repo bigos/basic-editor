@@ -303,9 +303,15 @@
   ;; ==================================================================
   (let ((model *basic-editor-model*))
 
-    (when T
-      (setf (world model) (boxes:make-node-down
-                           0 0 (width window) (height window) "#cccccc88")))
+    ;; (when T
+    ;;   (setf (world model) (boxes:make-node-down
+    ;;                        0 0 (width window) (height window) "#cccccc88")))
+    (if (world model)
+        (progn
+          (setf (children (world model)) nil))
+        (progn ; else
+          (setf (world model) (boxes:make-node-down
+                               0 0 (width window) (height window) "#cccccc88"))))
     ;; =========================================================================
 
     (adding-children model)
