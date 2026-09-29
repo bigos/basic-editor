@@ -316,8 +316,8 @@
 
 (defun main (&key (testing nil))
   (setf
-   gui-drawing:*client-fn-draw-objects*  'basic-editor:draw-window
-   gui-window-gtk:*client-fn-menu-bar*      nil
+   gui-drawing:*client-fn-draw-objects* 'basic-editor:draw-window
+   gui-window-gtk:*client-fn-menu-bar*  'basic-editor:menu-bar
    gui-events:*client-fn-process-event* 'basic-editor:process-event
    gui-window-gtk:*initial-window-width*    600
    gui-window-gtk:*initial-window-height*   400

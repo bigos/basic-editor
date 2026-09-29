@@ -91,7 +91,9 @@
          (T
           (format T "unhandled menu action ~S~%" action)))
 
-       (gtk4:widget-grab-focus gui-window-gtk:*canvas-widget*)
+       ;; (setf (gtk4:widget-focus-p (gui-window::gir-menu-bar lisp-window)) nil)
+       (setf (gtk4:root-focus) nil)
+       (setf (gtk4:root-focus) (gui-window:gir-canvas lisp-window))
        ;; possibly steal menu focus
        ))
     (otherwise
