@@ -147,6 +147,13 @@
                             (:word-wrap
                              :trim))))
 
+(defmethod line-numbers-toggle ((model basic-editor-model))
+  (progn
+    (setf (show-line-numbers *basic-editor-model*) (if (show-line-numbers *basic-editor-model*)
+                                                       nil
+                                                       T))
+    (warn "toggled showing lines to ~S" (show-line-numbers *basic-editor-model*))))
+
 (defun sample-text-stats (model)
   (assert (typep (text model) 'simple-array))
   (let* ((text (text model))

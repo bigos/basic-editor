@@ -83,7 +83,7 @@
           (gui-window-gtk:close-all-windows-and-quit))
          ;; View
          ((equalp action "toggle-line-numbers")
-          (wrap-toggle *basic-editor-model*))
+          (line-numbers-toggle *basic-editor-model*))
          ;; Help
          ((equalp action "about")
           (format T "menu selected about~%")
