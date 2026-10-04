@@ -111,18 +111,18 @@
 
 ;;; ----------------------------------------------------------------------------
 ;;; unused
-(defmethod first-row ((model basic-editor-model))
-  (let ((the-data (data (text-structure model))))
-    (gethash 0 the-data)))
+(defmethod first-row ((text-structure text-size))
+  (gethash 0
+           (data text-structure)))
 
-(defmethod previous-row ((model basic-editor-model))
-  (let ((the-data (data (text-structure model)))
-        (row (~> model cursor row)))
+(defmethod previous-row ((text-structure text-structure) (cursor cursor))
+  (let ((the-data (data text-structure ))
+        (row (~> cursor row)))
     (gethash (1- row) the-data)))
 
-(defmethod current-row ((model basic-editor-model))
-  (let ((the-data (data (text-structure model)))
-        (row (~> model cursor row)))
+(defmethod current-row ((text-structure text-structure) (cursor cursor))
+  (let ((the-data (data text-structure))
+        (row (~> cursor row)))
     (gethash row the-data)))
 
 (defmethod next-row ((text-structure text-structure) (cursor cursor))
@@ -204,7 +204,7 @@
 
 ;;; ----------------------------------------------------------------------------
 (defmethod find-cursor-position ((model basic-editor-model))
-  (let ((cur-row (current-row model)))
+  (let ((cur-row (current-row (text-structure model) (cursor model))))
     (when cur-row
       (+ (~> model cursor col)
          (home cur-row)))))

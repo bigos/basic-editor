@@ -51,7 +51,7 @@
 (defmethod valid-cursor-position ((model basic-editor-model) row col)
   (reload-text-structure model)
 
-  (let ((current-row (current-row model)))
+  (let ((current-row (current-row (text-structure model) (cursor model))))
 
     (let ((valid-row (and (>= row 0)
                           (<= row (row  (last-row (text-structure model))))))
@@ -98,12 +98,12 @@
                                       (+ column (home next-row)))))))
 
 (defmethod move-cursor-home ((model basic-editor-model))
-  (let ((cur-row (current-row model)))
+  (let ((cur-row (current-row (text-structure model) (cursor model))))
     (when cur-row
       (move-cursor-to-position model (home cur-row)))))
 
 (defmethod move-cursor-end ((model basic-editor-model) ignored)
-  (let ((cur-row (current-row model)))
+  (let ((cur-row (current-row (text-structure model) (cursor model))))
     (when cur-row
       (move-cursor-to-position model (1- (end cur-row))))))
 
