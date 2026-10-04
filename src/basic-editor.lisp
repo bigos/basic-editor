@@ -130,8 +130,8 @@
         (row (~> model cursor row)))
     (gethash (1+ row) the-data)))
 
-(defmethod last-row ((model basic-editor-model))
-  (let ((the-data (data (text-structure model))))
+(defmethod last-row ((text-structure text-structure))
+  (let ((the-data (data text-structure)))
     (gethash (1- (hash-table-count the-data)) the-data)))
 
 (defmethod nth-row ((text-structure text-structure) nth)
