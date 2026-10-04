@@ -63,8 +63,8 @@
 
 (defmethod move-cursor-to ((model basic-editor-model) row col)
   (warn "clicked to move cursor to ~S ~S" row col)
-    (let ((nth-row (nth-row model row)))
-      (move-cursor-to-position model (+ col (home nth-row)))))
+  (move-cursor-to-position model (+ col (home
+                                         (nth-row (text-structure model) row)))))
 
 (defmethod move-cursor-left ((model basic-editor-model))
   (when (> (~> model cursor text-position) 0)

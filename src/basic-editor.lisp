@@ -110,6 +110,7 @@
   (setf (current-file model) nil))
 
 ;;; ----------------------------------------------------------------------------
+;;; unused
 (defmethod first-row ((model basic-editor-model))
   (let ((the-data (data (text-structure model))))
     (gethash 0 the-data)))
@@ -133,9 +134,9 @@
   (let ((the-data (data (text-structure model))))
     (gethash (1- (hash-table-count the-data)) the-data)))
 
-(defmethod nth-row ((model basic-editor-model) nth)
-  (let ((the-data (data (text-structure model))))
-    (gethash nth the-data)))
+(defmethod nth-row ((text-structure text-structure) nth)
+  (gethash nth
+           (data text-structure)))
 ;;; ----------------------------------------------------------------------------
 
 (defmethod wrap-toggle ((model basic-editor-model))
