@@ -111,7 +111,7 @@
 
 ;;; ----------------------------------------------------------------------------
 ;;; unused
-(defmethod first-row ((text-structure text-size))
+(defmethod first-row ((text-structure text-structure))
   (gethash 0
            (data text-structure)))
 
