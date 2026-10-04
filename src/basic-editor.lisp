@@ -110,7 +110,6 @@
   (setf (current-file model) nil))
 
 ;;; ----------------------------------------------------------------------------
-;;; unused
 (defmethod first-row ((text-structure text-structure))
   (gethash 0
            (data text-structure)))
