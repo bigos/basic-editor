@@ -227,22 +227,23 @@
 
 ;;; ----------------------------------------------------------------------------
 (defmethod delete-character-at-cursor ((model basic-editor-model))
-  (let ((cur-pos (~> model cursor text-position)))
+  (let ((cur-pos (~> model cursor text-position))
+        (text (text model)))
 
     ;; (warn "will delete at row ~S col ~S pos ~S"
     ;;       (~> model cursor row)
     ;;       (~> model cursor col)
     ;;       cur-pos)
-    (unless (equal (text model) "")
+    (unless (equal text "")
       (if (and cur-pos
                (>= cur-pos 0)
-               (< cur-pos (length (text  model))))
+               (< cur-pos (length text)))
           (progn
-            (setf (text model) (format nil "~A~A"
-                                       (subseq (text model) 0
-                                               cur-pos)
-                                       (subseq (text model) (+ 1 cur-pos)
-                                               (length (text model)))))
+            (setf text (format nil "~A~A"
+                               (subseq text 0
+                                       cur-pos)
+                               (subseq text (+ 1 cur-pos)
+                                       (length text))))
             (reload-text-structure model))
           ;; (warn "No cursor position found, possibly no text")
           ))))
