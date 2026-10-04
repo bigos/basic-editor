@@ -91,7 +91,7 @@
 
 (defmethod move-cursor-down ((model basic-editor-model) ignored)
   (let ((column (~> model cursor col))
-        (next-row (next-row model)))
+        (next-row (next-row (text-structure model) (cursor model))))
     (when next-row
       (move-cursor-to-position model (min
                                       (1- (end next-row))

@@ -125,9 +125,9 @@
         (row (~> model cursor row)))
     (gethash row the-data)))
 
-(defmethod next-row ((model basic-editor-model))
-  (let ((the-data (data (text-structure model)))
-        (row (~> model cursor row)))
+(defmethod next-row ((text-structure text-structure) (cursor cursor))
+  (let ((the-data (data text-structure ))
+        (row (~> cursor row)))
     (gethash (1+ row) the-data)))
 
 (defmethod last-row ((text-structure text-structure))
