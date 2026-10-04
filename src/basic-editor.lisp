@@ -254,14 +254,14 @@
   ;;       (text model))
 
   (let ((cur-pos (or (~> model cursor text-position) 0))
-        (text (text model))
         (entered-key (if (equal key-name "Return")
                          (format nil "~%")
                          entered)))
-    (setf (text model) (format nil "~A~A~A"
-                          (subseq text 0 cur-pos)
-                          entered-key
-                          (subseq text cur-pos)))
+    (setf (text model) (let ((text (text model)))
+                         (format nil "~A~A~A"
+                                 (subseq text 0 cur-pos)
+                                 entered-key
+                                 (subseq text cur-pos))))
     (reload-text-structure model)
     (move-cursor-to-position model (1+ (~> model cursor text-position)))))
 
