@@ -27,7 +27,7 @@
        (let*
            ((children (~> (the-container *basic-editor-model*)
                           boxes:children))
-            (first-child-found ;; TODO because i added structure this no longer works
+            (first-child-found
               (car (loop for c in children
                          when (boxes:mouse-over-p c)
                            collect c)))
