@@ -207,7 +207,6 @@
     (when cur-row
       (+ (~> model cursor col)
          (home cur-row)))))
-
 (defmethod find-first-visible-row ((model basic-editor-model))
   (loop for c in (seen-chars model)
         minimize (~> c row)))
@@ -257,6 +256,7 @@
         (entered-key (if (equal key-name "Return")
                          (format nil "~%")
                          entered)))
+
     (setf (text model) (let ((text (text model)))
                          (format nil "~A~A~A"
                                  (subseq text 0 cur-pos)
