@@ -21,23 +21,39 @@
     (:focus-enter)
     (:focus-leave)
     (:pressed
-          (destructuring-bind ((button x y)) args
-            (gui-app:mouse-button-pressed button)
-            (warn "mouse state ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))
-            (let*
-                ((children (~> (the-container *basic-editor-model*)
-                               boxes:children))
-                 (first-child-found ;; TODO because i added structure this no longer works
-                   (car (loop for c in children
-                              when (boxes:mouse-over-p c)
-                                collect c))))
-              ;; (warn "model world children under mouse ~S"
-              ;;       first-child-found)
-              (when (and first-child-found
-                         (typep first-child-found 'basic-editor-character))
-                (warn "clicked ready to move cursor ~S" first-child-found)
-                (move-cursor-to *basic-editor-model* (row first-child-found) (col first-child-found)))
-              )))
+     (destructuring-bind ((button x y)) args
+       (gui-app:mouse-button-pressed button)
+       (warn "mouse state ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))
+       (let*
+           ((children (~> (the-container *basic-editor-model*)
+                          boxes:children))
+            (first-child-found ;; TODO because i added structure this no longer works
+              (car (loop for c in children
+                         when (boxes:mouse-over-p c)
+                           collect c))))
+         (warn "model world children under mouse ~S"
+               first-child-found)
+         (if (and children
+                  (null first-child-found))
+                                        ;then
+          (let* ((grandchildren (children (first children)))
+                (first-grandchild-found
+                  (car (loop for c in grandchildren
+                             when (boxes:mouse-over-p c)
+                               collect c))))
+            (when (and first-grandchild-found
+                       (typep first-grandchild-found 'basic-editor-character))
+              (warn "clicked 2 ready to move cursor ~S" first-grandchild-found)
+              (move-cursor-to *basic-editor-model*
+                              (row first-grandchild-found)
+                              (col first-grandchild-found))))
+          (progn                        ;else
+            (when (and first-child-found
+                       (typep first-child-found 'basic-editor-character))
+              (warn "clicked ready to move cursor ~S" first-child-found)
+              (move-cursor-to *basic-editor-model*
+                              (row first-child-found)
+                              (col first-child-found))))))))
     (:released
           (destructuring-bind ((button x y)) args
             (gui-app:mouse-button-released button)
