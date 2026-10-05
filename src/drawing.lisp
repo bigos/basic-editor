@@ -31,20 +31,19 @@
        ;; (linenum-width (if linenum-container
        ;;                    (width linenum-container)
        ;;                    0))
-       (wrap-column
-         (if (and text-container
-                  (> bwidth 0))
-             (- (floor
-                 (/
-                  (width text-container) 10
-                  )
-                 )
-                (case (text-wrap model)
-                  (:trim 2)
-                  (:wrap 3)
-                  (t 3)))
+       (wrap-column (if (and text-container
+                             (> bwidth 0))
+                        (- (floor
+                            (/
+                             (width text-container) 10
+                             )
+                            )
+                           (case (text-wrap model)
+                             (:trim 2)
+                             (:wrap 3)
+                             (t 3)))
 
-             80))
+                        80))
        (model-text-wrap (model-text-wrap model)))
 
     (setf (wrap-at-column model) wrap-column)
@@ -204,51 +203,49 @@
 (defun adding-children-viewport (model world)
   (assert (typep model 'basic-editor-model))
   (assert (typep world 'boxes:node))
-  (let ((outer-container (boxes:make-node-right 20
-                                                 340
-                                                 (- (width world) 20 20)
-                                                 (- (height world) 60) "black")))
+  (let* ((linenum-container (make-node 20
+                                       120
+                                       120
+                                       (- (height world) 60) "red"))
+         (text-container (make-node 20
+                                    340
+                                    (- (width world) 20 20
+                                       (if (show-line-numbers model)
+                                           (width linenum-container)
+                                           0)
+                                       )
+                                    (- (height world) 60) "yellow"))
+         (calculated-characters (calculate-chars model
+                                                 text-container
+                                                 (when (show-line-numbers model) linenum-container))))
+    ;; ----------------------------------------------------------------------------------------------
+    (add-children text-container
+                  (getf calculated-characters :chars))
+    (add-children text-container
+                  (getf calculated-characters :cursor))
 
-    (let* ((linenum-container (make-node 20
-                                        120
-                                        120
-                                        (- (height world) 60) "red"))
-          (text-container (make-node 20
-                                     340
-                                     (- (width world) 20 20
-                                        (if (show-line-numbers model)
-                                            (width linenum-container)
-                                            0)
-                                        )
-                                     (- (height world) 60) "yellow"))
-          (calculated-characters (calculate-chars model
-                                                  text-container
-                                                  (when (show-line-numbers model) linenum-container))))
-      ;; ----------------------------------------------------------------------------------------------
-      (add-children text-container
-                    (getf calculated-characters :chars))
-      (add-children text-container
-                    (getf calculated-characters :cursor))
-
-      (add-children linenum-container
-                    (loop for lc in (~> text-container boxes:children)
-                          when (and (typep lc 'basic-editor-character)
-                                    (zerop (trim-col lc)))
-                            collect
-                            (progn
-                              ;; (warn "zaq ~s ~s" (row lc) lc)
-                              (make-instance 'node-text
-                                             :coordinates-relative (make-coordinates-relative 10
-                                                                                              (~> lc boxes:coordinates-relative boxes:y))
-                                             :width 80
-                                             :height 15
-                                             :color "white"
-                                             :wrap 'truncate
-                                             :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
+    (add-children linenum-container
+                  (loop for lc in (~> text-container boxes:children)
+                        when (and (typep lc 'basic-editor-character)
+                                  (zerop (trim-col lc)))
+                          collect
+                          (progn
+                            ;; (warn "zaq ~s ~s" (row lc) lc)
+                            (make-instance 'node-text
+                                           :coordinates-relative (make-coordinates-relative 10
+                                                                                            (~> lc boxes:coordinates-relative boxes:y))
+                                           :width 80
+                                           :height 15
+                                           :color "white"
+                                           :wrap 'truncate
+                                           :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
 
 
 
-
+    (let ((outer-container (boxes:make-node-right 20
+                                                  340
+                                                  (- (width world) 20 20)
+                                                  (- (height world) 60) "black")))
       (add-children outer-container
                     (if (show-line-numbers model)
                         (list linenum-container

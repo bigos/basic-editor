@@ -76,7 +76,7 @@
 
 (defmethod move-cursor-up ((model basic-editor-model))
   (let ((column (~> model cursor col)))
-    (let ((previous-row (previous-row model)))
+    (let ((previous-row (previous-row (~> model text-structure) (~> model cursor))))
       (when previous-row
         (move-cursor-to-position model (min
                                         (1- (end previous-row))
