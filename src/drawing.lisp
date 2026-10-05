@@ -228,19 +228,17 @@
                   (loop for lc in (~> text-container boxes:children)
                         when (and (typep lc 'basic-editor-character)
                                   (zerop (trim-col lc)))
-                          collect
-                          (progn
-                            ;; (warn "zaq ~s ~s" (row lc) lc)
-                            (make-instance 'node-text
-                                           :coordinates-relative (make-coordinates-relative 10
-                                                                                            (~> lc boxes:coordinates-relative boxes:y))
-                                           :width 80
-                                           :height 15
-                                           :color "white"
-                                           :wrap 'truncate
-                                           :text (format nil "~S" (~> lc trim-row (1+ _) ))))))
-
-
+                          collect (make-instance 'node-text
+                                                 :coordinates-relative (make-coordinates-relative
+                                                                        10
+                                                                        (~> lc
+                                                                            boxes:coordinates-relative
+                                                                            boxes:y))
+                                                 :width 80
+                                                 :height 15
+                                                 :color "white"
+                                                 :wrap 'truncate
+                                                 :text (format nil "~S" (~> lc trim-row (1+ _) )))))
 
     (let ((outer-container (boxes:make-node-right 20
                                                   340
