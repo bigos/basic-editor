@@ -35,6 +35,7 @@
          (warn "model world children under mouse ~S"
                first-child-found)
          ;; TODO we need overhaul of finding widgets
+
          (if (and children
                   (null first-child-found))
                                         ;then
@@ -44,8 +45,10 @@
                               when (boxes:mouse-over-p c)
                                 collect c))))
             (setf char-child-found first-grandchild-found))
-          (progn                        ;else
+                                        ;else
+          (progn
             (setf char-child-found first-child-found)))
+
          (when (and char-child-found
                     (typep char-child-found 'basic-editor-character))
            (warn "clicked ready to move cursor ~S" char-child-found)
@@ -53,12 +56,12 @@
                            (row char-child-found)
                            (col char-child-found))))))
     (:released
-          (destructuring-bind ((button x y)) args
-            (gui-app:mouse-button-released button)
-            (warn "mouse state released ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))))
+               (destructuring-bind ((button x y)) args
+                 (gui-app:mouse-button-released button)
+                 (warn "mouse state released ~S ~S" (gui-app:mouse-button gui-app:*lisp-app*) (list button x y))))
     (:scroll)
     (:resize
-     ;; on resize move cursor to corresponding file position
+          ;; on resize move cursor to corresponding file position
      (destructuring-bind ((w h)) args
        (gui-window:window-resize w h lisp-window)
        (setf (width lisp-window) w
@@ -74,38 +77,38 @@
                        bwidth)))
                (reload-text-structure model)))))))
     (:key-pressed
-     (destructuring-bind ((entered key-name key-code mods)) args
-       ;; example of accessing gtk window object
-       ;; (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
-       (handle-key-pressed entered key-name key-code mods lisp-window)))
+          (destructuring-bind ((entered key-name key-code mods)) args
+            ;; example of accessing gtk window object
+            ;; (format t "~&>>> key pressed ~S~%" (list entered key-name key-code mods))
+            (handle-key-pressed entered key-name key-code mods lisp-window)))
     (:menu-simple
-     (destructuring-bind ((action)) args
-       (cond
-         ;; File
-         ((equalp action "new")
-          (format T "menu selected new~%")
-          (new-file *basic-editor-model*))
-         ((equalp action "open")
-          (format T "menu selected open~%")
-          (gui-window-gtk:present-file-open-dialog))
-         ((equalp action "save-as")
-          (format T "menu selected save-as~%")
-          (file-save-selector))
-         ((equalp action "quit")
-          (format T "menu selected quit~%")
-          (gui-window-gtk:close-all-windows-and-quit))
-         ;; View
-         ((equalp action "toggle-line-numbers")
-          (line-numbers-toggle *basic-editor-model*))
-         ;; Help
-         ((equalp action "about")
-          (format T "menu selected about~%")
-          (gui-window-gtk:present-about-dialog (about-dialog)))
-         (T
-          (format T "unhandled menu action ~S~%" action)))
+          (destructuring-bind ((action)) args
+            (cond
+              ;; File
+              ((equalp action "new")
+               (format T "menu selected new~%")
+               (new-file *basic-editor-model*))
+              ((equalp action "open")
+               (format T "menu selected open~%")
+               (gui-window-gtk:present-file-open-dialog))
+              ((equalp action "save-as")
+               (format T "menu selected save-as~%")
+               (file-save-selector))
+              ((equalp action "quit")
+               (format T "menu selected quit~%")
+               (gui-window-gtk:close-all-windows-and-quit))
+              ;; View
+              ((equalp action "toggle-line-numbers")
+               (line-numbers-toggle *basic-editor-model*))
+              ;; Help
+              ((equalp action "about")
+               (format T "menu selected about~%")
+               (gui-window-gtk:present-about-dialog (about-dialog)))
+              (T
+               (format T "unhandled menu action ~S~%" action)))
 
-       ;; remember to steal menu focus
-       (gui-window:steal-focus lisp-window)))
+            ;; remember to steal menu focus
+            (gui-window:steal-focus lisp-window)))
     (otherwise
      (unless (eq event  :key-released)
        (warn "not handled event ~S ~S" event args))))
