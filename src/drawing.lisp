@@ -206,7 +206,8 @@
   (let* ((linenum-container (make-node 20
                                        120
                                        120
-                                       (- (height world) 60) "red"))
+                                       (- (height world) 60)
+                                       "red"))
          (text-container (make-node 20
                                     340
                                     (- (width world) 20 20
@@ -214,7 +215,8 @@
                                            (width linenum-container)
                                            0)
                                        )
-                                    (- (height world) 60) "yellow"))
+                                    (- (height world) 60)
+                                    "yellow"))
          (calculated-characters (calculate-chars model
                                                  text-container
                                                  (when (show-line-numbers model) linenum-container))))
@@ -240,10 +242,11 @@
                                                  :wrap 'truncate
                                                  :text (format nil "~S" (~> lc trim-row (1+ _) )))))
 
-    (let ((outer-container (boxes:make-node-right 20
-                                                  340
-                                                  (- (width world) 20 20)
-                                                  (- (height world) 60) "black")))
+    (let ((outer-container (make-node-right 20
+                                            340
+                                            (- (width world) 20 20)
+                                            (- (height world) 60)
+                                            "black")))
       (add-children outer-container
                     (if (show-line-numbers model)
                         (list linenum-container
@@ -295,9 +298,7 @@
   (let ((cv 0.95)) (cairo:set-source-rgb  cv cv cv))
   (cairo:paint)
 
-  ;; ==================================================================
   (let ((model *basic-editor-model*))
-
     ;; do not create world all the time
     (if (world model)
         ;; then
@@ -307,9 +308,8 @@
         ;; else
         (setf (world model) (boxes:make-node-down
                              0 0 (width window) (height window) "#cccccc88")))
-    ;; =========================================================================
 
-    (adding-children model)
+    (adding-children model)             ;===============================================
     (render (world model)))
 
   (render-mouse window))
