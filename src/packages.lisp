@@ -8,6 +8,7 @@
   (:import-from :boxes
                 model
                 make-node
+                make-node-right
                 make-coordinates-relative
                 node-text
                 boxes-window
