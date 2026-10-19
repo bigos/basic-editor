@@ -3,6 +3,7 @@
 (in-package #:basic-editor)
 
 ;;; drawing ====================================================================
+
 (defun calculate-bwidth (model)
   (assert (typep model 'basic-editor-model))
   (let* ((font-size 18)
