@@ -16,7 +16,7 @@
 (defun model-text-wrap (model)
   (eq (text-wrap model) :wrap))
 
-(defun calculate-chars (model width-text-container height-text-container linenum-container)
+(defun calculate-chars (model width-text-container height-text-container)
   (assert (typep model 'basic-editor-model))
   (let*
       ((world (world model))
@@ -29,9 +29,6 @@
        (theight          (getf text-data :height))
        (bwidth  (+ twidth 0))
        (bheight (+ theight 0))
-       ;; (linenum-width (if linenum-container
-       ;;                    (width linenum-container)
-       ;;                    0))
        (wrap-column (if (and width-text-container
                              (> bwidth 0))
                         (- (floor
@@ -221,8 +218,7 @@
          (calculated-characters (calculate-chars model
                                                  ;; use width-text-container AND height-text-container
                                                  (width  text-container)
-                                                 (height text-container)
-                                                 (when (show-line-numbers model) linenum-container))))
+                                                 (height text-container))))
     ;; ----------------------------------------------------------------------------------------------
     (add-children text-container
                   (getf calculated-characters :chars))
