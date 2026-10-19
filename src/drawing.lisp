@@ -248,10 +248,9 @@
                                             (- (height world) 60)
                                             "black")))
       (add-children outer-container
-                    (if (show-line-numbers model)
-                        (list linenum-container
-                              text-container)
-                        (list text-container))))))
+                    (append
+                     (when (show-line-numbers model) (list linenum-container))
+                     (list text-container))))))
 
 (defun adding-children (model)
   (assert (typep model 'basic-editor-model))
