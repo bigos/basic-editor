@@ -240,16 +240,14 @@
                                                  :color "white"
                                                  :wrap 'truncate
                                                  :text (format nil "~S" (~> lc trim-row (1+ _) )))))
-
-    (let ((outer-container (make-node-right 20
-                                            340
-                                            (- (width world) 20 20)
-                                            (- (height world) 60)
-                                            "black")))
-      (add-children outer-container
-                    (append
-                     (when (show-line-numbers model) (list linenum-container))
-                     (list text-container))))))
+    (add-children (make-node-right 20
+                                   340
+                                   (- (width world) 20 20)
+                                   (- (height world) 60)
+                                   "black")
+                  (append
+                   (when (show-line-numbers model) (list linenum-container))
+                   (list text-container)))))
 
 (defun adding-children (model)
   (assert (typep model 'basic-editor-model))
