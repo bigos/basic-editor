@@ -219,6 +219,7 @@
                                     (- (height world) 60)
                                     "yellow"))
          (calculated-characters (calculate-chars model
+                                                 ;; use width-text-container AND height-text-container
                                                  text-container
                                                  (when (show-line-numbers model) linenum-container))))
     ;; ----------------------------------------------------------------------------------------------
