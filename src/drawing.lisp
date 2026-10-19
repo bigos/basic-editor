@@ -287,9 +287,7 @@
                                                  :max-column
                                                  (max-column (view-port model)))
                                                 (first-line (view-port   model))
-                                                (first-column (view-port model))
-                                                ))
-                   ))))
+                                                (first-column (view-port model))))))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -299,11 +297,11 @@
   (let ((model *basic-editor-model*))
     ;; do not create world all the time
     (if (world model)
-        ;; then
+        ;; then - reset world
         (setf (children (world model)) nil
               (width (world model))  (width window)
               (height (world model)) (height window))
-        ;; else
+        ;; else - build world
         (setf (world model) (boxes:make-node-down
                              0 0 (width window) (height window) "#cccccc88")))
 
