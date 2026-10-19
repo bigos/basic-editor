@@ -16,7 +16,7 @@
 (defun model-text-wrap (model)
   (eq (text-wrap model) :wrap))
 
-(defun calculate-chars (model text-container linenum-container)
+(defun calculate-chars (model width-text-container height-text-container linenum-container)
   (assert (typep model 'basic-editor-model))
   (let*
       ((world (world model))
@@ -32,11 +32,11 @@
        ;; (linenum-width (if linenum-container
        ;;                    (width linenum-container)
        ;;                    0))
-       (wrap-column (if (and text-container
+       (wrap-column (if (and width-text-container
                              (> bwidth 0))
                         (- (floor
                             (/
-                             (width text-container) 10
+                             width-text-container 10
                              )
                             )
                            (case (text-wrap model)
@@ -83,9 +83,9 @@
           for outside = (let ((max-x-coord (+ relx bwidth))
                               (max-y-coord (+ rely bheight)))
                           (or
-                           (>= max-x-coord (- (width text-container) 10))
+                           (>= max-x-coord (- width-text-container 10))
                            (< relx 0)
-                           (>= max-y-coord (height text-container))
+                           (>= max-y-coord height-text-container)
                            (< rely 0)))
           for max-seen-row = 0 then (if outside
                                         max-seen-row
@@ -220,7 +220,8 @@
                                     "yellow"))
          (calculated-characters (calculate-chars model
                                                  ;; use width-text-container AND height-text-container
-                                                 text-container
+                                                 (width  text-container)
+                                                 (height text-container)
                                                  (when (show-line-numbers model) linenum-container))))
     ;; ----------------------------------------------------------------------------------------------
     (add-children text-container
