@@ -3,6 +3,7 @@
 (in-package #:basic-editor)
 
 ;;; drawing ====================================================================
+
 (defun calculate-bwidth (model)
   (assert (typep model 'basic-editor-model))
   (let* ((font-size 18)
@@ -15,7 +16,7 @@
 (defun model-text-wrap (model)
   (eq (text-wrap model) :wrap))
 
-(defun calculate-chars (model text-container linenum-container)
+(defun calculate-chars (model width-text-container height-text-container)
   (assert (typep model 'basic-editor-model))
   (let*
       ((world (world model))
@@ -28,14 +29,11 @@
        (theight          (getf text-data :height))
        (bwidth  (+ twidth 0))
        (bheight (+ theight 0))
-       ;; (linenum-width (if linenum-container
-       ;;                    (width linenum-container)
-       ;;                    0))
-       (wrap-column (if (and text-container
+       (wrap-column (if (and width-text-container
                              (> bwidth 0))
                         (- (floor
                             (/
-                             (width text-container) 10
+                             width-text-container 10
                              )
                             )
                            (case (text-wrap model)
@@ -82,9 +80,9 @@
           for outside = (let ((max-x-coord (+ relx bwidth))
                               (max-y-coord (+ rely bheight)))
                           (or
-                           (>= max-x-coord (- (width text-container) 10))
+                           (>= max-x-coord (- width-text-container 10))
                            (< relx 0)
-                           (>= max-y-coord (height text-container))
+                           (>= max-y-coord height-text-container)
                            (< rely 0)))
           for max-seen-row = 0 then (if outside
                                         max-seen-row
@@ -218,8 +216,9 @@
                                     (- (height world) 60)
                                     "yellow"))
          (calculated-characters (calculate-chars model
-                                                 text-container
-                                                 (when (show-line-numbers model) linenum-container))))
+                                                 ;; use width-text-container AND height-text-container
+                                                 (width  text-container)
+                                                 (height text-container))))
     ;; ----------------------------------------------------------------------------------------------
     (add-children text-container
                   (getf calculated-characters :chars))
@@ -241,17 +240,14 @@
                                                  :color "white"
                                                  :wrap 'truncate
                                                  :text (format nil "~S" (~> lc trim-row (1+ _) )))))
-
-    (let ((outer-container (make-node-right 20
-                                            340
-                                            (- (width world) 20 20)
-                                            (- (height world) 60)
-                                            "black")))
-      (add-children outer-container
-                    (if (show-line-numbers model)
-                        (list linenum-container
-                              text-container)
-                        (list text-container))))))
+    (add-children (make-node-right 20
+                                   340
+                                   (- (width world) 20 20)
+                                   (- (height world) 60)
+                                   "black")
+                  (append
+                   (when (show-line-numbers model) (list linenum-container))
+                   (list text-container)))))
 
 (defun adding-children (model)
   (assert (typep model 'basic-editor-model))
@@ -289,9 +285,7 @@
                                                  :max-column
                                                  (max-column (view-port model)))
                                                 (first-line (view-port   model))
-                                                (first-column (view-port model))
-                                                ))
-                   ))))
+                                                (first-column (view-port model))))))))
 
 (defmethod draw-window ((window basic-editor-window))
   ;; paint background
@@ -301,11 +295,11 @@
   (let ((model *basic-editor-model*))
     ;; do not create world all the time
     (if (world model)
-        ;; then
+        ;; then - reset world
         (setf (children (world model)) nil
               (width (world model))  (width window)
               (height (world model)) (height window))
-        ;; else
+        ;; else - build world
         (setf (world model) (boxes:make-node-down
                              0 0 (width window) (height window) "#cccccc88")))
 
