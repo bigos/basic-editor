@@ -11,8 +11,7 @@
                #:sycamore
                #:serapeum
                #:cl-gtk4 #:cl-gdk4 #:cl-glib #:cl-cairo2
-               #:defclass-std
-               )
+               #:defclass-std)
   :pathname "src/"
   :components ((:file "packages")
                (:file "classes" :depends-on ("packages"))
